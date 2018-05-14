@@ -25,5 +25,7 @@ public class IniciarSesionActivity extends AppCompatActivity {
                 startActivity(intent_menuPrincipal);
             }
         });
+
+
     }
 }
