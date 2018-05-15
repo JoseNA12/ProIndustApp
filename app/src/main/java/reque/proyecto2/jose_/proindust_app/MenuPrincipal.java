@@ -1,5 +1,6 @@
 package reque.proyecto2.jose_.proindust_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,8 +29,10 @@ public class MenuPrincipal extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent_cruds = new Intent(MenuPrincipal.this, CRUDS.class);
+                startActivity(intent_cruds);
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
 
@@ -87,7 +90,8 @@ public class MenuPrincipal extends AppCompatActivity
         }
         else if (id == R.id.nav_cerrar_sesion)
         {
-
+            Intent intent_iniciarsesion = new Intent(MenuPrincipal.this, IniciarSesionActivity.class);
+            startActivity(intent_iniciarsesion);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

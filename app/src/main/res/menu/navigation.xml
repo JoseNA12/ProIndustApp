@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_proyectos"
+        android:icon="@drawable/ic_location_city_black_24dp"
+        android:title="@string/title_proyectos" />
+
+    <item
+        android:id="@+id/navigation_operaciones"
+        android:icon="@drawable/ic_business_center_black_24dp"
+        android:title="@string/title_operaciones" />
+
+    <item
+        android:id="@+id/navigation_tareas"
+        android:icon="@drawable/ic_local_dining_black_24dp"
+        android:title="@string/title_tareas" />
+
+    <item
+        android:id="@+id/navigation_colaboradores"
+        android:icon="@drawable/ic_rowing_black_24dp"
+        android:title="@string/title_colaboradores" />
+
+    <item
+        android:id="@+id/navigation_usuarios"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="@string/title_usuarios" />
+
+</menu>

@@ -31,7 +31,10 @@
         <activity
             android:name=".MenuPrincipal"
             android:label="@string/title_activity_menu_principal"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CRUDS"
+            android:label="@string/title_activity_cruds"></activity>
     </application>
 
 </manifest>
