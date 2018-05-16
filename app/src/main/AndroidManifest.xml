@@ -34,7 +34,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CRUDS"
-            android:label="@string/title_activity_cruds"></activity>
+            android:label="@string/title_activity_cruds" />
+        <activity
+            android:name=".Muestreo"
+            android:label="@string/title_activity_muestreo" />
     </application>
 
 </manifest>
