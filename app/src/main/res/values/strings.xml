@@ -16,4 +16,5 @@
     <string name="title_tareas">Tareas</string>
     <string name="title_colaboradores">Colaboradores</string>
     <string name="title_usuarios">Usuarios</string>
+    <string name="title_activity_crear_proyecto">Crear Proyecto</string>
 </resources>
