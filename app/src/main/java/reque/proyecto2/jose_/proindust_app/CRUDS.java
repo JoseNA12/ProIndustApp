@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 
 public class CRUDS extends AppCompatActivity {
 
-    private TextView mTextMessage;
     private ListView lv;
 
     @Override
@@ -28,7 +28,6 @@ public class CRUDS extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cruds);
 
-        mTextMessage = (TextView) findViewById(R.id.textView3);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -50,16 +49,24 @@ public class CRUDS extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem item) {
                         Toast.makeText(CRUDS.this,"You Clicked : " + item.getTitle(), Toast.LENGTH_SHORT).show();
 
-                        Intent intent_iniciarsesion = new Intent(CRUDS.this, CrearProyecto.class);
-                        startActivity(intent_iniciarsesion);
 
                         return true;
                     }
                 });
 
                 popup.show();//showing popup menu
+            }
+        });
 
-                mTextMessage.setText("Viva vegetta ostia");
+        // Boton flotante, lado derecha abajo (simbolo de una llave)
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crear_ID);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent myIntent = new Intent(CRUDS.this, CrearProyecto.class);
+                startActivity(myIntent);
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
 
@@ -72,19 +79,19 @@ public class CRUDS extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_proyectos:
-                    mTextMessage.setText(R.string.title_proyectos);
+                    // mTextMessage.setText(R.string.title_proyectos);
                     return true;
                 case R.id.navigation_operaciones:
-                    mTextMessage.setText(R.string.title_operaciones);
+                    // mTextMessage.setText(R.string.title_operaciones);
                     return true;
                 case R.id.navigation_tareas:
-                    mTextMessage.setText(R.string.title_tareas);
+                    // mTextMessage.setText(R.string.title_tareas);
                     return true;
                 case R.id.navigation_colaboradores:
-                    mTextMessage.setText(R.string.title_colaboradores);
+                    // mTextMessage.setText(R.string.title_colaboradores);
                     return true;
                 case R.id.navigation_usuarios:
-                    mTextMessage.setText(R.string.title_usuarios);
+                    // mTextMessage.setText(R.string.title_usuarios);
                     return true;
             }
             return false;

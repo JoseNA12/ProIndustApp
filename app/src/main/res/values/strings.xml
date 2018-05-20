@@ -16,5 +16,9 @@
     <string name="title_tareas">Tareas</string>
     <string name="title_colaboradores">Colaboradores</string>
     <string name="title_usuarios">Usuarios</string>
-    <string name="title_activity_crear_proyecto">Crear Proyecto</string>
+    <string name="title_activity_crear_proyecto">Proyecto</string>
+    <string name="title_activity_crear_operacion">Operación</string>
+    <string name="title_activity_crear_tarea">Tarea</string>
+    <string name="title_activity_crear_colaborador">Colaborador</string>
+    <string name="title_activity_crear_usuarios">Usuario</string>
 </resources>

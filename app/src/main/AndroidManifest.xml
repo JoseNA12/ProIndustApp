@@ -41,6 +41,18 @@
         <activity
             android:name=".CrearProyecto"
             android:label="@string/title_activity_crear_proyecto" />
+        <activity
+            android:name=".CrearOperacion"
+            android:label="@string/title_activity_crear_operacion" />
+        <activity
+            android:name=".CrearTarea"
+            android:label="@string/title_activity_crear_tarea" />
+        <activity
+            android:name=".CrearColaborador"
+            android:label="@string/title_activity_crear_colaborador" />
+        <activity
+            android:name=".CrearUsuario"
+            android:label="@string/title_activity_crear_usuarios" />
     </application>
 
 </manifest>
