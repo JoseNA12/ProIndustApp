@@ -1,6 +1,7 @@
 package reque.proyecto2.jose_.proindust_app;
 
 import android.app.ActionBar;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,18 +23,23 @@ import java.util.ArrayList;
 public class CRUDS extends AppCompatActivity {
 
     private ListView lv;
+    private BottomNavigationView navigation;
+    private FloatingActionButton crear;
+    private Class pestaniaActual = CrearProyecto.class; // por defecto se muestra la de proyecto
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cruds);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        // Barra que contiene proyectos, operaciones, tareas, colaboradores y tareas
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        String[] ninjaList = {"Jose", "Navarro", "Hola", "Holiwis", "Jelou mai frey"};
+        String[] ninjaList = {"Jose", "Navarro", "Hola", "Holiwis", "Jelou mai frey", "Prueba 1", "Prueba 2", "Tarea X", "Colaborador X", "Prueba 3", "Prueba 4", "Prueba 5", "Prueba 6"};
         ListAdapter theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, ninjaList);
         lv = (ListView) findViewById(R.id.dy_lista_ID);
+
         lv.setAdapter(theAdapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -47,8 +53,24 @@ public class CRUDS extends AppCompatActivity {
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(CRUDS.this,"You Clicked : " + item.getTitle(), Toast.LENGTH_SHORT).show();
+                        // Toast.makeText(CRUDS.this,"You Clicked : " + item.getTitle(), Toast.LENGTH_SHORT).show();
 
+                        if (item.getTitle().equals("Información"))
+                        {
+                            Toast.makeText(CRUDS.this,"Información", Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                            {
+                            if (item.getTitle().equals("Modificar"))
+                            {
+
+                                Toast.makeText(CRUDS.this,"Modificar", Toast.LENGTH_SHORT).show();
+                            }
+                            else // Eliminar
+                            {
+                                Toast.makeText(CRUDS.this,"Eliminar", Toast.LENGTH_SHORT).show();
+                            }
+                        }
 
                         return true;
                     }
@@ -59,16 +81,17 @@ public class CRUDS extends AppCompatActivity {
         });
 
         // Boton flotante, lado derecha abajo (simbolo de una llave)
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_crear_ID);
-        fab.setOnClickListener(new View.OnClickListener() {
+        crear = (FloatingActionButton) findViewById(R.id.fab_crear_ID);
+        crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(CRUDS.this, CrearProyecto.class);
+                Intent myIntent = new Intent(CRUDS.this, pestaniaActual);
                 startActivity(myIntent);
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
             }
         });
+
 
     }
 
@@ -77,27 +100,32 @@ public class CRUDS extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
             switch (item.getItemId()) {
                 case R.id.navigation_proyectos:
-                    // mTextMessage.setText(R.string.title_proyectos);
+                    pestaniaActual = CrearProyecto.class;
+
                     return true;
                 case R.id.navigation_operaciones:
-                    // mTextMessage.setText(R.string.title_operaciones);
+                    pestaniaActual = CrearOperacion.class;
+
                     return true;
                 case R.id.navigation_tareas:
-                    // mTextMessage.setText(R.string.title_tareas);
+                    pestaniaActual = CrearTarea.class;
+
                     return true;
                 case R.id.navigation_colaboradores:
-                    // mTextMessage.setText(R.string.title_colaboradores);
+                    pestaniaActual = CrearColaborador.class;
+
                     return true;
                 case R.id.navigation_usuarios:
+                    pestaniaActual = CrearUsuario.class;
                     // mTextMessage.setText(R.string.title_usuarios);
                     return true;
             }
             return false;
         }
     };
-
 
 
 }
