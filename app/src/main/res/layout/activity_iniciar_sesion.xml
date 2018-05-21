@@ -8,12 +8,13 @@
     tools:context=".IniciarSesionActivity">
 
     <EditText
-        android:id="@+id/ct_clave_ID"
+        android:id="@+id/et_clave_ID"
         android:layout_width="326dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="208dp"
         android:layout_marginEnd="62dp"
         android:layout_marginStart="62dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:fontFamily="@font/roboto"
         android:hint="Contraseña"
@@ -22,15 +23,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
-        android:id="@+id/ct_usuario_ID"
+        android:id="@+id/et_usuario_ID"
         android:layout_width="326dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="280dp"
         android:layout_marginEnd="62dp"
         android:layout_marginStart="62dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
         android:fontFamily="@font/roboto"
         android:hint="Usuario"
@@ -39,7 +43,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textView"
@@ -81,13 +87,16 @@
         android:id="@+id/imageView"
         android:layout_width="158dp"
         android:layout_height="145dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginTop="132dp"
         android:background="@drawable/obrero"
         android:tint="@color/cardview_light_background"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.034" />
 
     <TextView
         android:id="@+id/textView2"
