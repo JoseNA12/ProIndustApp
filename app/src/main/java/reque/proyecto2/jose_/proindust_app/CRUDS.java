@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,13 +36,15 @@ import java.util.ArrayList;
 
 public class CRUDS extends AppCompatActivity {
 
+    private TextView PRUEBA;
+
     private ListView lv;
     private ListAdapter theAdapter;
     private BottomNavigationView navigation;
     private FloatingActionButton crear;
     private Class pestaniaActual = CrearProyecto.class; // por defecto se muestra la de proyecto
 
-    // IP del servidor
+    /*// IP del servidor
     private String IP = "http://proindustapp.000webhostapp.com";
 
     // Rutas de los Web Services
@@ -49,9 +52,8 @@ public class CRUDS extends AppCompatActivity {
     private String GET_PROYECTO_BY_ID = IP + "/obtener_proyecto_por_id.php";
     private String INSERT_PROYECTO = IP + "/insertar_proyecto.php";
     private String UPDATE_PROYECTO = IP + "/actualizar_proyecto.php";
-    private String DELETE_PROYECTO = IP + "/eliminar_proyecto.php";
+    private String DELETE_PROYECTO = IP + "/eliminar_proyecto.php";*/
 
-    private ObtenerWebServices hiloConexion;
 
 
     @Override
@@ -62,7 +64,7 @@ public class CRUDS extends AppCompatActivity {
         // Barra que contiene proyectos, operaciones, tareas, colaboradores y tareas
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
+/* */
         String[] ninjaList = {"Jose", "Navarro", "Hola", "Holiwis", "Jelou mai frey", "Prueba 1", "Prueba 2", "Tarea X", "Colaborador X", "Prueba 3", "Prueba 4", "Prueba 5", "Prueba 6"};
         theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, ninjaList);
         lv = (ListView) findViewById(R.id.dy_lista_ID);
@@ -119,16 +121,16 @@ public class CRUDS extends AppCompatActivity {
             }
         });
 
-
+        ConsultarListaDatos();
     }
 
     private void ConsultarListaDatos() // cada vez que se cambie de pestaña (CRUDS), consultar la respectiva lista de información
     {
-        switch (pestaniaActual.getName())
+        Log.d("IMPRIMIR", pestaniaActual.getSimpleName());
+
+        switch (pestaniaActual.getSimpleName())
         {
             case "CrearProyecto":
-                hiloConexion = new ObtenerWebServices();
-                hiloConexion.execute(GET_PROYECTO, "GET_PROYECTO"); // Parámetros que recibe doInBackground
 
                 break;
             case "CrearOperacion":
@@ -185,106 +187,4 @@ public class CRUDS extends AppCompatActivity {
         }
     };
 
-
-
-    public class ObtenerWebServices extends AsyncTask<String, Void, String>{
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            // PONER EL RESULTADO EN ALGUN LADO
-            // super.onPostExecute(s);
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onCancelled(String s) {
-            super.onCancelled(s);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            String cadena = params[0];
-            URL url = null; // URL de donde queremos obtener la información
-
-            String devuelve = "";
-
-            if(params[1].equals("GET_PROYECTO"))
-            {
-                try {
-                    url = new URL(cadena);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection(); //Abrir la conexión
-                    connection.setRequestProperty("User-Agent", "Mozilla/5.0" +
-                            " (Linux; Android 1.5; es-ES) Ejemplo HTTP");
-                    //connection.setHeader("content-type", "application/json");
-
-                    int respuesta = connection.getResponseCode();
-                    StringBuilder result = new StringBuilder();
-
-                    if (respuesta == HttpURLConnection.HTTP_OK) {
-
-                        InputStream in = new BufferedInputStream(connection.getInputStream());  // preparo la cadena de entrada
-
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));  // la introduzco en un BufferedReader
-
-                        // El siguiente proceso lo hago porque el JSONOBject necesita un String y tengo
-                        // que tranformar el BufferedReader a String. Esto lo hago a traves de un
-                        // StringBuilder.
-
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            result.append(line);        // Paso toda la entrada al StringBuilder
-                        }
-
-                        //Creamos un objeto JSONObject para poder acceder a los atributos (campos) del objeto.
-                        JSONObject respuestaJSON = new JSONObject(result.toString());   //Creo un JSONObject a partir del StringBuilder pasado a cadena
-                        //Accedemos al vector de resultados
-                        String resultJSON = respuestaJSON.getString("estado");   // results es el nombre del campo en el JSON
-
-                        //Vamos obteniendo todos los campos que nos interesen.
-
-
-                        if (resultJSON.equals("1")) { // "1" -> si hay PROYECTOS
-                            JSONArray proyectosJSON = respuestaJSON.getJSONArray("proyectos"); // existen proyectos, entonces agarro las lista "proyectos"
-
-                            for (int i = 0; i < proyectosJSON.length(); i++)
-                            {
-                                devuelve = devuelve + proyectosJSON.getJSONObject(i).getString("idProyecto") + " " +
-                                        proyectosJSON.getJSONObject(i).getString("nombre") + " " +
-                                        proyectosJSON.getJSONObject(i).getString("descripcion") + " " +
-                                        proyectosJSON.getJSONObject(i).getString("nivelConfianza") + " " +
-                                        proyectosJSON.getJSONObject(i).getString("rangoInicial") + " " +
-                                        proyectosJSON.getJSONObject(i).getString("rangoFinal") + " " +
-                                        proyectosJSON.getJSONObject(i).getString("cantMuestreosP") + "\n";
-                            }
-                        }
-                        else if (resultJSON.equals("2")) { // "2" -> no hay proyectos almacenados
-                            devuelve = "No existen proyectos!";
-                        }
-
-                    }
-
-
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return devuelve;
-            }
-            // else if (params[1].equals("GET_PROYECTO"))){}
-
-            return null;
-        }
-    }
 }
