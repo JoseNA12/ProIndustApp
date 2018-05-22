@@ -41,19 +41,19 @@ public class CrearUsuario extends AppCompatActivity {
         bt_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CrearUsuario();
+                Boton_CrearUsuario();
             }
         });
     }
 
-    private void CrearUsuario()
+    private void Boton_CrearUsuario()
     {
         if(!et_nombre.getText().toString().equals("") && !et_apellidos.getText().toString().equals("") &&
                 !et_nombreUsuario.getText().toString().equals("") && !et_contrasenia.getText().toString().equals("") &&
                 !et_repetirContrasenia.getText().toString().equals("")) {
 
 
-            createUser(ClaseGlobal.INSERT_USUARIO +
+            CrearUsuario(ClaseGlobal.INSERT_USUARIO +
                     "?Nombre=" + et_nombre.getText().toString() +
                     "&Apellidos=" + "PRUEBAS" +
                     "&IdRol=123" +
@@ -61,49 +61,38 @@ public class CrearUsuario extends AppCompatActivity {
                     "&NombreUsuario=CaraBotella" +
                     "&Contrasenia=123");
 
-            correctMessageDialog("1");
-
-
             //createUser(ClaseGlobal.Usuario_Insert+"?Usuario="+txt_NombreUsuario.getText().toString()+"&Password="+txt_Password.getText().toString()+"&Tipo_Usuario=Asist");
-
 
         }else{
             errorMessageDialog("Llene todos las casillas para crear el usuario");
         }
     }
 
-    private void createUser(String URL){
+    private void CrearUsuario(String URL){
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
 
             @Override
             public void onResponse(String response) { // response -> {"status":"false"} o true
-                Log.d("IMPRIMIR", response);
-                createUserAux(response);
+                //CrearUsuarioAux(response);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false")) {
+                        correctMessageDialog("Se ha creado el proyecto!");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                errorMessageDialog("No se pudo conectar al servidor");
+                errorMessageDialog("Error, al procesar la solicitud.\nVerifique su conexión a internet!.");
             }
         });queue.add(stringRequest);
-    }
-
-    private void createUserAux(String response){
-        try{
-            JSONObject jsonObject = new JSONObject(response);
-
-            if(jsonObject.getString("status").equals("false"))
-            {
-                errorMessageDialog("No se pudo hacer xd");
-            }
-            else
-            {
-                correctMessageDialog("Si se pudo hacer alv");
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
     }
 
     private void errorMessageDialog(String message){
