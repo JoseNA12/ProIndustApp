@@ -7,7 +7,7 @@
     tools:context=".CrearProyecto">
 
     <EditText
-        android:id="@+id/tv_descripcion_ID2"
+        android:id="@+id/et_descripcion_ID"
         android:layout_width="327dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -162,7 +162,7 @@
         app:layout_constraintVertical_bias="0.667" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/et_cantMuestreosP_ID"
         android:layout_width="109dp"
         android:layout_height="42dp"
         android:layout_marginBottom="8dp"

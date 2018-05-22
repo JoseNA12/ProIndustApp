@@ -1,6 +1,7 @@
 package reque.proyecto2.jose_.proindust_app;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,19 +53,25 @@ public class CrearUsuario extends AppCompatActivity {
                 !et_nombreUsuario.getText().toString().equals("") && !et_contrasenia.getText().toString().equals("") &&
                 !et_repetirContrasenia.getText().toString().equals("")) {
 
+            if (!et_contrasenia.getText().toString().equals(et_repetirContrasenia.getText().toString())) {
 
-            CrearUsuario(ClaseGlobal.INSERT_USUARIO +
-                    "?Nombre=" + et_nombre.getText().toString() +
-                    "&Apellidos=" + "PRUEBAS" +
-                    "&IdRol=123" +
-                    "&IdProyecto=123" +
-                    "&NombreUsuario=CaraBotella" +
-                    "&Contrasenia=123");
-
-            //createUser(ClaseGlobal.Usuario_Insert+"?Usuario="+txt_NombreUsuario.getText().toString()+"&Password="+txt_Password.getText().toString()+"&Tipo_Usuario=Asist");
-
-        }else{
-            errorMessageDialog("Llene todos las casillas para crear el usuario");
+                CrearUsuario(ClaseGlobal.INSERT_USUARIO +
+                        "?Nombre=" + et_nombre.getText().toString() +
+                        "&Apellidos=" + et_apellidos.getText().toString() +
+                        "&IdRol=123" +
+                        "&IdProyecto=123" +
+                        "&NombreUsuario=" + et_nombreUsuario.getText().toString() +
+                        "&Contrasenia=" + et_contrasenia.getText().toString()
+                );
+            }
+            else
+            {
+                errorMessageDialog("Las contraseñas ingresadas no concuerdan!");
+            }
+        }
+        else
+        {
+            errorMessageDialog("Por favor, complete todos los campos!");
         }
     }
 
@@ -78,8 +85,9 @@ public class CrearUsuario extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    if (!jsonObject.getString("status").equals("false")) {
-                        correctMessageDialog("Se ha creado el proyecto!");
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        correctMessageDialog("Se ha creado el usuario!");
                     }
 
                 }catch (JSONException e){
