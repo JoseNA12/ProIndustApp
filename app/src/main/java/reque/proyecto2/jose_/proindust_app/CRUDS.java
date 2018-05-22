@@ -46,11 +46,12 @@ import java.util.ArrayList;
 public class CRUDS extends AppCompatActivity {
 
     private ListView listaComponente;
+    // private ArrayList<String> listaElementos = new ArrayList<String>();
     private ListAdapter theAdapter;
+
     private BottomNavigationView navigation;
     private FloatingActionButton crear;
     private Class pestaniaActual = CrearProyecto.class; // por defecto se muestra la de proyecto
-    ArrayList<String> listaElementos = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +61,9 @@ public class CRUDS extends AppCompatActivity {
         // Barra que contiene proyectos, operaciones, tareas, colaboradores y tareas
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-/* */
-        //String[] ninjaList = {"Jose", "Navarro", "Hola", "Holiwis", "Jelou mai frey", "Prueba 1", "Prueba 2", "Tarea X", "Colaborador X", "Prueba 3", "Prueba 4", "Prueba 5", "Prueba 6"};
-        theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, listaElementos);
         
         listaComponente = (ListView) findViewById(R.id.dy_lista_ID);
 
-        listaComponente.setAdapter(theAdapter);
         listaComponente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -121,40 +118,17 @@ public class CRUDS extends AppCompatActivity {
         ConsultarListaDatos();
     }
 
-    private void ConsultarListaDatos() // cada vez que se cambie de pestaña (CRUDS), consultar la respectiva lista de información
-    {
-        Log.d("IMPRIMIR", pestaniaActual.getSimpleName());
-
-        switch (pestaniaActual.getSimpleName())
-        {
-            case "CrearProyecto": // CREAR es solo por nombre, en teoria deberia ser Proyecto xd
-
-                break;
-            case "CrearOperacion":
-
-                break;
-
-            case "CrearTarea":
-
-                break;
-
-            case "CrearColaborador":
-
-                break;
-
-            case "CrearUsuario":
-                ConsultarUsuarios(ClaseGlobal.SELECT_USUARIO);
-                break;
-
-            default:
-                break;
-        }
-
-    }
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
+        /**
+         * Permite obtener todos los datos de cada CRUD al momento de seleccionar en pantalla
+         * algun componente de la barra
+         * Se utiliza "pestaniaActual" para actualizar el identificador y asi saber en cual pestalla
+         * estamos observando
+         * @param item
+         * @return
+         */
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
@@ -189,17 +163,57 @@ public class CRUDS extends AppCompatActivity {
         }
     };
 
-    private void ActualizarListView(ArrayList<String> mylist)
+    /**
+     * Permite obtener todos los datos de cada actividad (proyectos, operaciones, etc. Mediante una
+     * etiqueta php) al momento de cambiar de pestalla y finalmente actualizar la tabla ListView.
+     * Funcion llamada mediante el listener del componente: BottomNavigationView navigation
+     */
+    private void ConsultarListaDatos() // cada vez que se cambie de pestaña (CRUDS), consultar la respectiva lista de información
     {
-        // String[] ninjaList = {"Jose", "Navarro", "Hola", "Holiwis", "Jelou mai frey", "Prueba 1", "Prueba 2", "Tarea X", "Colaborador X", "Prueba 3", "Prueba 4", "Prueba 5", "Prueba 6"};
+        switch (pestaniaActual.getSimpleName())
+        {
+            case "CrearProyecto": // CREAR es solo por nombre, en teoria deberia ser Proyecto xd
+                ConsultarDatosTablas(ClaseGlobal.SELECT_PROYECTOS_ALL, "nombre");
+                break;
+            case "CrearOperacion":
+                ConsultarDatosTablas(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
+                break;
 
-        //theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, listaElementos);
-        //lv = (ListView) findViewById(R.id.dy_lista_ID);
+            case "CrearTarea":
+                ConsultarDatosTablas(ClaseGlobal.SELECT_TAREAS_ALL, "nombre");
+                break;
 
+            case "CrearColaborador":
+                ConsultarDatosTablas(ClaseGlobal.SELECT_COLABORADORES_ALL, "pseudonimo");
+                break;
+
+            case "CrearUsuario":
+                ConsultarDatosTablas(ClaseGlobal.SELECT_USUARIOS_ALL, "nombre");
+                break;
+
+            default:
+                break;
+        }
 
     }
 
-    private void ConsultarUsuarios(String URL)
+    /***
+     * Permite actualizar los datos que se despliegan del componente ListaView
+     * @param lista: Lista con los elementos a refrescar
+     */
+    private void ActualizarListView(ArrayList<String> lista)
+    {
+        theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, lista);
+        listaComponente.setAdapter(theAdapter);
+    }
+
+    /***
+     * Funcion que obtiene las consultas hechas mediante los SELECT_*****_ALL.php
+     * SOLO SE CONSULTA UNA ETIQUETA!
+     * @param URL: Direccion web del archivo php de la consulta
+     * @param pEtiqueta: Etiqueta del php, se obtendra el nombre por ejemplo, entonces es 'nombre'
+     */
+    private void ConsultarDatosTablas(String URL, final String pEtiquetaPHP)
     {
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -213,15 +227,24 @@ public class CRUDS extends AppCompatActivity {
                     JSONArray jsonArray = jsonObject.getJSONArray("value");
 
                     // ArrayList<String> lista = new ArrayList<String>();
+                    ArrayList<String> listaElementos = new ArrayList<String>();
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        String nombreUsuario = jsonArray.getJSONObject(i).get("nombre").toString();
+                        String nombreUsuario = jsonArray.getJSONObject(i).get(pEtiquetaPHP).toString();
                         listaElementos.add(nombreUsuario);
-                        Log.d("VER", nombreUsuario);
                     }
 
-                    ActualizarListView(listaElementos);
+                    if (listaElementos.size() != 0)
+                    {
+                        ActualizarListView(listaElementos);
+                    }
+                    else
+                    {
+                        MessageDialog("Aun no hay registros de información almacenados!",
+                                "Atención", "Aceptar");
+                    }
+
                 }
                 catch (JSONException e ) { e.printStackTrace(); };
             }
@@ -229,24 +252,20 @@ public class CRUDS extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                errorMessageDialog("Error al solicitar los datos.\nVerifique su conexión a internet!.");
+                MessageDialog("Error al solicitar los datos.\nVerifique su conexión a internet!.",
+                        "Error", "Aceptar");
             }
         });queue.add(stringRequest);
     }
 
-    private void errorMessageDialog(String message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle("Error").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                return;
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private void correctMessageDialog(String message){ // mostrar mensaje emergente
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle("Éxito").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+    /**
+     * Despliega un mensaje emergente en pantalla
+     * @param message
+     * @param pTitulo
+     * @param pLabelBoton
+     */
+    private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;

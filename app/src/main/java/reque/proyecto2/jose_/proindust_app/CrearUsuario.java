@@ -53,29 +53,29 @@ public class CrearUsuario extends AppCompatActivity {
                 !et_nombreUsuario.getText().toString().equals("") && !et_contrasenia.getText().toString().equals("") &&
                 !et_repetirContrasenia.getText().toString().equals("")) {
 
-            if (!et_contrasenia.getText().toString().equals(et_repetirContrasenia.getText().toString())) {
+            if (et_contrasenia.getText().toString().equals(et_repetirContrasenia.getText().toString())) {
 
                 CrearUsuario(ClaseGlobal.INSERT_USUARIO +
                         "?Nombre=" + et_nombre.getText().toString() +
                         "&Apellidos=" + et_apellidos.getText().toString() +
-                        "&IdRol=123" +
-                        "&IdProyecto=123" +
+                        "&IdRolUsuario=123" +
                         "&NombreUsuario=" + et_nombreUsuario.getText().toString() +
                         "&Contrasenia=" + et_contrasenia.getText().toString()
                 );
             }
             else
             {
-                errorMessageDialog("Las contraseñas ingresadas no concuerdan!");
+                MessageDialog("Las contraseñas ingresadas no concuerdan!", "Error", "Aceptar");
             }
         }
         else
         {
-            errorMessageDialog("Por favor, complete todos los campos!");
+            MessageDialog("Por favor, complete todos los campos!", "Error", "Aceptar");
         }
     }
 
-    private void CrearUsuario(String URL){
+    private void CrearUsuario(String URL)
+    {
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
 
@@ -87,7 +87,11 @@ public class CrearUsuario extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        correctMessageDialog("Se ha creado el usuario!");
+                        MessageDialog("Se ha creado el usuario!", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al crear el usuario!", "Error", "Aceptar");
                     }
 
                 }catch (JSONException e){
@@ -98,24 +102,20 @@ public class CrearUsuario extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                errorMessageDialog("Error, al procesar la solicitud.\nVerifique su conexión a internet!.");
+                MessageDialog("Error, al procesar la solicitud.\nVerifique su conexión a internet!.",
+                        "Error", "Aceptar");
             }
         });queue.add(stringRequest);
     }
 
-    private void errorMessageDialog(String message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle("Error").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                return;
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private void correctMessageDialog(String message){ // mostrar mensaje emergente
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle("Éxito").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+    /**
+     * Despliega un mensaje emergente en pantalla
+     * @param message
+     * @param pTitulo
+     * @param pLabelBoton
+     */
+    private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;

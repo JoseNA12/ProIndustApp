@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -99,11 +100,12 @@ public class CrearProyecto extends AppCompatActivity {
         }
         else
         {
-            errorMessageDialog("Por favor, complete todos los campos!");
+            MessageDialog("Por favor, complete todos los campos!", "Error", "Aceptar");
         }
     }
 
-    private void CrearProyecto(String URL){
+    private void CrearProyecto(String URL)
+    {
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
 
@@ -115,7 +117,11 @@ public class CrearProyecto extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        correctMessageDialog("Se ha creado el proyecto!");
+                        MessageDialog("Se ha creado el proyecto!", "Éxtio", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al crear el proyecto!", "Error", "Aceptar");
                     }
 
                 }catch (JSONException e){
@@ -126,24 +132,20 @@ public class CrearProyecto extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                errorMessageDialog("Error, al procesar la solicitud.\nVerifique su conexión a internet!.");
+                MessageDialog("Ha ocurrido un error al procesar la solictud.\n",
+                        "Error", "Aceptar");
             }
         });queue.add(stringRequest);
     }
 
-    private void errorMessageDialog(String message){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle("Error").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                return;
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    private void correctMessageDialog(String message){ // mostrar mensaje emergente
-        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle("Éxito").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+    /**
+     * Despliega un mensaje emergente en pantalla
+     * @param message
+     * @param pTitulo
+     * @param pLabelBoton
+     */
+    private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 return;
