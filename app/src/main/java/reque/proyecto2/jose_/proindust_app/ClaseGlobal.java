@@ -8,4 +8,6 @@ public class ClaseGlobal {
     // Rutas de los Web Services
     public static final String INSERT_USUARIO = IP + "insertar_usuario.php";
     public static final String INSERT_PROYECTO = IP + "insertar_proyecto.php";
+
+    public static final String SELECT_USUARIO = IP + "select_usuario.php";
 }

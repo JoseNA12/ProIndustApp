@@ -2,12 +2,14 @@ package reque.proyecto2.jose_.proindust_app;
 
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,6 +21,13 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,25 +45,12 @@ import java.util.ArrayList;
 
 public class CRUDS extends AppCompatActivity {
 
-    private TextView PRUEBA;
-
-    private ListView lv;
+    private ListView listaComponente;
     private ListAdapter theAdapter;
     private BottomNavigationView navigation;
     private FloatingActionButton crear;
     private Class pestaniaActual = CrearProyecto.class; // por defecto se muestra la de proyecto
-
-    /*// IP del servidor
-    private String IP = "http://proindustapp.000webhostapp.com";
-
-    // Rutas de los Web Services
-    private String GET_PROYECTO = IP + "/obtener_proyectos.php";
-    private String GET_PROYECTO_BY_ID = IP + "/obtener_proyecto_por_id.php";
-    private String INSERT_PROYECTO = IP + "/insertar_proyecto.php";
-    private String UPDATE_PROYECTO = IP + "/actualizar_proyecto.php";
-    private String DELETE_PROYECTO = IP + "/eliminar_proyecto.php";*/
-
-
+    ArrayList<String> listaElementos = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +61,13 @@ public class CRUDS extends AppCompatActivity {
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 /* */
-        String[] ninjaList = {"Jose", "Navarro", "Hola", "Holiwis", "Jelou mai frey", "Prueba 1", "Prueba 2", "Tarea X", "Colaborador X", "Prueba 3", "Prueba 4", "Prueba 5", "Prueba 6"};
-        theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, ninjaList);
-        lv = (ListView) findViewById(R.id.dy_lista_ID);
+        //String[] ninjaList = {"Jose", "Navarro", "Hola", "Holiwis", "Jelou mai frey", "Prueba 1", "Prueba 2", "Tarea X", "Colaborador X", "Prueba 3", "Prueba 4", "Prueba 5", "Prueba 6"};
+        theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, listaElementos);
+        
+        listaComponente = (ListView) findViewById(R.id.dy_lista_ID);
 
-        lv.setAdapter(theAdapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listaComponente.setAdapter(theAdapter);
+        listaComponente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final int pos = position;
@@ -130,7 +127,7 @@ public class CRUDS extends AppCompatActivity {
 
         switch (pestaniaActual.getSimpleName())
         {
-            case "CrearProyecto":
+            case "CrearProyecto": // CREAR es solo por nombre, en teoria deberia ser Proyecto xd
 
                 break;
             case "CrearOperacion":
@@ -146,7 +143,7 @@ public class CRUDS extends AppCompatActivity {
                 break;
 
             case "CrearUsuario":
-
+                ConsultarUsuarios(ClaseGlobal.SELECT_USUARIO);
                 break;
 
             default:
@@ -164,27 +161,98 @@ public class CRUDS extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_proyectos:
                     pestaniaActual = CrearProyecto.class;
-
+                    ConsultarListaDatos();
                     return true;
+
                 case R.id.navigation_operaciones:
                     pestaniaActual = CrearOperacion.class;
-
+                    ConsultarListaDatos();
                     return true;
+
                 case R.id.navigation_tareas:
                     pestaniaActual = CrearTarea.class;
-
+                    ConsultarListaDatos();
                     return true;
+
                 case R.id.navigation_colaboradores:
                     pestaniaActual = CrearColaborador.class;
-
+                    ConsultarListaDatos();
                     return true;
+
                 case R.id.navigation_usuarios:
                     pestaniaActual = CrearUsuario.class;
-                    // mTextMessage.setText(R.string.title_usuarios);
+                    ConsultarListaDatos();
                     return true;
             }
+
             return false;
         }
     };
 
+    private void ActualizarListView(ArrayList<String> mylist)
+    {
+        // String[] ninjaList = {"Jose", "Navarro", "Hola", "Holiwis", "Jelou mai frey", "Prueba 1", "Prueba 2", "Tarea X", "Colaborador X", "Prueba 3", "Prueba 4", "Prueba 5", "Prueba 6"};
+
+        //theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, listaElementos);
+        //lv = (ListView) findViewById(R.id.dy_lista_ID);
+
+
+    }
+
+    private void ConsultarUsuarios(String URL)
+    {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response)
+            {
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    // ArrayList<String> lista = new ArrayList<String>();
+
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String nombreUsuario = jsonArray.getJSONObject(i).get("nombre").toString();
+                        listaElementos.add(nombreUsuario);
+                        Log.d("VER", nombreUsuario);
+                    }
+
+                    ActualizarListView(listaElementos);
+                }
+                catch (JSONException e ) { e.printStackTrace(); };
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                errorMessageDialog("Error al solicitar los datos.\nVerifique su conexión a internet!.");
+            }
+        });queue.add(stringRequest);
+    }
+
+    private void errorMessageDialog(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle("Error").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void correctMessageDialog(String message){ // mostrar mensaje emergente
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle("Éxito").setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }
