@@ -2,13 +2,21 @@ package reque.proyecto2.jose_.proindust_app;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.Request;
@@ -17,8 +25,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class CrearUsuario extends AppCompatActivity {
 
@@ -26,6 +37,9 @@ public class CrearUsuario extends AppCompatActivity {
 
     private EditText et_nombre, et_apellidos, et_nombreUsuario, et_contrasenia, et_repetirContrasenia;
     private Button bt_crear;
+    private Spinner sp_rolUsuario;
+    private ArrayAdapter<String> adapterSpinner_rolUsuario;
+    private ArrayList<String> roles;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +51,17 @@ public class CrearUsuario extends AppCompatActivity {
         et_nombreUsuario = (EditText) findViewById(R.id.et_nombreUsuario_ID);
         et_contrasenia = (EditText) findViewById(R.id.et_contrasenia_ID);
         et_repetirContrasenia = (EditText) findViewById(R.id.et_repetirContrasenia_ID);
+
+        sp_rolUsuario = (Spinner) findViewById(R.id.sp_rol_ID);
+
+        // Obtener los nombres de los roles
+        roles = GetRolesUsuario();
+
+        adapterSpinner_rolUsuario = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, roles);
+
+        adapterSpinner_rolUsuario.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        sp_rolUsuario.setAdapter(adapterSpinner_rolUsuario);
+
 
         bt_crear = (Button) findViewById(R.id.bt_crear_ID);
         bt_crear.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +106,6 @@ public class CrearUsuario extends AppCompatActivity {
 
             @Override
             public void onResponse(String response) { // response -> {"status":"false"} o true
-                //CrearUsuarioAux(response);
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
@@ -102,10 +126,52 @@ public class CrearUsuario extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error, al procesar la solicitud.\nVerifique su conexión a internet!.",
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
+    }
+
+    /**
+     * Obtener los roles de los usuarios (solo el nombre)
+     * Administrador o Analista
+     * @return
+     */
+    private ArrayList<String> GetRolesUsuario()
+    {
+        String URL = ClaseGlobal.SELECT_ROLESUSUARIOS_ALL;
+        final ArrayList<String> arraySpinner = new ArrayList<String>();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String rol = jsonArray.getJSONObject(i).get("rol").toString();
+                        arraySpinner.add(rol);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return arraySpinner;
     }
 
     /**

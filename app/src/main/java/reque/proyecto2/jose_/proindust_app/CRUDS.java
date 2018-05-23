@@ -252,7 +252,7 @@ public class CRUDS extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al solicitar los datos.\nVerifique su conexión a internet!.",
+                MessageDialog("Error al solicitar los datos.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
