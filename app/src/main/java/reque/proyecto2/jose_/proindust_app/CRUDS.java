@@ -2,6 +2,8 @@ package reque.proyecto2.jose_.proindust_app;
 
 import android.app.ActionBar;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -42,6 +44,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+
 
 public class CRUDS extends AppCompatActivity {
 
@@ -116,6 +119,10 @@ public class CRUDS extends AppCompatActivity {
         });
 
         ConsultarListaDatos();
+
+        // Mostrar por defecto el frame de proyectos
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentProyecto()).commit();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -132,30 +139,32 @@ public class CRUDS extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
             switch (item.getItemId()) {
-                case R.id.navigation_proyectos:
-                    pestaniaActual = CrearProyecto.class;
-                    ConsultarListaDatos();
+                case R.id.navigation_proyectos: // firstFragment
+
+                    fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentProyecto()).commit();
                     return true;
 
-                case R.id.navigation_operaciones:
-                    pestaniaActual = CrearOperacion.class;
-                    ConsultarListaDatos();
+                case R.id.navigation_operaciones: // secondFragment
+
+                    fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentOperacion()).commit();
                     return true;
 
                 case R.id.navigation_tareas:
-                    pestaniaActual = CrearTarea.class;
-                    ConsultarListaDatos();
+
+
                     return true;
 
                 case R.id.navigation_colaboradores:
-                    pestaniaActual = CrearColaborador.class;
-                    ConsultarListaDatos();
+
+
                     return true;
 
                 case R.id.navigation_usuarios:
-                    pestaniaActual = CrearUsuario.class;
-                    ConsultarListaDatos();
+
+
                     return true;
             }
 
@@ -173,22 +182,22 @@ public class CRUDS extends AppCompatActivity {
         switch (pestaniaActual.getSimpleName())
         {
             case "CrearProyecto": // CREAR es solo por nombre, en teoria deberia ser Proyecto xd
-                ConsultarDatosTablas(ClaseGlobal.SELECT_PROYECTOS_ALL, "nombre");
+                // ConsultarDatosTablas(ClaseGlobal.SELECT_PROYECTOS_ALL, "nombre");
                 break;
             case "CrearOperacion":
-                ConsultarDatosTablas(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
+                // ConsultarDatosTablas(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
                 break;
 
             case "CrearTarea":
-                ConsultarDatosTablas(ClaseGlobal.SELECT_TAREAS_ALL, "nombre");
+                // ConsultarDatosTablas(ClaseGlobal.SELECT_TAREAS_ALL, "nombre");
                 break;
 
             case "CrearColaborador":
-                ConsultarDatosTablas(ClaseGlobal.SELECT_COLABORADORES_ALL, "pseudonimo");
+                // ConsultarDatosTablas(ClaseGlobal.SELECT_COLABORADORES_ALL, "pseudonimo");
                 break;
 
             case "CrearUsuario":
-                ConsultarDatosTablas(ClaseGlobal.SELECT_USUARIOS_ALL, "nombre");
+                // ConsultarDatosTablas(ClaseGlobal.SELECT_USUARIOS_ALL, "nombre");
                 break;
 
             default:

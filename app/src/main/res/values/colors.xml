@@ -4,4 +4,10 @@
     <color name="colorPrimaryDark">#FF3E525D</color>
     <color name="colorAccent">#FF242F35</color>
     <color name="colorBotones">#2e6377</color>
+
+    <!-- color's used in our project -->
+    <color name="black">#000</color>
+    <color name="green">#0f0</color>
+    <color name="white">#fff</color>
+    <color name="button_background_color">#925</color>
 </resources>

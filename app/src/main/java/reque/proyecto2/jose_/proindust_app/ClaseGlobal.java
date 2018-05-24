@@ -1,5 +1,18 @@
 package reque.proyecto2.jose_.proindust_app;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 public class ClaseGlobal {
 
     // IP del servidor
@@ -42,4 +55,6 @@ public class ClaseGlobal {
 
     // ProyectoUsuario
     public static final String INSERT_PROYECTOUSUARIO = IP + "ProyectoUsuario/insertar_ProyectoUsuario.php";
+
+
 }

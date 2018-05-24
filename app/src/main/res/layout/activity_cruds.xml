@@ -33,6 +33,7 @@
         android:background="@color/colorAccent"
         android:clickable="true"
         android:tint="@color/cardview_light_background"
+        android:visibility="invisible"
         app:backgroundTint="@color/colorBotones"
         app:layout_constraintBottom_toBottomOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
@@ -53,9 +54,21 @@
         android:fadeScrollbars="false"
         android:scrollbars="horizontal"
 
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout_cruds"
+        android:layout_width="0dp"
+        android:layout_height="543dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.036" />
 
 </android.support.constraint.ConstraintLayout>
