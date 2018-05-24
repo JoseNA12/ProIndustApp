@@ -22,44 +22,6 @@
         app:layout_constraintVertical_bias="1.0"
         app:menu="@menu/navigation" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_crear_ID"
-        android:layout_width="57dp"
-        android:layout_height="57dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/colorAccent"
-        android:clickable="true"
-        android:tint="@color/cardview_light_background"
-        android:visibility="invisible"
-        app:backgroundTint="@color/colorBotones"
-        app:layout_constraintBottom_toBottomOf="@+id/navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.976"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.886"
-        app:srcCompat="@android:drawable/ic_input_add" />
-
-    <ListView
-        android:id="@+id/dy_lista_ID"
-        android:layout_width="0dp"
-        android:layout_height="431dp"
-        android:layout_marginBottom="60dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:fadeScrollbars="false"
-        android:scrollbars="horizontal"
-
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <FrameLayout
         android:id="@+id/frameLayout_cruds"
         android:layout_width="0dp"

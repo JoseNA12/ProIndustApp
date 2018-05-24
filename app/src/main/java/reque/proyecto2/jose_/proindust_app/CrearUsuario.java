@@ -35,7 +35,7 @@ public class CrearUsuario extends AppCompatActivity {
 
     // et_nombre_ID, et_apellidos_ID, sp_rol_ID, sp_proyecto_ID, et_nombreUsuario_ID, et_contrasenia_ID, et_repetirContrasenia_ID
 
-    private EditText et_nombre, et_apellidos, et_nombreUsuario, et_contrasenia, et_repetirContrasenia;
+    private EditText et_nombre, et_apellidos, et_nombreUsuario, et_correo, et_contrasenia, et_repetirContrasenia;
     private Button bt_crear;
     private Spinner sp_rolUsuario;
     private ArrayAdapter<String> adapterSpinner_rolUsuario;
@@ -49,6 +49,7 @@ public class CrearUsuario extends AppCompatActivity {
         et_nombre = (EditText) findViewById(R.id.et_nombre_ID);
         et_apellidos = (EditText) findViewById(R.id.et_apellidos_ID);
         et_nombreUsuario = (EditText) findViewById(R.id.et_nombreUsuario_ID);
+        et_correo = (EditText) findViewById(R.id.et_correo_ID);
         et_contrasenia = (EditText) findViewById(R.id.et_contrasenia_ID);
         et_repetirContrasenia = (EditText) findViewById(R.id.et_repetirContrasenia_ID);
 
@@ -57,11 +58,10 @@ public class CrearUsuario extends AppCompatActivity {
         // Obtener los nombres de los roles
         roles = GetRolesUsuario();
 
-        adapterSpinner_rolUsuario = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, roles);
+        adapterSpinner_rolUsuario = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, roles);
 
-        adapterSpinner_rolUsuario.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        adapterSpinner_rolUsuario.setDropDownViewResource(android.R.layout.simple_selectable_list_item);
         sp_rolUsuario.setAdapter(adapterSpinner_rolUsuario);
-
 
         bt_crear = (Button) findViewById(R.id.bt_crear_ID);
         bt_crear.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +76,7 @@ public class CrearUsuario extends AppCompatActivity {
     {
         if(!et_nombre.getText().toString().equals("") && !et_apellidos.getText().toString().equals("") &&
                 !et_nombreUsuario.getText().toString().equals("") && !et_contrasenia.getText().toString().equals("") &&
-                !et_repetirContrasenia.getText().toString().equals("")) {
+                !et_repetirContrasenia.getText().toString().equals("") && !et_correo.getText().toString().equals("")) {
 
             if (et_contrasenia.getText().toString().equals(et_repetirContrasenia.getText().toString())) {
 

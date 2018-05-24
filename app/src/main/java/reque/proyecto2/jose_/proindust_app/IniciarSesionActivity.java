@@ -32,6 +32,5 @@ public class IniciarSesionActivity extends AppCompatActivity {
             }
         });
 
-
     }
 }

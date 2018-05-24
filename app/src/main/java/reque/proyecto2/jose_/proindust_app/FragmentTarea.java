@@ -36,7 +36,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentProyecto extends Fragment {
+public class FragmentTarea extends Fragment {
 
     private View view;
 
@@ -46,7 +46,7 @@ public class FragmentProyecto extends Fragment {
 
     private ProgressDialog progressDialog;
 
-    public FragmentProyecto() {
+    public FragmentTarea() {
         // Required empty public constructor
     }
 
@@ -54,7 +54,7 @@ public class FragmentProyecto extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_proyecto, container, false);
+        view = inflater.inflate(R.layout.fragment_tarea, container, false);
 
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
@@ -102,7 +102,7 @@ public class FragmentProyecto extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearProyecto.class);
+                Intent myIntent = new Intent(getActivity(), CrearTarea.class);
                 startActivity(myIntent);
             }
         });
@@ -111,12 +111,9 @@ public class FragmentProyecto extends Fragment {
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Cargado información...");
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_PROYECTOS_ALL, "nombre");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_TAREAS_ALL, "nombre");
 
         return view;
-
-        // Inflate the layout for this fragment
-        // return inflater.inflate(R.layout.fragment_operacion, container, false);
     }
 
     /***
@@ -165,7 +162,7 @@ public class FragmentProyecto extends Fragment {
                 }
                 catch (JSONException e )
                 {
-                    Toast.makeText(getActivity(),"Sin datos de proyectos!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Sin datos de tareas!", Toast.LENGTH_SHORT).show();
                 };
 
                 progressDialog.dismiss();

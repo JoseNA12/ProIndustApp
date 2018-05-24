@@ -1,5 +1,6 @@
 package reque.proyecto2.jose_.proindust_app;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,6 +43,8 @@ public class FragmentOperacion extends Fragment {
     private ListView lv_listaComponente;
     private ListAdapter theAdapter;
     private FloatingActionButton fab_crear;
+
+    private ProgressDialog progressDialog;
 
     public FragmentOperacion() {
         // Required empty public constructor
@@ -105,7 +108,11 @@ public class FragmentOperacion extends Fragment {
             }
         });
 
-        // ConsultarDatosTablas(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
+        // Mensaje de carga
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Cargado información...");
+
+        ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
 
         return view;
     }
@@ -126,8 +133,10 @@ public class FragmentOperacion extends Fragment {
      * @param URL: Direccion web del archivo php de la consulta
      * @param pEtiquetaPHP: Etiqueta del php, se obtendra el nombre por ejemplo, entonces es 'nombre'
      */
-    private void ConsultarDatosTablas(String URL, final String pEtiquetaPHP)
+    private void ConsultarDatosTabla(String URL, final String pEtiquetaPHP)
     {
+        progressDialog.show();
+
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
 
@@ -139,7 +148,6 @@ public class FragmentOperacion extends Fragment {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("value");
 
-                    // ArrayList<String> lista = new ArrayList<String>();
                     ArrayList<String> listaElementos = new ArrayList<String>();
 
                     for (int i = 0; i < jsonArray.length(); i++)
@@ -152,15 +160,14 @@ public class FragmentOperacion extends Fragment {
                     {
                         ActualizarListView(listaElementos);
                     }
-                    else
-                    {
-                        MessageDialog("Aun no hay registros de información almacenados!",
-                                "Atención", "Aceptar");
-                    }
-
                 }
                 catch (JSONException e )
-                { ; };
+                {
+                    Toast.makeText(getActivity(),"Sin datos de operaciones!", Toast.LENGTH_SHORT).show();
+                };
+
+                progressDialog.dismiss();
+
             }
 
         }, new Response.ErrorListener() {

@@ -36,7 +36,7 @@ import java.util.ArrayList;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentProyecto extends Fragment {
+public class FragmentUsuario extends Fragment {
 
     private View view;
 
@@ -46,7 +46,7 @@ public class FragmentProyecto extends Fragment {
 
     private ProgressDialog progressDialog;
 
-    public FragmentProyecto() {
+    public FragmentUsuario() {
         // Required empty public constructor
     }
 
@@ -54,7 +54,7 @@ public class FragmentProyecto extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_proyecto, container, false);
+        view = inflater.inflate(R.layout.fragment_usuario, container, false);
 
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
@@ -102,8 +102,10 @@ public class FragmentProyecto extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearProyecto.class);
+                Intent myIntent = new Intent(getActivity(), CrearUsuario.class);
                 startActivity(myIntent);
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
             }
         });
 
@@ -111,12 +113,9 @@ public class FragmentProyecto extends Fragment {
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Cargado información...");
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_PROYECTOS_ALL, "nombre");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_USUARIOS_ALL, "nombre");
 
         return view;
-
-        // Inflate the layout for this fragment
-        // return inflater.inflate(R.layout.fragment_operacion, container, false);
     }
 
     /***
@@ -165,10 +164,11 @@ public class FragmentProyecto extends Fragment {
                 }
                 catch (JSONException e )
                 {
-                    Toast.makeText(getActivity(),"Sin datos de proyectos!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Sin datos de usuarios!", Toast.LENGTH_SHORT).show();
                 };
 
                 progressDialog.dismiss();
+
             }
 
         }, new Response.ErrorListener() {
