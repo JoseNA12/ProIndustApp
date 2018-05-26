@@ -41,11 +41,7 @@ public class CrearUsuario extends AppCompatActivity {
     private EditText et_nombre, et_apellidos, et_nombreUsuario, et_correo, et_contrasenia, et_repetirContrasenia;
     private Button bt_crear;
     private Spinner sp_rolUsuario;
-    private Spinner sp_proyecto;
     private ArrayAdapter<String> adapterSpinner_rolUsuario;
-    private ArrayAdapter<String> adapterSpinner_proyecto;
-    private List lista_roles;
-    private List lista_proyectos;
     private String protectoSeleccionado;
     private String rolSeleccionado;
 
@@ -54,11 +50,15 @@ public class CrearUsuario extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
+    private ArrayList<RolUsuario> listaRoles;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_usuario);
+
+        listaRoles = new ArrayList<RolUsuario>();
 
         et_nombre = (EditText) findViewById(R.id.et_nombre_ID);
         et_apellidos = (EditText) findViewById(R.id.et_apellidos_ID);
@@ -68,16 +68,12 @@ public class CrearUsuario extends AppCompatActivity {
         et_repetirContrasenia = (EditText) findViewById(R.id.et_repetirContrasenia_ID);
 
         sp_rolUsuario = (Spinner) findViewById(R.id.sp_rol_ID);
-        sp_proyecto = (Spinner) findViewById(R.id.sp_proyecto_ID);
 
         adapterSpinner_rolUsuario = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetRolesUsuario());
-        adapterSpinner_proyecto = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetProyectos());
 
         adapterSpinner_rolUsuario.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        adapterSpinner_proyecto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         sp_rolUsuario.setAdapter(adapterSpinner_rolUsuario);
-        sp_proyecto.setAdapter(adapterSpinner_proyecto);
 
         sp_rolUsuario.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -90,16 +86,6 @@ public class CrearUsuario extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-        sp_proyecto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                protectoSeleccionado = sp_proyecto.getSelectedItem().toString();
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
-        });
 
         bt_crear = (Button) findViewById(R.id.bt_crear_ID);
         bt_crear.setOnClickListener(new View.OnClickListener() {
@@ -130,34 +116,22 @@ public class CrearUsuario extends AppCompatActivity {
         if(!nombre.equals("") && !apellidos.equals("") && !nombreUsuario.equals("") &&
                 !contrasenia.equals("") && !repetirContrasenia.equals("") && !correo.equals("")) {
 
-            if (!rolSeleccionado.equals(msgRol)) {
-
-                if (!protectoSeleccionado.equals(msgProyecto)) {
-
-                    if (contrasenia.equals(repetirContrasenia))
-                    {
-                        String idRol = "";
-
-                        if (rolSeleccionado.equals("ADMINISTRADOR")) { idRol = "1"; }
-                        else { idRol = "2"; }
-
-                        CrearUsuario(ClaseGlobal.INSERT_USUARIO +
-                                "?Nombre=" + nombre +
-                                "&Apellidos=" + apellidos +
-                                "&IdRolUsuario=" + idRol +
-                                "&NombreUsuario=" + nombreUsuario +
-                                "&CorreoElectronico=" + correo +
-                                "&Contrasenia=" + contrasenia
-                        );
-                    }
-                    else
-                    {
-                        MessageDialog("Las contraseñas ingresadas no concuerdan!", "Error", "Aceptar");
-                    }
+            if (!rolSeleccionado.equals(msgRol))
+            {
+                if (contrasenia.equals(repetirContrasenia))
+                {
+                    CrearUsuario(ClaseGlobal.INSERT_USUARIO +
+                            "?Nombre=" + nombre +
+                            "&Apellidos=" + apellidos +
+                            "&IdRolUsuario=" + GetIdRol(rolSeleccionado) +
+                            "&NombreUsuario=" + nombreUsuario +
+                            "&CorreoElectronico=" + correo +
+                            "&Contrasenia=" + contrasenia
+                    );
                 }
                 else
                 {
-                    MessageDialog("Por favor, seleccione un proyecto!", "Error", "Aceptar");
+                    MessageDialog("Las contraseñas ingresadas no concuerdan!", "Error", "Aceptar");
                 }
             }
             else
@@ -236,7 +210,11 @@ public class CrearUsuario extends AppCompatActivity {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
+                        String id = jsonArray.getJSONObject(i).get("idRolUsuario").toString();
                         String rol = jsonArray.getJSONObject(i).get("rol").toString();
+
+                        listaRoles.add(new RolUsuario(id, rol));
+
                         arraySpinner.add(rol);
                     }
 
@@ -312,6 +290,31 @@ public class CrearUsuario extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private String GetIdRol(String pRol)
+    {
+        String id = "1";  // siempre existirá
+        for (int i = 0; i < listaRoles.size(); i++)
+        {
+            if (pRol.equals(listaRoles.get(i).rol))
+            {
+                id = listaRoles.get(i).id;
+            }
+        }
+        return id;
+    }
+
+    public class RolUsuario
+    {
+        private String id;
+        private String rol;
+
+        public RolUsuario(String pId, String pRol)
+        {
+            id = pId;
+            rol = pRol;
+        }
     }
 
 }

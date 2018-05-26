@@ -20,29 +20,40 @@ public class MenuPrincipal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Button bt_Muestreo;
+    private Toolbar toolbar_operaciones;
+    private FloatingActionButton fab;
+    private FloatingActionButton fab_enlaces;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_principal);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        toolbar_operaciones = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar_operaciones);
 
         // Boton flotante, lado derecha abajo (simbolo de una llave)
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent_cruds = new Intent(MenuPrincipal.this, CRUDS.class);
                 startActivity(intent_cruds);
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
+            }
+        });
+
+        fab_enlaces = (FloatingActionButton) findViewById(R.id.fab_enlaces_ID);
+        fab_enlaces.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent_cruds = new Intent(MenuPrincipal.this, Enlaces_Datos.class);
+                startActivity(intent_cruds);
             }
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar_operaciones, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 

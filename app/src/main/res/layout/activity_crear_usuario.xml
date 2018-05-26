@@ -16,13 +16,13 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Nombre"
-        android:textColorLink="@color/colorBotones"
         android:inputType="textPersonName"
+        android:textColorLink="@color/colorBotones"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.031" />
+        app:layout_constraintVertical_bias="0.053" />
 
     <EditText
         android:id="@+id/et_apellidos_ID"
@@ -34,18 +34,18 @@
         android:layout_marginTop="80dp"
         android:ems="10"
         android:hint="Apellidos"
-        android:textColorLink="@color/colorBotones"
         android:inputType="textPersonName"
+        android:textColorLink="@color/colorBotones"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019" />
+        app:layout_constraintVertical_bias="0.048" />
 
     <Spinner
         android:id="@+id/sp_rol_ID"
         android:layout_width="323dp"
-        android:layout_height="37dp"
+        android:layout_height="38dp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
@@ -58,7 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.291" />
+        app:layout_constraintVertical_bias="0.336" />
 
     <EditText
         android:id="@+id/et_nombreUsuario_ID"
@@ -70,12 +70,13 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Nombre de usuario"
-        android:textColorLink="@color/colorBotones"
         android:inputType="textPersonName"
+        android:textColorLink="@color/colorBotones"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.477" />
 
     <EditText
         android:id="@+id/et_contrasenia_ID"
@@ -87,13 +88,13 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Contraseña"
-        android:textColorLink="@color/colorBotones"
         android:inputType="textPassword"
+        android:textColorLink="@color/colorBotones"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.721" />
+        app:layout_constraintVertical_bias="0.693" />
 
     <EditText
         android:id="@+id/et_repetirContrasenia_ID"
@@ -105,13 +106,13 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:hint="Repetir contraseña"
-        android:textColorLink="@color/colorBotones"
         android:inputType="textPassword"
+        android:textColorLink="@color/colorBotones"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.824" />
+        app:layout_constraintVertical_bias="0.804" />
 
     <Button
         android:id="@+id/bt_crear_ID"
@@ -145,41 +146,7 @@
         app:layout_constraintHorizontal_bias="0.096"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.243" />
-
-    <TextView
-        android:id="@+id/textView14"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Proyecto"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.108"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.353" />
-
-    <Spinner
-        android:id="@+id/sp_proyecto_ID"
-        android:layout_width="323dp"
-        android:layout_height="37dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:singleLine="true"
-        android:textColor="@color/colorAccent"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintVertical_bias="0.287" />
 
     <EditText
         android:id="@+id/et_correo_ID"
@@ -197,5 +164,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.616" />
+        app:layout_constraintVertical_bias="0.586" />
 </android.support.constraint.ConstraintLayout>

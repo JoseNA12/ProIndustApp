@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -55,6 +54,22 @@
         <activity
             android:name=".CrearUsuario"
             android:label="@string/title_activity_crear_usuarios" />
+        <activity
+            android:name=".Enlaces_Datos"
+            android:label="@string/title_activity_enlaces_datos" />
+        <activity
+            android:name=".CrearEnlace_Tareas"
+            android:label="@string/title_activity_crear_enlace_tareas" />
+        <activity
+            android:name=".CrearEnlace_Operaciones"
+            android:label="@string/title_activity_crear_enlace_operaciones" />
+        <activity
+            android:name=".CrearEnlace_Colaboradores"
+            android:label="@string/title_activity_crear_enlace_colaboradores" />
+        <activity
+            android:name=".CrearEnlace_Usuarios"
+            android:label="@string/title_activity_crear_enlace_usuarios" >
+        </activity>
     </application>
 
 </manifest>

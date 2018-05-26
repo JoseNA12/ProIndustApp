@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_enlaces_tareas"
+        android:icon="@drawable/ic_local_dining_black_24dp"
+        android:title="@string/navigation_OperacionTarea" />
+
+    <item
+        android:id="@+id/navigation_enlaces_operaciones"
+        android:icon="@drawable/ic_business_center_black_24dp"
+        android:title="@string/navigation_ProyectoOperacion" />
+
+    <item
+        android:id="@+id/navigation_enlaces_colaboradores"
+        android:icon="@drawable/ic_rowing_black_24dp"
+        android:title="@string/navigation_ProyectoColaborador" />
+
+    <item
+        android:id="@+id/navigation_enlaces_usuarios"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="@string/navigation_ProyectoUsuario" />
+
+</menu>

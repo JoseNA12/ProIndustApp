@@ -1,26 +1,35 @@
 package reque.proyecto2.jose_.proindust_app;
 
-import android.content.Intent;
-import android.graphics.Color;
-import android.support.design.widget.FloatingActionButton;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class CrearOperacion extends AppCompatActivity {
 
     // bt_Crear_ID, lv_listaTareas_ID, et_nombre_ID, actv_tarea_ID
 
-    private FloatingActionButton fab;
+    private ProgressDialog progressDialog;
+
     private EditText et_nombre;
     private Button bt_crear;
-    private ListView lv_listaTareas;
-    private AutoCompleteTextView actv_tarea;
+    private EditText et_descripcion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,30 +38,90 @@ public class CrearOperacion extends AppCompatActivity {
 
         bt_crear = (Button) findViewById(R.id.bt_crear_ID);
         et_nombre = (EditText) findViewById(R.id.et_nombre_ID);
-        lv_listaTareas = (ListView) findViewById(R.id.lv_listaTareas_ID);
-        actv_tarea = (AutoCompleteTextView) findViewById(R.id.actv_tarea_ID);
+        et_descripcion = (EditText) findViewById(R.id.et_descripcion_ID);
 
-        // Boton flotante, lado derecha abajo (simbolo de una llave)
-        fab = (FloatingActionButton) findViewById(R.id.fab_agregarTarea_ID);
-        fab.setOnClickListener(new View.OnClickListener() {
+        bt_crear.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
+            public void onClick(View v) {
+                Boton_CrearOperacion();
             }
         });
 
-        String[] fruits = {"Apple", "Antes", "Ahora", "Banana", "Cherry", "Date", "Datos", "Grape", "Kiwi", "Mango", "Pear"};
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Insertando nueva información...");
+        progressDialog.setCancelable(false);
 
-        //Creating the instance of ArrayAdapter containing list of fruit names
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, fruits);
+    }
 
-        // Getting the instance of AutoCompleteTextView
+    private void Boton_CrearOperacion(){
+        String nombre = et_nombre.getText().toString();
+        String descripcion = et_descripcion.getText().toString();
 
-        actv_tarea.setThreshold(1); //will start working from first character
+        if(nombre.equals(""))
+        {
+            MessageDialog("Por favor, ingrese un nombre para la operación!", "Error", "Aceptar");
+        }
+        else
+        {
+                CrearOperacion(ClaseGlobal.INSERT_OPERACION +
+                        "?Nombre=" + nombre +
+                        "&Descripcion=" + descripcion);
+        }
+    }
 
-        actv_tarea.setAdapter(adapter); //setting the adapter data into the AutoCompleteTextView
+    private void CrearOperacion(String URL)
+    {
+        Log.d("PUTA", URL);
+        progressDialog.show();
 
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject object = new JSONObject(response);
+
+                    if (object.getString("status").equals("false"))
+                    {
+                        MessageDialog("Error al crear la operación!", "Error", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Se ha creado la operación!", "Éxito", "Aceptar");
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error",
+                        "Aceptar");
+            }
+        });
+        queue.add(stringRequest);
+    }
+
+    /**
+     * Despliega un mensaje emergente en pantalla
+     * @param message
+     * @param pTitulo
+     * @param pLabelBoton
+     */
+    private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

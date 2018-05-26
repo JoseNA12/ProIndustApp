@@ -9,19 +9,34 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+
     <string name="title_activity_cruds">Información</string>
     <string name="title_activity_muestreo">Muestreo</string>
+
     <string name="title_proyectos">Proyectos</string>
     <string name="title_operaciones">Operaciones</string>
     <string name="title_tareas">Tareas</string>
     <string name="title_colaboradores">Colaboradores</string>
     <string name="title_usuarios">Usuarios</string>
+
     <string name="title_activity_crear_proyecto">Proyecto</string>
     <string name="title_activity_crear_operacion">Operación</string>
     <string name="title_activity_crear_tarea">Tarea</string>
     <string name="title_activity_crear_colaborador">Colaborador</string>
     <string name="title_activity_crear_usuarios">Usuario</string>
+    <string name="title_activity_enlaces_datos">Enlaces de Información</string>
+
+    <string name="title_activity_crear_enlace_tareas">Enlazar Tareas con Operaciones</string>
+    <string name="title_activity_crear_enlace_operaciones">Enlazar Operaciones con Proyectos</string>
+    <string name="title_activity_crear_enlace_colaboradores">Enlazar Colaboradores con Proyectos</string>
+    <string name="title_activity_crear_enlace_usuarios">Enlazar Usuarios con Proyectos</string>
+
+    <string name="navigation_OperacionTarea">Tareas</string>
+    <string name="navigation_ProyectoColaborador">Colaboradores</string>
+    <string name="navigation_ProyectoOperacion">Operaciones</string>
+    <string name="navigation_ProyectoUsuario">Usuarios</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

@@ -32,14 +32,12 @@ public class CrearTarea extends AppCompatActivity {
 
     private EditText et_nombreTarea, et_descripcion;
     private Spinner sp_tipoActividad;
-
     private Button bt_crear;
-
     private String actividadSeleccionada;
-
     private ArrayAdapter<String> adapterSpinner_actividades;
-
     private ProgressDialog progressDialog;
+
+    private ArrayList<Tarea> listaTareas;
 
     private String msgActividad = "Seleccione el tipo de actividad...";
 
@@ -47,6 +45,8 @@ public class CrearTarea extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_tarea);
+
+        listaTareas = new ArrayList<Tarea>();
 
         et_nombreTarea = (EditText) findViewById(R.id.et_nombreTarea_ID);
         et_descripcion = (EditText) findViewById(R.id.et_descripcion_ID);
@@ -96,9 +96,7 @@ public class CrearTarea extends AppCompatActivity {
                 CrearTarea(ClaseGlobal.INSERT_TAREA +
                         "?Nombre=" + nombre +
                         "&Descripcion=" + descripcion +
-                        "&IdActividad=" +
-                        GetIdActividad(ClaseGlobal.SELECT_ACTIVIDAD_BY_NOMBRE +
-                                "?Tipo=" + actividadSeleccionada));
+                        "&IdActividad=" + GetIdActividad(actividadSeleccionada));
             }
             else
             {
@@ -175,7 +173,10 @@ public class CrearTarea extends AppCompatActivity {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        String rol = jsonArray.getJSONObject(i).get("Tipo").toString();
+                        String id = jsonArray.getJSONObject(i).get("idActividad").toString();
+                        String rol = jsonArray.getJSONObject(i).get("tipo").toString();
+
+                        listaTareas.add(new Tarea(id, rol));
 
                         arraySpinner.add(rol);
                     }
@@ -195,44 +196,17 @@ public class CrearTarea extends AppCompatActivity {
         return arraySpinner;
     }
 
-    /**
-     * Encargado de hacer la peticion al servidor para solictar el id de una actividad
-     * @param URL
-     * @param pTipo
-     * @return
-     */
-    private String GetIdActividad(String URL)
+    private String GetIdActividad(String pTipo)
     {
-        final List<String> arraySpinner = new ArrayList<String>();
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) { // response -> {"status":"false"} o true
-                try
-                {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray jsonArray = jsonObject.getJSONArray("value");
-
-                    // indice 0 porque las actividades son unicas y no hay posiblidad de ambiguedad
-                    String rol = jsonArray.getJSONObject(0).get("idActividad").toString();
-                    arraySpinner.add(rol);
-
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
+        String id = "1"; // siempre existirá
+        for (int i = 0; i < listaTareas.size(); i++)
+        {
+            if (pTipo.equals(listaTareas.get(i).tipo))
+            {
+                id = listaTareas.get(i).id;
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
-            }
-        });queue.add(stringRequest);
-
-        return arraySpinner.get(0);
+        }
+        return id;
     }
 
     /**
@@ -250,5 +224,18 @@ public class CrearTarea extends AppCompatActivity {
         });
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    public class Tarea
+    {
+        private String id;
+        private String tipo;
+
+        public Tarea(String pId, String pTipo)
+        {
+            id = pId;
+            tipo = pTipo;
+        }
     }
 }

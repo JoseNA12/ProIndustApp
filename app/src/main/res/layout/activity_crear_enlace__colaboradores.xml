@@ -4,59 +4,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CrearOperacion" >
+    tools:context=".CrearEnlace_Colaboradores">
 
-    <EditText
-        android:id="@+id/et_descripcion_ID"
-        android:layout_width="327dp"
-        android:layout_height="wrap_content"
+    <Spinner
+        android:id="@+id/sp_operacion_ID"
+        android:layout_width="333dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="Descripción"
-        android:inputType="textMultiLine"
-        android:lines="4"
-        android:singleLine="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.525" />
+        app:layout_constraintVertical_bias="0.363" />
 
-    <EditText
-        android:id="@+id/et_nombre_ID"
-        android:layout_width="323dp"
-        android:layout_height="wrap_content"
+    <Spinner
+        android:id="@+id/sp_tarea_ID"
+        android:layout_width="333dp"
+        android:layout_height="40dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:hint="Nombre"
-        android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.335" />
+        app:layout_constraintVertical_bias="0.499" />
 
     <Button
-        android:id="@+id/bt_crear_ID"
-        android:layout_width="297dp"
+        android:id="@+id/bt_enlazar_ID"
+        android:layout_width="295dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorBotones"
-        android:text="CREAR"
-        android:textColor="@color/cardview_light_background"
+        android:text="ENLAZAR"
+        android:textColor="@android:color/background_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.931" />
+        app:layout_constraintVertical_bias="0.888" />
 
 </android.support.constraint.ConstraintLayout>

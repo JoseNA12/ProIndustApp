@@ -134,13 +134,13 @@ public class CrearProyecto extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    if (!jsonObject.getString("status").equals("false"))
+                    if (jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha creado el proyecto!", "Éxtio", "Aceptar");
+                        MessageDialog("Error al crear el proyecto!", "Error", "Aceptar");
                     }
                     else
                     {
-                        MessageDialog("Error al crear el proyecto!", "Error", "Aceptar");
+                        MessageDialog("Se ha creado el proyecto!", "Éxito", "Aceptar");
                     }
 
                 }catch (JSONException e){
