@@ -51,6 +51,11 @@ public class CrearTarea extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_tarea);
 
+        // Mensaje de carga
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Insertando nueva información...");
+        progressDialog.setCancelable(false);
+
         listaActividades = new ArrayList<Actividad>();
 
         et_nombreTarea = (EditText) findViewById(R.id.et_nombreTarea_ID);
@@ -79,11 +84,6 @@ public class CrearTarea extends AppCompatActivity {
                 Boton_CrearTarea();
             }
         });
-
-        // Mensaje de carga
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Insertando nueva información...");
-        progressDialog.setCancelable(false);
     }
 
     /**
@@ -120,6 +120,7 @@ public class CrearTarea extends AppCompatActivity {
      */
     private void CrearTarea(String URL)
     {
+        progressDialog.setMessage("Insertando nueva información...");
         progressDialog.show();
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -162,6 +163,9 @@ public class CrearTarea extends AppCompatActivity {
      */
     private List<String> GetActividades()
     {
+        progressDialog.setMessage("Solicitando los tipos de actividades...");
+        progressDialog.show();
+
         String URL = ClaseGlobal.SELECT_ACTIVIDADES_ALL;
         final List<String> arraySpinner = new ArrayList<String>();
         arraySpinner.add(msgActividad);
@@ -189,12 +193,15 @@ public class CrearTarea extends AppCompatActivity {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
+                progressDialog.dismiss();
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar los tipos de actividades.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
 

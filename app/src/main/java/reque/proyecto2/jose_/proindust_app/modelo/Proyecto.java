@@ -13,4 +13,9 @@ public class Proyecto {
         this.rangoFinal = rangoFinal;
         this.cantMuestreosP = cantMuestreosP;
     }
+
+    public Proyecto(String id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
 }

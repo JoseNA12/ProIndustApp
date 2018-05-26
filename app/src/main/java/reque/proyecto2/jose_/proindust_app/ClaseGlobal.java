@@ -49,15 +49,19 @@ public class ClaseGlobal {
 
     // OperacionTarea
     public static final String INSERT_OPERACIONTAREA = IP + "OperacionTarea/insertar_OperacionTarea.php";
+    public static final String SELECT_OPERACIONTAREA_ALL = IP + "OperacionTarea/select_OperacionTarea.php";
 
     // ProyectoColaborador
     public static final String INSERT_PROYECTOCOLABORADOR = IP + "ProyectoColaborador/insertar_ProyectoColaborador.php";
+    public static final String SELECT_PROYECTOCOLABORADOR_ALL = IP + "ProyectoColaborador/select_ProyectoColaborador.php";
 
     // ProyectoOperacion
-    public static final String INSERT_PROYECTOOPERACION = IP + "ProyectoColaborador/insertar_ProyectoOperacion.php";
+    public static final String INSERT_PROYECTOOPERACION = IP + "ProyectoOperacion/insertar_ProyectoOperacion.php";
+    public static final String SELECT_PROYECTOOPERACION_ALL = IP + "ProyectoOperacion/select_ProyectoOperacion.php ";
 
     // ProyectoUsuario
     public static final String INSERT_PROYECTOUSUARIO = IP + "ProyectoUsuario/insertar_ProyectoUsuario.php";
+    public static final String SELECT_PROYECTOUSUARIO_ALL = IP + "ProyectoUsuario/select_ProyectoUsuario.php";
 
 
 }

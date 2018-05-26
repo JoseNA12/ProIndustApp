@@ -11,9 +11,9 @@ public class Tarea {
         this.idActividad = idActividad;
     }
 
-    public Tarea(String pId, String pTipo)
+    public Tarea(String pId, String nombre)
     {
-        id = pId;
-        nombre = pTipo;
+        this.id = pId;
+        this.nombre = nombre;
     }
 }

@@ -5,11 +5,13 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -52,6 +54,10 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_enlace__tareas);
 
+        progressDialog = new ProgressDialog(this);
+        // progressDialog.setMessage("Insertando nueva información...");
+        progressDialog.setCancelable(false);
+
         listaOperaciones = new ArrayList<Operacion>();
         listaTareas = new ArrayList<Tarea>();
 
@@ -92,10 +98,6 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
                 Boton_Enlazar();
             }
         });
-
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Insertando nueva información...");
-        progressDialog.setCancelable(false);
     }
 
     private void Boton_Enlazar()
@@ -121,6 +123,7 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
 
     private void CrearEnlace(String URL)
     {
+        progressDialog.setMessage("Insertando nueva información...");
         progressDialog.show();
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -152,13 +155,16 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
                 MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
+                        "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
     }
 
     private List<String> GetOperaciones()
     {
+        progressDialog.setMessage("Solicitando información...");
+        progressDialog.show();
+
         String URL = ClaseGlobal.SELECT_OPERACIONES_ALL;
         final List<String> arraySpinner = new ArrayList<String>();
         arraySpinner.add(msgOperacion);
@@ -186,11 +192,14 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
+                // progressDialog.dismiss();
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                // progressDialog.dismiss();
+                MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
@@ -216,7 +225,7 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        String id = jsonArray.getJSONObject(i).get("idActividad").toString();
+                        String id = jsonArray.getJSONObject(i).get("idTarea").toString();
                         String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
 
                         arraySpinner.add(nombre);
@@ -227,11 +236,14 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
+                progressDialog.dismiss();
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar tareas.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
@@ -241,7 +253,8 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
 
     private String GetIdOperacion(String pVar)
     {
-        String id = "1"; // siempre existirá
+        String id = "error";
+
         for (int i = 0; i < listaOperaciones.size(); i++)
         {
             if (pVar.equals(listaOperaciones.get(i).nombre))
@@ -254,7 +267,7 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
 
     private String GetIdTarea(String pVar)
     {
-        String id = "1"; // siempre existirá
+        String id = "error";
         for (int i = 0; i < listaTareas.size(); i++)
         {
             if (pVar.equals(listaTareas.get(i).nombre))

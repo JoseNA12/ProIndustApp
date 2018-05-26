@@ -158,8 +158,11 @@ public class FragmentUsuario extends Fragment {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        String nombreUsuario = jsonArray.getJSONObject(i).get(pEtiquetaPHP).toString();
-                        listaElementos.add(nombreUsuario);
+                        if (jsonArray.getJSONObject(i).get("idRolUsuario").toString().equals("2"))
+                        {
+                            String nombreUsuario = jsonArray.getJSONObject(i).get(pEtiquetaPHP).toString();
+                            listaElementos.add(nombreUsuario);
+                        }
                     }
 
                     if (listaElementos.size() != 0)

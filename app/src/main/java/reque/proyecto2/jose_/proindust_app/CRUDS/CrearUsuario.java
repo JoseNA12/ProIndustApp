@@ -62,6 +62,11 @@ public class CrearUsuario extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_usuario);
 
+        // Mensaje de carga
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Insertando nueva información...");
+        progressDialog.setCancelable(false);
+
         listaRoles = new ArrayList<RolUsuario>();
 
         et_nombre = (EditText) findViewById(R.id.et_nombre_ID);
@@ -98,11 +103,6 @@ public class CrearUsuario extends AppCompatActivity {
                 Boton_CrearUsuario();
             }
         });
-
-        // Mensaje de carga
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Insertando nueva información...");
-        progressDialog.setCancelable(false);
     }
 
     /**
@@ -155,6 +155,7 @@ public class CrearUsuario extends AppCompatActivity {
      */
     private void CrearUsuario(String URL)
     {
+        progressDialog.setMessage("Insertando nueva información...");
         progressDialog.show();
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -186,7 +187,7 @@ public class CrearUsuario extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
                 MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
+                        "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
     }
@@ -198,6 +199,9 @@ public class CrearUsuario extends AppCompatActivity {
      */
     private List<String> GetRolesUsuario()
     {
+        progressDialog.setMessage("Solicitando los roles de usuario...");
+        progressDialog.show();
+
         String URL = ClaseGlobal.SELECT_ROLESUSUARIOS_ALL;
         final List<String> arraySpinner = new ArrayList<String>();
         arraySpinner.add(msgRol);
@@ -225,53 +229,14 @@ public class CrearUsuario extends AppCompatActivity {
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
-            }
-        });queue.add(stringRequest);
-
-        return arraySpinner;
-    }
-
-    /**
-     * Obtener todos los proyectos almacenados en la BD (solo el nombre)
-     * @return
-     */
-    private List<String> GetProyectos()
-    {
-        String URL = ClaseGlobal.SELECT_PROYECTOS_ALL;
-        final List<String> arraySpinner = new ArrayList<String>();
-        arraySpinner.add(msgProyecto);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) { // response -> {"status":"false"} o true
-                try
-                {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray jsonArray = jsonObject.getJSONArray("value");
-
-                    for (int i = 0; i < jsonArray.length(); i++)
-                    {
-                        String rol = jsonArray.getJSONObject(i).get("nombre").toString();
-                        arraySpinner.add(rol);
-                    }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
+                progressDialog.dismiss();
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar los roles de usuario.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);

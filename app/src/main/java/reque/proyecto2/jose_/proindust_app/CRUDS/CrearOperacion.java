@@ -104,7 +104,7 @@ public class CrearOperacion extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
                 MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
-                        "Error",
+                        "Error de conexión",
                         "Aceptar");
             }
         });

@@ -157,8 +157,8 @@ public class CrearProyecto extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
-                MessageDialog("Ha ocurrido un error al procesar la solictud.\n",
-                        "Error", "Aceptar");
+                MessageDialog("Error al procesar la solicitud.\n",
+                        "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
     }
