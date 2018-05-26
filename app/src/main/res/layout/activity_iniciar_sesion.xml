@@ -4,11 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light"
     tools:context=".IniciarSesionActivity">
 
     <EditText
-        android:id="@+id/et_clave_ID"
+        android:id="@+id/et_contrasenia_ID"
         android:layout_width="295dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="208dp"
@@ -19,6 +18,7 @@
         android:fontFamily="@font/roboto"
         android:hint="Contraseña"
         android:inputType="textPassword"
+        android:text="12345"
         android:textColorLink="#545454"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +28,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
-        android:id="@+id/et_usuario_ID"
+        android:id="@+id/et_nombreUsuario_ID"
         android:layout_width="295dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="280dp"
@@ -37,9 +37,10 @@
         android:layout_marginTop="8dp"
         android:ems="10"
         android:fontFamily="@font/roboto"
-        android:hint="Usuario"
+        android:hint="Nombre de usuario"
         android:inputType="textPersonName"
         android:singleLine="true"
+        android:text="JoseNA"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.512"

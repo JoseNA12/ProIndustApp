@@ -112,6 +112,7 @@ public class FragmentColaborador extends Fragment {
         // Mensaje de carga
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Cargado información...");
+        progressDialog.setCancelable(false);
 
         ConsultarDatosTabla(ClaseGlobal.SELECT_COLABORADORES_ALL, "pseudonimo");
 
@@ -162,7 +163,7 @@ public class FragmentColaborador extends Fragment {
                         ActualizarListView(listaElementos);
                     }
                 }
-                catch (JSONException e )
+                catch (JSONException e)
                 {
                     Toast.makeText(getActivity(),"Sin datos de colaboradores!", Toast.LENGTH_SHORT).show();
                 };
@@ -174,10 +175,12 @@ public class FragmentColaborador extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
                 MessageDialog("Error al solicitar los datos.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
+
     }
 
     /**

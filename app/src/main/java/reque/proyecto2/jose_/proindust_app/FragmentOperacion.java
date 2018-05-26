@@ -111,6 +111,7 @@ public class FragmentOperacion extends Fragment {
         // Mensaje de carga
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Cargado información...");
+        progressDialog.setCancelable(false);
 
         ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
 
@@ -173,6 +174,7 @@ public class FragmentOperacion extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
                 MessageDialog("Error al solicitar los datos.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }

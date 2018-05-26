@@ -110,6 +110,7 @@ public class FragmentTarea extends Fragment {
         // Mensaje de carga
         progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Cargado información...");
+        progressDialog.setCancelable(false);
 
         ConsultarDatosTabla(ClaseGlobal.SELECT_TAREAS_ALL, "nombre");
 
@@ -166,15 +167,18 @@ public class FragmentTarea extends Fragment {
                 };
 
                 progressDialog.dismiss();
+
             }
 
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
                 MessageDialog("Error al solicitar los datos.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
+
     }
 
     /**

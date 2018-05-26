@@ -1,5 +1,6 @@
 package reque.proyecto2.jose_.proindust_app;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -28,11 +30,13 @@ public class CrearProyecto extends AppCompatActivity {
     // et_nombre_ID, tv_descripcion_ID, sb_nivelConfianza_ID, et_rangoInicio_ID,
     // et_rangoFinal_ID, sch_rangoAleatorio_ID, et_cantMuestreosP, bt_crear_ID
 
-    EditText et_nombre, et_descripcion, et_rangoInicio, et_rangoFinal, et_cantMuestreosP;
-    Switch sch_rangoAleatorio;
-    Button bt_crear;
-    SeekBar barraNivelConfianza;
-    TextView textoNivelConfianza;
+    private EditText et_nombre, et_descripcion, et_rangoInicio, et_rangoFinal, et_cantMuestreosP;
+    private Switch sch_rangoAleatorio;
+    private Button bt_crear;
+    private SeekBar barraNivelConfianza;
+    private TextView textoNivelConfianza;
+
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,14 @@ public class CrearProyecto extends AppCompatActivity {
         et_cantMuestreosP = (EditText) findViewById(R.id.et_cantMuestreosP_ID);
 
         sch_rangoAleatorio = (Switch) findViewById(R.id.sch_rangoAleatorio_ID);
+        sch_rangoAleatorio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                et_rangoInicio.setEnabled(!isChecked);
+                et_rangoFinal.setEnabled(!isChecked);
+            }
+        });
 
         bt_crear = (Button) findViewById(R.id.bt_crear_ID);
 
@@ -80,6 +92,11 @@ public class CrearProyecto extends AppCompatActivity {
                 Boton_CrearProyecto();
             }
         });
+
+        // Mensaje de carga
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Insertando nueva información...");
+        progressDialog.setCancelable(false);
     }
 
     private void Boton_CrearProyecto()
@@ -91,7 +108,7 @@ public class CrearProyecto extends AppCompatActivity {
             CrearProyecto(ClaseGlobal.INSERT_PROYECTO +
                     "?Nombre=" + et_nombre.getText().toString() +
                     "&Descripcion=" + et_descripcion.getText().toString() +
-                    "&NivelConfianza=" + barraNivelConfianza.getProgress() +
+                    "&NivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
                     "&RangoInicial=" + et_rangoInicio.getText().toString() +
                     "&RangoFinal=" + et_rangoFinal.getText().toString() +
                     "&CantMuestreosP=" + et_cantMuestreosP.getText().toString()
@@ -106,6 +123,8 @@ public class CrearProyecto extends AppCompatActivity {
 
     private void CrearProyecto(String URL)
     {
+        progressDialog.show();
+
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
 
@@ -128,10 +147,13 @@ public class CrearProyecto extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                progressDialog.dismiss();
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
                 MessageDialog("Ha ocurrido un error al procesar la solictud.\n",
                         "Error", "Aceptar");
             }
