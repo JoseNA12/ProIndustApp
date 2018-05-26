@@ -1,4 +1,4 @@
-package reque.proyecto2.jose_.proindust_app;
+package reque.proyecto2.jose_.proindust_app.CRUDS;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -24,6 +24,9 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
+import reque.proyecto2.jose_.proindust_app.R;
 
 public class CrearProyecto extends AppCompatActivity {
 
@@ -106,12 +109,12 @@ public class CrearProyecto extends AppCompatActivity {
                 !et_cantMuestreosP.getText().toString().equals("")) {
 
             CrearProyecto(ClaseGlobal.INSERT_PROYECTO +
-                    "?Nombre=" + et_nombre.getText().toString() +
-                    "&Descripcion=" + et_descripcion.getText().toString() +
-                    "&NivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
-                    "&RangoInicial=" + et_rangoInicio.getText().toString() +
-                    "&RangoFinal=" + et_rangoFinal.getText().toString() +
-                    "&CantMuestreosP=" + et_cantMuestreosP.getText().toString()
+                    "?nombre=" + et_nombre.getText().toString() +
+                    "&descripcion=" + et_descripcion.getText().toString() +
+                    "&nivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
+                    "&rangoInicial=" + et_rangoInicio.getText().toString() +
+                    "&rangoFinal=" + et_rangoFinal.getText().toString() +
+                    "&cantMuestreosP=" + et_cantMuestreosP.getText().toString()
             );
 
         }

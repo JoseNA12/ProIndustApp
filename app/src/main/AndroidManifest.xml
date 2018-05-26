@@ -34,40 +34,40 @@
             android:label="@string/title_activity_menu_principal"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".CRUDS"
+            android:name=".CRUDS.CRUDS"
             android:label="@string/title_activity_cruds" />
         <activity
             android:name=".Muestreo"
             android:label="@string/title_activity_muestreo" />
         <activity
-            android:name=".CrearProyecto"
+            android:name=".CRUDS.CrearProyecto"
             android:label="@string/title_activity_crear_proyecto" />
         <activity
-            android:name=".CrearOperacion"
+            android:name=".CRUDS.CrearOperacion"
             android:label="@string/title_activity_crear_operacion" />
         <activity
-            android:name=".CrearTarea"
+            android:name=".CRUDS.CrearTarea"
             android:label="@string/title_activity_crear_tarea" />
         <activity
-            android:name=".CrearColaborador"
+            android:name=".CRUDS.CrearColaborador"
             android:label="@string/title_activity_crear_colaborador" />
         <activity
-            android:name=".CrearUsuario"
+            android:name=".CRUDS.CrearUsuario"
             android:label="@string/title_activity_crear_usuarios" />
         <activity
-            android:name=".Enlaces_Datos"
+            android:name=".enlacesDatos.Enlaces_Datos"
             android:label="@string/title_activity_enlaces_datos" />
         <activity
-            android:name=".CrearEnlace_Tareas"
+            android:name=".enlacesDatos.CrearEnlace_Tareas"
             android:label="@string/title_activity_crear_enlace_tareas" />
         <activity
-            android:name=".CrearEnlace_Operaciones"
+            android:name=".enlacesDatos.CrearEnlace_Operaciones"
             android:label="@string/title_activity_crear_enlace_operaciones" />
         <activity
-            android:name=".CrearEnlace_Colaboradores"
+            android:name=".enlacesDatos.CrearEnlace_Colaboradores"
             android:label="@string/title_activity_crear_enlace_colaboradores" />
         <activity
-            android:name=".CrearEnlace_Usuarios"
+            android:name=".enlacesDatos.CrearEnlace_Usuarios"
             android:label="@string/title_activity_crear_enlace_usuarios" >
         </activity>
     </application>

@@ -1,5 +1,4 @@
-package reque.proyecto2.jose_.proindust_app;
-
+package reque.proyecto2.jose_.proindust_app.fragmentsCRUDS;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -13,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -32,11 +32,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
+import reque.proyecto2.jose_.proindust_app.CRUDS.CrearOperacion;
+import reque.proyecto2.jose_.proindust_app.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentTarea extends Fragment {
+public class FragmentOperacion extends Fragment {
 
     private View view;
 
@@ -46,15 +50,15 @@ public class FragmentTarea extends Fragment {
 
     private ProgressDialog progressDialog;
 
-    public FragmentTarea() {
+    public FragmentOperacion() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_tarea, container, false);
+        view = inflater.inflate(R.layout.fragment_operacion, container, false);
 
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
@@ -102,8 +106,9 @@ public class FragmentTarea extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearTarea.class);
+                Intent myIntent = new Intent(getActivity(), CrearOperacion.class);
                 startActivity(myIntent);
+
             }
         });
 
@@ -112,7 +117,7 @@ public class FragmentTarea extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_TAREAS_ALL, "nombre");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
 
         return view;
     }
@@ -163,7 +168,7 @@ public class FragmentTarea extends Fragment {
                 }
                 catch (JSONException e )
                 {
-                    Toast.makeText(getActivity(), "Sin datos de tareas!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Sin datos de operaciones!", Toast.LENGTH_SHORT).show();
                 };
 
                 progressDialog.dismiss();
@@ -178,7 +183,6 @@ public class FragmentTarea extends Fragment {
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
-
     }
 
     /**

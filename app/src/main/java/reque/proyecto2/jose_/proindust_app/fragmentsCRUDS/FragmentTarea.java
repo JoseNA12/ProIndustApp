@@ -1,4 +1,4 @@
-package reque.proyecto2.jose_.proindust_app;
+package reque.proyecto2.jose_.proindust_app.fragmentsCRUDS;
 
 
 import android.app.ProgressDialog;
@@ -32,11 +32,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
+import reque.proyecto2.jose_.proindust_app.CRUDS.CrearTarea;
+import reque.proyecto2.jose_.proindust_app.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentUsuario extends Fragment {
+public class FragmentTarea extends Fragment {
 
     private View view;
 
@@ -46,7 +50,7 @@ public class FragmentUsuario extends Fragment {
 
     private ProgressDialog progressDialog;
 
-    public FragmentUsuario() {
+    public FragmentTarea() {
         // Required empty public constructor
     }
 
@@ -54,7 +58,7 @@ public class FragmentUsuario extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_usuario, container, false);
+        view = inflater.inflate(R.layout.fragment_tarea, container, false);
 
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
@@ -102,10 +106,8 @@ public class FragmentUsuario extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearUsuario.class);
+                Intent myIntent = new Intent(getActivity(), CrearTarea.class);
                 startActivity(myIntent);
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
             }
         });
 
@@ -114,7 +116,7 @@ public class FragmentUsuario extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_USUARIOS_ALL, "nombre");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_TAREAS_ALL, "nombre");
 
         return view;
     }
@@ -165,7 +167,7 @@ public class FragmentUsuario extends Fragment {
                 }
                 catch (JSONException e )
                 {
-                    Toast.makeText(getActivity(),"Sin datos de usuarios!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Sin datos de tareas!", Toast.LENGTH_SHORT).show();
                 };
 
                 progressDialog.dismiss();

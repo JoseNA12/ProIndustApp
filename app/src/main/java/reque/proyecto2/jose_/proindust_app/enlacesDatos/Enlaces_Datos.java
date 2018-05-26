@@ -1,4 +1,4 @@
-package reque.proyecto2.jose_.proindust_app;
+package reque.proyecto2.jose_.proindust_app.enlacesDatos;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -6,6 +6,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+
+import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.fragmentsEnlaces.FragmentEnlace_Colaboradores;
+import reque.proyecto2.jose_.proindust_app.fragmentsEnlaces.FragmentEnlace_Operaciones;
+import reque.proyecto2.jose_.proindust_app.fragmentsEnlaces.FragmentEnlace_Tareas;
+import reque.proyecto2.jose_.proindust_app.fragmentsEnlaces.FragmentEnlace_Usuarios;
 
 public class Enlaces_Datos extends AppCompatActivity {
 

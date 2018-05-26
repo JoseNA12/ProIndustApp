@@ -1,4 +1,5 @@
-package reque.proyecto2.jose_.proindust_app;
+package reque.proyecto2.jose_.proindust_app.fragmentsCRUDS;
+
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -12,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -32,11 +32,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
+import reque.proyecto2.jose_.proindust_app.CRUDS.CrearProyecto;
+import reque.proyecto2.jose_.proindust_app.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentOperacion extends Fragment {
+public class FragmentProyecto extends Fragment {
 
     private View view;
 
@@ -46,15 +50,15 @@ public class FragmentOperacion extends Fragment {
 
     private ProgressDialog progressDialog;
 
-    public FragmentOperacion() {
+    public FragmentProyecto() {
         // Required empty public constructor
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_operacion, container, false);
+        view = inflater.inflate(R.layout.fragment_proyecto, container, false);
 
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
@@ -102,9 +106,8 @@ public class FragmentOperacion extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearOperacion.class);
+                Intent myIntent = new Intent(getActivity(), CrearProyecto.class);
                 startActivity(myIntent);
-
             }
         });
 
@@ -113,9 +116,12 @@ public class FragmentOperacion extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_PROYECTOS_ALL, "nombre");
 
         return view;
+
+        // Inflate the layout for this fragment
+        // return inflater.inflate(R.layout.fragment_operacion, container, false);
     }
 
     /***
@@ -164,7 +170,7 @@ public class FragmentOperacion extends Fragment {
                 }
                 catch (JSONException e )
                 {
-                    Toast.makeText(getActivity(),"Sin datos de operaciones!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Sin datos de proyectos!", Toast.LENGTH_SHORT).show();
                 };
 
                 progressDialog.dismiss();

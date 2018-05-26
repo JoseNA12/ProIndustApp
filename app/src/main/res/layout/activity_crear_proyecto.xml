@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CrearProyecto">
+    tools:context=".CRUDS.CrearProyecto">
 
     <EditText
         android:id="@+id/et_descripcion_ID"

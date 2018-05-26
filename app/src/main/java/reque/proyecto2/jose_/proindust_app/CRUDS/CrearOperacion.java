@@ -1,4 +1,4 @@
-package reque.proyecto2.jose_.proindust_app;
+package reque.proyecto2.jose_.proindust_app.CRUDS;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -19,6 +19,9 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
+import reque.proyecto2.jose_.proindust_app.R;
 
 
 public class CrearOperacion extends AppCompatActivity {
@@ -64,8 +67,8 @@ public class CrearOperacion extends AppCompatActivity {
         else
         {
                 CrearOperacion(ClaseGlobal.INSERT_OPERACION +
-                        "?Nombre=" + nombre +
-                        "&Descripcion=" + descripcion);
+                        "?nombre=" + nombre +
+                        "&descripcion=" + descripcion);
         }
     }
 

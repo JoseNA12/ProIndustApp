@@ -1,4 +1,4 @@
-package reque.proyecto2.jose_.proindust_app;
+package reque.proyecto2.jose_.proindust_app.CRUDS;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -33,6 +33,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
+import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.RolUsuario;
 
 public class CrearUsuario extends AppCompatActivity {
 
@@ -121,12 +125,12 @@ public class CrearUsuario extends AppCompatActivity {
                 if (contrasenia.equals(repetirContrasenia))
                 {
                     CrearUsuario(ClaseGlobal.INSERT_USUARIO +
-                            "?Nombre=" + nombre +
-                            "&Apellidos=" + apellidos +
-                            "&IdRolUsuario=" + GetIdRol(rolSeleccionado) +
-                            "&NombreUsuario=" + nombreUsuario +
-                            "&CorreoElectronico=" + correo +
-                            "&Contrasenia=" + contrasenia
+                            "?nombre=" + nombre +
+                            "&apellidos=" + apellidos +
+                            "&idRolUsuario=" + GetIdRol(rolSeleccionado) +
+                            "&nombreUsuario=" + nombreUsuario +
+                            "&correoElectronico=" + correo +
+                            "&contrasenia=" + contrasenia
                     );
                 }
                 else
@@ -303,18 +307,6 @@ public class CrearUsuario extends AppCompatActivity {
             }
         }
         return id;
-    }
-
-    public class RolUsuario
-    {
-        private String id;
-        private String rol;
-
-        public RolUsuario(String pId, String pRol)
-        {
-            id = pId;
-            rol = pRol;
-        }
     }
 
 }

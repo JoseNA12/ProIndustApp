@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CrearEnlace_Colaboradores">
+    tools:context=".enlacesDatos.CrearEnlace_Colaboradores">
 
     <Spinner
-        android:id="@+id/sp_operacion_ID"
+        android:id="@+id/sp_proyecto_ID"
         android:layout_width="333dp"
         android:layout_height="40dp"
         android:layout_marginBottom="8dp"
@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.363" />
 
     <Spinner
-        android:id="@+id/sp_tarea_ID"
+        android:id="@+id/sp_colaborador_ID"
         android:layout_width="333dp"
         android:layout_height="40dp"
         android:layout_marginBottom="8dp"

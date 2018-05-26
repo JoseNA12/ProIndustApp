@@ -1,7 +1,8 @@
-package reque.proyecto2.jose_.proindust_app;
+package reque.proyecto2.jose_.proindust_app.fragmentsEnlaces;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -16,11 +17,14 @@ import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import reque.proyecto2.jose_.proindust_app.enlacesDatos.CrearEnlace_Usuarios;
+import reque.proyecto2.jose_.proindust_app.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentEnlace_Operaciones extends Fragment {
+public class FragmentEnlace_Usuarios extends Fragment {
 
     private View view;
 
@@ -31,13 +35,14 @@ public class FragmentEnlace_Operaciones extends Fragment {
 
     private ProgressDialog progressDialog;
 
-    public FragmentEnlace_Operaciones() {
+    public FragmentEnlace_Usuarios() {
         // Required empty public constructor
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_enlace__operaciones, container, false);
+        view = inflater.inflate(R.layout.fragment_enlace__usuarios, container, false);
 
         sp_operacione_enlace = (Spinner) view.findViewById(R.id.sp_proyecto_enlace_ID);
 
@@ -66,7 +71,7 @@ public class FragmentEnlace_Operaciones extends Fragment {
                     }
                 });
 
-                popup.show(); //showing popup menu
+                popup.show();//showing popup menu
             }
         });
 
@@ -75,8 +80,8 @@ public class FragmentEnlace_Operaciones extends Fragment {
         fab_crear_enlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Intent myIntent = new Intent(getActivity(), CrearTarea.class);
-                // startActivity(myIntent);
+                Intent myIntent = new Intent(getActivity(), CrearEnlace_Usuarios.class);
+                startActivity(myIntent);
             }
         });
 

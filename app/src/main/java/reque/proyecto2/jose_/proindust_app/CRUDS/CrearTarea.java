@@ -1,4 +1,4 @@
-package reque.proyecto2.jose_.proindust_app;
+package reque.proyecto2.jose_.proindust_app.CRUDS;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -26,6 +26,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
+import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.Actividad;
+import reque.proyecto2.jose_.proindust_app.modelo.Tarea;
+
 public class CrearTarea extends AppCompatActivity {
 
     // et_nombreTarea_ID, et_descripcion_ID, sp_tipoActividad_ID,
@@ -37,7 +42,7 @@ public class CrearTarea extends AppCompatActivity {
     private ArrayAdapter<String> adapterSpinner_actividades;
     private ProgressDialog progressDialog;
 
-    private ArrayList<Tarea> listaTareas;
+    private ArrayList<Actividad> listaActividades;
 
     private String msgActividad = "Seleccione el tipo de actividad...";
 
@@ -46,7 +51,7 @@ public class CrearTarea extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_tarea);
 
-        listaTareas = new ArrayList<Tarea>();
+        listaActividades = new ArrayList<Actividad>();
 
         et_nombreTarea = (EditText) findViewById(R.id.et_nombreTarea_ID);
         et_descripcion = (EditText) findViewById(R.id.et_descripcion_ID);
@@ -94,9 +99,9 @@ public class CrearTarea extends AppCompatActivity {
             if (!actividadSeleccionada.equals(msgActividad))
             {
                 CrearTarea(ClaseGlobal.INSERT_TAREA +
-                        "?Nombre=" + nombre +
-                        "&Descripcion=" + descripcion +
-                        "&IdActividad=" + GetIdActividad(actividadSeleccionada));
+                        "?nombre=" + nombre +
+                        "&descripcion=" + descripcion +
+                        "&idActividad=" + GetIdActividad(actividadSeleccionada));
             }
             else
             {
@@ -176,7 +181,7 @@ public class CrearTarea extends AppCompatActivity {
                         String id = jsonArray.getJSONObject(i).get("idActividad").toString();
                         String rol = jsonArray.getJSONObject(i).get("tipo").toString();
 
-                        listaTareas.add(new Tarea(id, rol));
+                        listaActividades.add(new Actividad(id, rol));
 
                         arraySpinner.add(rol);
                     }
@@ -199,11 +204,11 @@ public class CrearTarea extends AppCompatActivity {
     private String GetIdActividad(String pTipo)
     {
         String id = "1"; // siempre existirá
-        for (int i = 0; i < listaTareas.size(); i++)
+        for (int i = 0; i < listaActividades.size(); i++)
         {
-            if (pTipo.equals(listaTareas.get(i).tipo))
+            if (pTipo.equals(listaActividades.get(i).tipo))
             {
-                id = listaTareas.get(i).id;
+                id = listaActividades.get(i).id;
             }
         }
         return id;
@@ -227,15 +232,5 @@ public class CrearTarea extends AppCompatActivity {
     }
 
 
-    public class Tarea
-    {
-        private String id;
-        private String tipo;
 
-        public Tarea(String pId, String pTipo)
-        {
-            id = pId;
-            tipo = pTipo;
-        }
-    }
 }
