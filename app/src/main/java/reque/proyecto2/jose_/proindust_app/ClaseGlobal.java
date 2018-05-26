@@ -43,6 +43,9 @@ public class ClaseGlobal {
 
     public static final String SELECT_ROLESUSUARIOS_ALL = IP + "Usuario/select_rolusuarios_all.php";
 
+    // Actividades
+    public static final String SELECT_ACTIVIDADES_ALL = IP +"Actividad/select_all_actividad.php";
+    public static final String SELECT_ACTIVIDAD_BY_NOMBRE = IP +"Actividad/select_actividad_by_nombre.php";
 
     // OperacionTarea
     public static final String INSERT_OPERACIONTAREA = IP + "OperacionTarea/insertar_OperacionTarea.php";

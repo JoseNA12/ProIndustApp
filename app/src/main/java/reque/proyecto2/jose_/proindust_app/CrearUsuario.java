@@ -70,10 +70,6 @@ public class CrearUsuario extends AppCompatActivity {
         sp_rolUsuario = (Spinner) findViewById(R.id.sp_rol_ID);
         sp_proyecto = (Spinner) findViewById(R.id.sp_proyecto_ID);
 
-        // Obtener los nombres de los roles
-        lista_roles = GetRolesUsuario();
-        lista_proyectos = GetProyectos();
-
         adapterSpinner_rolUsuario = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetRolesUsuario());
         adapterSpinner_proyecto = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetProyectos());
 
