@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_enlaces_colaboradores"
-        android:icon="@drawable/ic_rowing_black_24dp"
+        android:icon="@drawable/ic_img_nav_view_add_worker_icon"
         android:title="@string/navigation_ProyectoColaborador" />
 
     <item

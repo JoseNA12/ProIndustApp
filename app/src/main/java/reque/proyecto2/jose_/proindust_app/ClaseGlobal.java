@@ -41,9 +41,9 @@ public class ClaseGlobal {
     public static final String SELECT_COLABORADORES_ALL = IP + "Colaborador/select_colaboradores_all.php";
 
     // Usuarios
-    public static final String SELECT_USUARIO = IP + "Usuario/select_usuario.php";
     public static final String SELECT_USUARIOS_ALL = IP + "Usuario/select_usuarios_all.php";
     public static final String INSERT_USUARIO = IP + "Usuario/insertar_usuario.php";
+    public static final String SELECT_USUARIO_LOGIN = IP + "Usuario/select_usuario_iniciar_sesion.php";
 
     public static final String SELECT_ROLESUSUARIOS_ALL = IP + "Usuario/select_rolusuarios_all.php";
 

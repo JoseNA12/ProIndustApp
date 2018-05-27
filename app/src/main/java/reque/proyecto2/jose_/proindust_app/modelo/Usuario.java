@@ -18,4 +18,17 @@ public class Usuario {
         this.id = id;
         this.nombreUsuario = nombreUsuario;
     }
+
+    @Override
+    public String toString() {
+        return "Usuario{" +
+                "id='" + id + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellidos='" + apellidos + '\'' +
+                ", idRolUsuario='" + idRolUsuario + '\'' +
+                ", nombreUsuario='" + nombreUsuario + '\'' +
+                ", correo='" + correo + '\'' +
+                ", contrasenia='" + contrasenia + '\'' +
+                '}';
+    }
 }

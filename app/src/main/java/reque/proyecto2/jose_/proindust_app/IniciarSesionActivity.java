@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.modelo.OperacionTarea;
+import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
 
 public class IniciarSesionActivity extends AppCompatActivity {
 
@@ -34,7 +37,7 @@ public class IniciarSesionActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-    private String idUsuario;
+    private Usuario usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class IniciarSesionActivity extends AppCompatActivity {
                 Boton_IniciarSesion();
             }
         });
+
     }
 
     /**
@@ -72,7 +76,7 @@ public class IniciarSesionActivity extends AppCompatActivity {
         {
             if (!contrasenia.equals(""))
             {
-                IniciarSesionRequest(ClaseGlobal.INICIAR_SESION +
+                IniciarSesionRequest(ClaseGlobal.SELECT_USUARIO_LOGIN +
                         "?nombreUsuario=" + nombreUsuario +
                         "&contrasenia=" + contrasenia);
             }
@@ -86,11 +90,11 @@ public class IniciarSesionActivity extends AppCompatActivity {
             MessageDialog("Por favor, ingrese el nombre de usuario!", "Error", "Aceptar");
         }
 
-        Intent intent_menuPrincipal = new Intent(IniciarSesionActivity.this, MenuPrincipal.class);
-        startActivity(intent_menuPrincipal);
+        // Intent intent_menuPrincipal = new Intent(IniciarSesionActivity.this, MenuPrincipal.class);
+        // startActivity(intent_menuPrincipal);
     }
 
-    private void IniciarSesionRequest(String URL)
+    private void IniciarSesionRequest(final String URL)
     {
         progressDialog.show();
 
@@ -103,17 +107,42 @@ public class IniciarSesionActivity extends AppCompatActivity {
                 {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    if (!jsonObject.getString("status").equals("false"))
-                    {
-                        JSONArray jsonArray = jsonObject.getJSONArray("value");
+                    if (!jsonObject.getString("status").equals("false")) {
+                        String idUsuario = jsonObject.getJSONObject("value").getString("idUsuario").toString();
+                        String nombre = jsonObject.getJSONObject("value").getString("nombre").toString();
+                        String apellidos = jsonObject.getJSONObject("value").getString("apellidos").toString();
+                        String idRolUsuario = jsonObject.getJSONObject("value").getString("idRolUsuario").toString();
+                        String nombreUsuario = jsonObject.getJSONObject("value").getString("nombreUsuario").toString();
+                        String correoElectronico = jsonObject.getJSONObject("value").getString("correoElectronico").toString();
+                        String contrasenia = jsonObject.getJSONObject("value").getString("contrasenia").toString();
 
-                        idUsuario = jsonArray.getJSONObject(0).get("idUsuario").toString();
+                        Usuario usuarioTemp = new
+                                Usuario(idUsuario, nombre, apellidos, idRolUsuario, nombreUsuario, correoElectronico, contrasenia);
+
+                        // ADMINISTRADOR
+                        if (idRolUsuario.equals("1")) {
+                            Intent intent_ = new Intent(IniciarSesionActivity.this, MenuPrincipal.class);
+
+                            SetUsuarioActual(usuarioTemp);
+                            intent_.putExtra("ROL", "ADMINISTRADOR");
+
+                            startActivity(intent_);
+                        }
+                        else // ANALISTA
+                        {
+                            Intent intent_ = new Intent(IniciarSesionActivity.this, MenuPrincipal.class);
+
+                            SetUsuarioActual(usuarioTemp);
+                            intent_.putExtra("ROL", "ANALISTA");
+
+                            startActivity(intent_);
+                        }
                     }
                     else
                     {
-                        idUsuario = "error";
+                        MessageDialog("Las crendeciales ingresadas no concuerdan con ninguna cuenta registrada!",
+                                "Cuenta incorrecta", "Aceptar");
                     }
-
 
                 }catch (JSONException e){
                     e.printStackTrace();
@@ -130,6 +159,11 @@ public class IniciarSesionActivity extends AppCompatActivity {
             }
         });queue.add(stringRequest);
 
+    }
+
+    private void SetUsuarioActual(Usuario pU)
+    {
+        ClaseGlobal.usuarioActual = pU;
     }
 
     /**

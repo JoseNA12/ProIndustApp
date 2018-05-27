@@ -48,6 +48,8 @@ public class FragmentProyecto extends Fragment {
     private ListAdapter theAdapter;
     private FloatingActionButton fab_crear;
 
+    private FloatingActionButton fab_horaslibres;
+
     private ProgressDialog progressDialog;
 
     public FragmentProyecto() {
@@ -108,6 +110,16 @@ public class FragmentProyecto extends Fragment {
             public void onClick(View view) {
                 Intent myIntent = new Intent(getActivity(), CrearProyecto.class);
                 startActivity(myIntent);
+            }
+        });
+
+        // Boton flotante, lado izquierdo abajo (simbolo de una cronometro)
+        fab_horaslibres = (FloatingActionButton) view.findViewById(R.id.fab_horaslibres_ID);
+        fab_horaslibres.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Intent myIntent = new Intent(getActivity(), CrearProyecto.class);
+                // startActivity(myIntent);
             }
         });
 

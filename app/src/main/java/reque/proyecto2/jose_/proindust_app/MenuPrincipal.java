@@ -3,6 +3,7 @@ package reque.proyecto2.jose_.proindust_app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -71,6 +72,47 @@ public class MenuPrincipal extends AppCompatActivity
                 startActivity(intent_menuPrincipal);
             }
         });
+
+        MostrarComponentes_usuario(savedInstanceState);
+    }
+
+    /**
+     * Indentificar en tipo de usuario al momento de crear la pantalla
+     * recibe un parametro "ROL" por parte de la pantalla del login
+     * @param savedInstanceState
+     */
+    private void MostrarComponentes_usuario(Bundle savedInstanceState)
+    {
+        String rol;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                rol = null;
+            }
+            else {
+                rol = extras.getString("ROL");
+
+                if (rol.equals("ADMINISTRADOR"))
+                {
+                    fab_enlaces.setEnabled(true);
+                    fab.setEnabled(true);
+
+                    fab_enlaces.setVisibility(View.VISIBLE);
+                    fab.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    fab_enlaces.setEnabled(false);
+                    fab.setEnabled(false);
+
+                    fab_enlaces.setVisibility(View.INVISIBLE);
+                    fab.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+        else {
+            rol= (String) savedInstanceState.getSerializable("ROL");
+        }
     }
 
     @Override
