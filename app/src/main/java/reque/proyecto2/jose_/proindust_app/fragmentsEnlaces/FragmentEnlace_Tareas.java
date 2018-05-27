@@ -110,7 +110,7 @@ public class FragmentEnlace_Tareas extends Fragment {
 
         lv_lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
                 final int pos = position;
 
                 PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -124,7 +124,10 @@ public class FragmentEnlace_Tareas extends Fragment {
 
                         if (item.getTitle().equals("Eliminar"))
                         {
-                            Toast.makeText(getActivity(),"Eliminar", Toast.LENGTH_SHORT).show();
+                            String nombreTarea = parent.getItemAtPosition(position).toString();
+                            String nombreOperacion = sp_operacion_enlace.getSelectedItem().toString();
+
+                            EliminarTarea_de_Operacion(nombreOperacion, nombreTarea);
                         }
 
                         return true;
@@ -294,10 +297,10 @@ public class FragmentEnlace_Tareas extends Fragment {
     private List<String> GetTareas_de_Operacion(String pNombreOperacion)
     {
 
-        return GetIdOperacion(pNombreOperacion);
+        return GetListaNombreTareas(GetIdOperacion(pNombreOperacion));
     }
 
-    private List<String> GetIdOperacion(String pNombre)
+    private String GetIdOperacion(String pNombre)
     {
         String id = "error";
 
@@ -309,7 +312,7 @@ public class FragmentEnlace_Tareas extends Fragment {
                 break;
             }
         }
-        return GetListaNombreTareas(id);
+        return id;
     }
 
     private List<String> GetListaNombreTareas(String pIdOperacion)
@@ -339,6 +342,92 @@ public class FragmentEnlace_Tareas extends Fragment {
             }
         }
         return nombre;
+    }
+
+    private String GetIdTarea(String pNombre)
+    {
+        String id = "error";
+
+        for (int i = 0; i < listaDatosTareas.size(); i++)
+        {
+            if (pNombre.equals(listaDatosTareas.get(i).nombre))
+            {
+                id = listaDatosTareas.get(i).id;
+                break;
+            }
+        }
+        return id;
+    }
+
+    private void EliminarTarea_de_Operacion(final String pNombreOperacion, final String pNombreTarea)
+    {
+        final AlertDialog.Builder builderEliminar = new AlertDialog.Builder(getActivity());
+        builderEliminar.setTitle("Atención!");
+        builderEliminar.setMessage("¿Desea eliminar la tarea " + pNombreTarea +
+                " de la operación " + pNombreOperacion + "?");
+
+        builderEliminar.setPositiveButton("PROCEDER", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                EliminarEnlace(ClaseGlobal.DELECT_OPERACIONTAREA_ID_ID +
+                        "?idOperacion=" + GetIdOperacion(pNombreOperacion) +
+                        "&idTarea=" + GetIdTarea(pNombreTarea));
+
+                dialog.dismiss();
+            }
+        });
+
+        builderEliminar.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builderEliminar.create();
+        alert.show();
+    }
+
+    private void EliminarEnlace(String URL)
+    {
+        progressDialog.setMessage("Eliminando enlace...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha eliminado el enlace!", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al eliminar el enlace!", "Error", "Aceptar");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     /**

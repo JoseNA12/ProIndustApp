@@ -50,18 +50,22 @@ public class ClaseGlobal {
     // OperacionTarea
     public static final String INSERT_OPERACIONTAREA = IP + "OperacionTarea/insertar_OperacionTarea.php";
     public static final String SELECT_OPERACIONTAREA_ALL = IP + "OperacionTarea/select_OperacionTarea.php";
+    public static final String DELECT_OPERACIONTAREA_ID_ID = IP +"OperacionTarea/eliminar_operacionTarea.php";
 
     // ProyectoColaborador
     public static final String INSERT_PROYECTOCOLABORADOR = IP + "ProyectoColaborador/insertar_ProyectoColaborador.php";
     public static final String SELECT_PROYECTOCOLABORADOR_ALL = IP + "ProyectoColaborador/select_ProyectoColaborador.php";
+    public static final String DELECT_PROYECTOCOLABORADOR_ID_ID = IP + "ProyectoColaborador/eliminar_proyectoColaborador.php";
 
     // ProyectoOperacion
     public static final String INSERT_PROYECTOOPERACION = IP + "ProyectoOperacion/insertar_ProyectoOperacion.php";
-    public static final String SELECT_PROYECTOOPERACION_ALL = IP + "ProyectoOperacion/select_ProyectoOperacion.php ";
+    public static final String SELECT_PROYECTOOPERACION_ALL = IP + "ProyectoOperacion/select_ProyectoOperacion.php";
+    public static final String DELECT_PROYECTOOPERACION_ID_ID = IP + "ProyectoOperacion/eliminar_proyectoOperacion.php";
 
     // ProyectoUsuario
     public static final String INSERT_PROYECTOUSUARIO = IP + "ProyectoUsuario/insertar_ProyectoUsuario.php";
     public static final String SELECT_PROYECTOUSUARIO_ALL = IP + "ProyectoUsuario/select_ProyectoUsuario.php";
+    public static final String DELECT_PROYECTOUSUARIO_ID_ID = IP + "ProyectoUsuario/eliminar_proyectoUsuario.php";
 
 
 }

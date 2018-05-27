@@ -110,7 +110,7 @@ public class FragmentEnlace_Colaboradores extends Fragment {
 
         lv_lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
                 final int pos = position;
 
                 PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -124,7 +124,10 @@ public class FragmentEnlace_Colaboradores extends Fragment {
 
                         if (item.getTitle().equals("Eliminar"))
                         {
-                            Toast.makeText(getActivity(),"Eliminar", Toast.LENGTH_SHORT).show();
+                            String nombreColaborador = parent.getItemAtPosition(position).toString();
+                            String nombreProyecto = sp_proyecto_enlace.getSelectedItem().toString();
+
+                            EliminarColaborador_de_Proyecto(nombreColaborador, nombreProyecto);
                         }
 
                         return true;
@@ -140,7 +143,7 @@ public class FragmentEnlace_Colaboradores extends Fragment {
         fab_crear_enlace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearEnlace_Operaciones.class);
+                Intent myIntent = new Intent(getActivity(), CrearEnlace_Colaboradores.class);
                 startActivity(myIntent);
             }
         });
@@ -294,10 +297,10 @@ public class FragmentEnlace_Colaboradores extends Fragment {
     private List<String> GetColaboradores_de_Proyecto(String pNombreProyecto)
     {
 
-        return GetIdProyecto(pNombreProyecto);
+        return GetListaNombreColaboradores(GetIdProyecto(pNombreProyecto));
     }
 
-    private List<String> GetIdProyecto(String pNombre)
+    private String GetIdProyecto(String pNombre)
     {
         String id = "error";
 
@@ -309,7 +312,7 @@ public class FragmentEnlace_Colaboradores extends Fragment {
                 break;
             }
         }
-        return GetListaNombreColaboradores(id);
+        return id;
     }
 
     private List<String> GetListaNombreColaboradores(String pIdOperacion)
@@ -339,6 +342,92 @@ public class FragmentEnlace_Colaboradores extends Fragment {
             }
         }
         return nombre;
+    }
+
+    private String GetIdColaborador(String pNombre)
+    {
+        String id = "error";
+
+        for (int i = 0; i < listaDatosColaboradores.size(); i++)
+        {
+            if (pNombre.equals(listaDatosColaboradores.get(i).pseudonimo))
+            {
+                id = listaDatosColaboradores.get(i).id;
+                break;
+            }
+        }
+        return id;
+    }
+
+    private void EliminarColaborador_de_Proyecto(final String pNombreColaborador, final String pNombreProyecto)
+    {
+        final AlertDialog.Builder builderEliminar = new AlertDialog.Builder(getActivity());
+        builderEliminar.setTitle("Atención!");
+        builderEliminar.setMessage("¿Desea eliminar el colaborador " + pNombreColaborador +
+                " del proyecto " + pNombreProyecto + "?");
+
+        builderEliminar.setPositiveButton("PROCEDER", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                EliminarEnlace(ClaseGlobal.DELECT_PROYECTOCOLABORADOR_ID_ID +
+                        "?idProyecto=" + GetIdProyecto(pNombreProyecto) +
+                        "&idColaborador=" + GetIdColaborador(pNombreColaborador));
+
+                dialog.dismiss();
+            }
+        });
+
+        builderEliminar.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builderEliminar.create();
+        alert.show();
+    }
+
+    private void EliminarEnlace(String URL)
+    {
+        progressDialog.setMessage("Eliminando enlace...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha eliminado el enlace!", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al eliminar el enlace!", "Error", "Aceptar");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     /**
