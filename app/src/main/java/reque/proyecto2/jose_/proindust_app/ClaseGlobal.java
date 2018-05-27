@@ -13,7 +13,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
+
 public class ClaseGlobal {
+
+    public static Usuario usuarioActual;
 
     // IP del servidor
     private static final String IP = "https://proindustapp.000webhostapp.com/";
@@ -66,6 +70,9 @@ public class ClaseGlobal {
     public static final String INSERT_PROYECTOUSUARIO = IP + "ProyectoUsuario/insertar_ProyectoUsuario.php";
     public static final String SELECT_PROYECTOUSUARIO_ALL = IP + "ProyectoUsuario/select_ProyectoUsuario.php";
     public static final String DELECT_PROYECTOUSUARIO_ID_ID = IP + "ProyectoUsuario/eliminar_proyectoUsuario.php";
+
+    // Iniciar sesion
+    public static final String INICIAR_SESION = IP + "iniciar_sesion.php";
 
 
 }

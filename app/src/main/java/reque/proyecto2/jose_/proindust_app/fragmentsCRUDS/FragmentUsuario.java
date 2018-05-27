@@ -31,10 +31,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.CRUDS.CrearUsuario;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
 
 
 /**
@@ -48,17 +50,20 @@ public class FragmentUsuario extends Fragment {
     private ListAdapter theAdapter;
     private FloatingActionButton fab_crear;
 
+    private List<Usuario> listaDatosUsuarios;
+
     private ProgressDialog progressDialog;
 
     public FragmentUsuario() {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_usuario, container, false);
+
+        listaDatosUsuarios = new ArrayList<Usuario>();
 
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
@@ -118,7 +123,7 @@ public class FragmentUsuario extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_USUARIOS_ALL, "nombre");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_USUARIOS_ALL);
 
         return view;
     }
@@ -139,7 +144,7 @@ public class FragmentUsuario extends Fragment {
      * @param URL: Direccion web del archivo php de la consulta
      * @param pEtiquetaPHP: Etiqueta del php, se obtendra el nombre por ejemplo, entonces es 'nombre'
      */
-    private void ConsultarDatosTabla(String URL, final String pEtiquetaPHP)
+    private void ConsultarDatosTabla(String URL)
     {
         progressDialog.show();
 
@@ -158,11 +163,19 @@ public class FragmentUsuario extends Fragment {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        if (jsonArray.getJSONObject(i).get("idRolUsuario").toString().equals("2"))
-                        {
-                            String nombreUsuario = jsonArray.getJSONObject(i).get(pEtiquetaPHP).toString();
-                            listaElementos.add(nombreUsuario);
-                        }
+                        String nombreUsuario = jsonArray.getJSONObject(i).get("nombreUsuario").toString();
+                        listaElementos.add(nombreUsuario);
+
+                        String idUsuario = jsonArray.getJSONObject(i).get("idUsuario").toString();
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
+                        String apellidos = jsonArray.getJSONObject(i).get("apellidos").toString();
+                        String idRolUsuario = jsonArray.getJSONObject(i).get("idRolUsuario").toString();
+                        String correoElectronico = jsonArray.getJSONObject(i).get("correoElectronico").toString();
+                        String contrasenia = jsonArray.getJSONObject(i).get("contrasenia").toString();
+
+                        listaDatosUsuarios.add(new
+                                Usuario(idUsuario, nombre, apellidos, idRolUsuario, nombreUsuario, correoElectronico, contrasenia));
+
                     }
 
                     if (listaElementos.size() != 0)

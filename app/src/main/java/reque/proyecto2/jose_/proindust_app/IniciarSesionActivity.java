@@ -1,5 +1,6 @@
 package reque.proyecto2.jose_.proindust_app;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -9,16 +10,41 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import reque.proyecto2.jose_.proindust_app.modelo.OperacionTarea;
+
 public class IniciarSesionActivity extends AppCompatActivity {
 
 
     private Button bt_Ingresar;
     private EditText et_nombreUsuario, et_contrasenia;
 
+    private ProgressDialog progressDialog;
+
+    private String idUsuario;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_iniciar_sesion);
+
+        // Mensaje de carga
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Iniciando sesión...");
+        progressDialog.setCancelable(false);
 
         et_nombreUsuario = (EditText) findViewById(R.id.et_nombreUsuario_ID);
         et_contrasenia = (EditText) findViewById(R.id.et_contrasenia_ID);
@@ -46,7 +72,9 @@ public class IniciarSesionActivity extends AppCompatActivity {
         {
             if (!contrasenia.equals(""))
             {
-
+                IniciarSesionRequest(ClaseGlobal.INICIAR_SESION +
+                        "?nombreUsuario=" + nombreUsuario +
+                        "&contrasenia=" + contrasenia);
             }
             else
             {
@@ -60,6 +88,48 @@ public class IniciarSesionActivity extends AppCompatActivity {
 
         Intent intent_menuPrincipal = new Intent(IniciarSesionActivity.this, MenuPrincipal.class);
         startActivity(intent_menuPrincipal);
+    }
+
+    private void IniciarSesionRequest(String URL)
+    {
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                        idUsuario = jsonArray.getJSONObject(0).get("idUsuario").toString();
+                    }
+                    else
+                    {
+                        idUsuario = "error";
+                    }
+
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar datos.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
     }
 
     /**
