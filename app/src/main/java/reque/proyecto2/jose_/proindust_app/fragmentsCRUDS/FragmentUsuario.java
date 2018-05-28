@@ -69,7 +69,7 @@ public class FragmentUsuario extends Fragment {
 
         lv_listaComponente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
                 final int pos = position;
 
                 PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -94,7 +94,8 @@ public class FragmentUsuario extends Fragment {
                             }
                             else // Eliminar
                             {
-                                Toast.makeText(getActivity(),"Eliminar", Toast.LENGTH_SHORT).show();
+                                String nombreUsuario = parent.getItemAtPosition(position).toString();
+                                EliminarUsuario(nombreUsuario);
                             }
                         }
 
@@ -113,8 +114,6 @@ public class FragmentUsuario extends Fragment {
             public void onClick(View view) {
                 Intent myIntent = new Intent(getActivity(), CrearUsuario.class);
                 startActivity(myIntent);
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
             }
         });
 
@@ -173,7 +172,7 @@ public class FragmentUsuario extends Fragment {
                         String correoElectronico = jsonArray.getJSONObject(i).get("correoElectronico").toString();
                         String contrasenia = jsonArray.getJSONObject(i).get("contrasenia").toString();
 
-                        listaDatosUsuarios.add(new
+                        AgregarUsuario(new
                                 Usuario(idUsuario, nombre, apellidos, idRolUsuario, nombreUsuario, correoElectronico, contrasenia));
 
                     }
@@ -201,6 +200,80 @@ public class FragmentUsuario extends Fragment {
             }
         });queue.add(stringRequest);
 
+    }
+
+    private void AgregarUsuario(Usuario pUser)
+    {
+        listaDatosUsuarios.add(pUser);
+    }
+
+    private void EliminarUsuario(final String pNombreUsuario)
+    {
+        final AlertDialog.Builder builderEliminar = new AlertDialog.Builder(getActivity());
+        builderEliminar.setTitle("Atención!");
+        builderEliminar.setMessage("¿Desea eliminar el usuario " + pNombreUsuario + "?");
+
+        builderEliminar.setPositiveButton("PROCEDER", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                EliminarUsuarioRequest(ClaseGlobal.DELECT_USUARIO +
+                        "?nombreUsuario=" + pNombreUsuario);
+
+                dialog.dismiss();
+            }
+        });
+
+        builderEliminar.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builderEliminar.create();
+        alert.show();
+    }
+
+    private void EliminarUsuarioRequest(String URL)
+    {
+        progressDialog.setMessage("Eliminando usuario...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha eliminado el usuario!", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al eliminar el usuario!", "Error", "Aceptar");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     /**

@@ -31,10 +31,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.CRUDS.CrearColaborador;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
 
 
 /**
@@ -50,6 +52,8 @@ public class FragmentColaborador extends Fragment {
 
     private ProgressDialog progressDialog;
 
+    private List<Colaborador> listaDatosColaborador;
+
     public FragmentColaborador() {
         // Required empty public constructor
     }
@@ -60,11 +64,13 @@ public class FragmentColaborador extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_colaborador, container, false);
 
+        listaDatosColaborador = new ArrayList<Colaborador>();
+
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
         lv_listaComponente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
                 final int pos = position;
 
                 PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -89,7 +95,8 @@ public class FragmentColaborador extends Fragment {
                             }
                             else // Eliminar
                             {
-                                Toast.makeText(getActivity(),"Eliminar", Toast.LENGTH_SHORT).show();
+                                String pseudonimo = parent.getItemAtPosition(position).toString();
+                                EliminarColaborador(pseudonimo);
                             }
                         }
 
@@ -118,7 +125,7 @@ public class FragmentColaborador extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_COLABORADORES_ALL, "pseudonimo");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_COLABORADORES_ALL);
 
         return view;
     }
@@ -139,7 +146,7 @@ public class FragmentColaborador extends Fragment {
      * @param URL: Direccion web del archivo php de la consulta
      * @param pEtiquetaPHP: Etiqueta del php, se obtendra el nombre por ejemplo, entonces es 'nombre'
      */
-    private void ConsultarDatosTabla(String URL, final String pEtiquetaPHP)
+    private void ConsultarDatosTabla(String URL)
     {
         progressDialog.show();
 
@@ -158,8 +165,14 @@ public class FragmentColaborador extends Fragment {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        String nombreUsuario = jsonArray.getJSONObject(i).get(pEtiquetaPHP).toString();
-                        listaElementos.add(nombreUsuario);
+                        String pseudonimo = jsonArray.getJSONObject(i).get("pseudonimo").toString();
+                        listaElementos.add(pseudonimo);
+
+                        String idColaborador = jsonArray.getJSONObject(i).get("idColaborador").toString();
+                        String descripcion = jsonArray.getJSONObject(i).get("descripcion").toString();
+
+                        AgregarColaborador(new
+                                Colaborador(idColaborador, pseudonimo, descripcion));
                     }
 
                     if (listaElementos.size() != 0)
@@ -185,6 +198,80 @@ public class FragmentColaborador extends Fragment {
             }
         });queue.add(stringRequest);
 
+    }
+
+    private void AgregarColaborador(Colaborador pPseu)
+    {
+        listaDatosColaborador.add(pPseu);
+    }
+
+    private void EliminarColaborador(final String pPseudonimo)
+    {
+        final AlertDialog.Builder builderEliminar = new AlertDialog.Builder(getActivity());
+        builderEliminar.setTitle("Atención!");
+        builderEliminar.setMessage("¿Desea eliminar al colaborador " + pPseudonimo + "?");
+
+        builderEliminar.setPositiveButton("PROCEDER", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                EliminarColaboradorRequest(ClaseGlobal.DELECT_COLABORADOR +
+                        "?pseudonimo=" + pPseudonimo);
+
+                dialog.dismiss();
+            }
+        });
+
+        builderEliminar.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builderEliminar.create();
+        alert.show();
+    }
+
+    private void EliminarColaboradorRequest(String URL)
+    {
+        progressDialog.setMessage("Eliminando colaborador...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha eliminado al colaborador!", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al eliminar al colaborador", "Error", "Aceptar");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     /**

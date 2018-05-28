@@ -31,10 +31,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.CRUDS.CrearOperacion;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
 
 
 /**
@@ -48,6 +50,8 @@ public class FragmentOperacion extends Fragment {
     private ListAdapter theAdapter;
     private FloatingActionButton fab_crear;
 
+    private List<Operacion> listaDatosOperaciones;
+
     private ProgressDialog progressDialog;
 
     public FragmentOperacion() {
@@ -60,11 +64,13 @@ public class FragmentOperacion extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_operacion, container, false);
 
+        listaDatosOperaciones = new ArrayList<Operacion>();
+
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
         lv_listaComponente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
                 final int pos = position;
 
                 PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -89,7 +95,8 @@ public class FragmentOperacion extends Fragment {
                             }
                             else // Eliminar
                             {
-                                Toast.makeText(getActivity(),"Eliminar", Toast.LENGTH_SHORT).show();
+                                String nombre = parent.getItemAtPosition(position).toString();
+                                EliminarOperacion(nombre);
                             }
                         }
 
@@ -117,7 +124,7 @@ public class FragmentOperacion extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL, "nombre");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL);
 
         return view;
     }
@@ -138,7 +145,7 @@ public class FragmentOperacion extends Fragment {
      * @param URL: Direccion web del archivo php de la consulta
      * @param pEtiquetaPHP: Etiqueta del php, se obtendra el nombre por ejemplo, entonces es 'nombre'
      */
-    private void ConsultarDatosTabla(String URL, final String pEtiquetaPHP)
+    private void ConsultarDatosTabla(String URL)
     {
         progressDialog.show();
 
@@ -157,8 +164,14 @@ public class FragmentOperacion extends Fragment {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        String nombreUsuario = jsonArray.getJSONObject(i).get(pEtiquetaPHP).toString();
-                        listaElementos.add(nombreUsuario);
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
+                        listaElementos.add(nombre);
+
+                        String idOperacion = jsonArray.getJSONObject(i).get("idOperacion").toString();
+                        String descripcion = jsonArray.getJSONObject(i).get("descripcion").toString();
+
+                        AgregarOperacion(new
+                                Operacion(idOperacion, nombre, descripcion));
                     }
 
                     if (listaElementos.size() != 0)
@@ -181,6 +194,80 @@ public class FragmentOperacion extends Fragment {
                 progressDialog.dismiss();
                 MessageDialog("Error al solicitar los datos.\nIntente mas tarde!.",
                         "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+    }
+
+    private void AgregarOperacion(Operacion pOpe)
+    {
+        listaDatosOperaciones.add(pOpe);
+    }
+
+    private void EliminarOperacion(final String pNombre)
+    {
+        final AlertDialog.Builder builderEliminar = new AlertDialog.Builder(getActivity());
+        builderEliminar.setTitle("Atención!");
+        builderEliminar.setMessage("¿Desea eliminar la operación " + pNombre + "?");
+
+        builderEliminar.setPositiveButton("PROCEDER", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                EliminarOperacionRequest(ClaseGlobal.DELECT_OPERACION +
+                        "?nombre=" + pNombre);
+
+                dialog.dismiss();
+            }
+        });
+
+        builderEliminar.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builderEliminar.create();
+        alert.show();
+    }
+
+    private void EliminarOperacionRequest(String URL)
+    {
+        progressDialog.setMessage("Eliminando operación...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha eliminado la operación!", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al eliminar la operación!", "Error", "Aceptar");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
     }

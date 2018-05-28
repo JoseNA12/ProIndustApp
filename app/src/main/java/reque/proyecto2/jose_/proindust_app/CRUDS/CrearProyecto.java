@@ -33,7 +33,7 @@ public class CrearProyecto extends AppCompatActivity {
     // et_nombre_ID, tv_descripcion_ID, sb_nivelConfianza_ID, et_rangoInicio_ID,
     // et_rangoFinal_ID, sch_rangoAleatorio_ID, et_cantMuestreosP, bt_crear_ID
 
-    private EditText et_nombre, et_descripcion, et_rangoInicio, et_rangoFinal, et_cantMuestreosP;
+    private EditText et_nombre, et_descripcion, et_rangoInicio, et_rangoFinal, et_cantMuestreosP, et_tiempoRecorrido;
     private Switch sch_rangoAleatorio;
     private Button bt_crear;
     private SeekBar barraNivelConfianza;
@@ -51,6 +51,7 @@ public class CrearProyecto extends AppCompatActivity {
         et_rangoInicio = (EditText) findViewById(R.id.et_rangoInicio_ID);
         et_rangoFinal = (EditText) findViewById(R.id.et_rangoFinal_ID);
         et_cantMuestreosP = (EditText) findViewById(R.id.et_cantMuestreosP_ID);
+        et_tiempoRecorrido = (EditText) findViewById(R.id.et_tiempoRecorrido_ID);
 
         sch_rangoAleatorio = (Switch) findViewById(R.id.sch_rangoAleatorio_ID);
         sch_rangoAleatorio.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -106,7 +107,7 @@ public class CrearProyecto extends AppCompatActivity {
     {
         if(!et_nombre.getText().toString().equals("") &&
                 !et_rangoInicio.getText().toString().equals("") && !et_rangoFinal.getText().toString().equals("") &&
-                !et_cantMuestreosP.getText().toString().equals("")) {
+                !et_cantMuestreosP.getText().toString().equals("") && !et_tiempoRecorrido.getText().toString().equals("")) {
 
             CrearProyecto(ClaseGlobal.INSERT_PROYECTO +
                     "?nombre=" + et_nombre.getText().toString() +
@@ -114,7 +115,8 @@ public class CrearProyecto extends AppCompatActivity {
                     "&nivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
                     "&rangoInicial=" + et_rangoInicio.getText().toString() +
                     "&rangoFinal=" + et_rangoFinal.getText().toString() +
-                    "&cantMuestreosP=" + et_cantMuestreosP.getText().toString()
+                    "&cantMuestreosP=" + et_cantMuestreosP.getText().toString() +
+                    "&tiempoRecorrido=" + et_tiempoRecorrido.getText().toString()
             );
 
         }

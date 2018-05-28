@@ -27,23 +27,28 @@ public class ClaseGlobal {
     // Proyectos
     public static final String INSERT_PROYECTO = IP + "Proyecto/insertar_proyecto.php";
     public static final String SELECT_PROYECTOS_ALL = IP + "Proyecto/select_proyectos_all.php";
+    public static final String DELECT_PROYECTO = IP + "Proyecto/eliminar_proyecto.php";
 
     // Operaciones
     public static final String INSERT_OPERACION = IP + "Operacion/insertar_operacion.php";
     public static final String SELECT_OPERACIONES_ALL = IP + "Operacion/select_operaciones_all.php";
+    public static final String DELECT_OPERACION = IP + "Operacion/eliminar_operacion.php";
 
     // Tareas
     public static final String INSERT_TAREA = IP + "Tarea/insertar_tarea.php";
     public static final String SELECT_TAREAS_ALL = IP + "Tarea/select_tareas_all.php";
+    public static final String DELECT_TAREA = IP + "Tarea/eliminar_Tarea.php";
 
     // Colaboradores
     public static final String INSERT_COLABORADOR = IP + "Colaborador/insertar_colaborador.php";
     public static final String SELECT_COLABORADORES_ALL = IP + "Colaborador/select_colaboradores_all.php";
+    public static final String DELECT_COLABORADOR = IP + "Colaborador/eliminar_colaborador.php";
 
     // Usuarios
     public static final String SELECT_USUARIOS_ALL = IP + "Usuario/select_usuarios_all.php";
     public static final String INSERT_USUARIO = IP + "Usuario/insertar_usuario.php";
     public static final String SELECT_USUARIO_LOGIN = IP + "Usuario/select_usuario_iniciar_sesion.php";
+    public static final String DELECT_USUARIO = IP + "Usuario/eliminar_usuario.php";
 
     public static final String SELECT_ROLESUSUARIOS_ALL = IP + "Usuario/select_rolusuarios_all.php";
 

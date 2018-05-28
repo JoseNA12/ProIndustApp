@@ -31,10 +31,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.CRUDS.CrearTarea;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.Tarea;
 
 
 /**
@@ -50,6 +52,8 @@ public class FragmentTarea extends Fragment {
 
     private ProgressDialog progressDialog;
 
+    private List<Tarea> listaDatosTarea;
+
     public FragmentTarea() {
         // Required empty public constructor
     }
@@ -60,11 +64,13 @@ public class FragmentTarea extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_tarea, container, false);
 
+        listaDatosTarea = new ArrayList<Tarea>();
+
         lv_listaComponente = (ListView) view.findViewById(R.id.dy_lista_ID);
 
         lv_listaComponente.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
                 final int pos = position;
 
                 PopupMenu popup = new PopupMenu(getActivity(), view);
@@ -89,7 +95,8 @@ public class FragmentTarea extends Fragment {
                             }
                             else // Eliminar
                             {
-                                Toast.makeText(getActivity(),"Eliminar", Toast.LENGTH_SHORT).show();
+                                String nombre = parent.getItemAtPosition(position).toString();
+                                EliminarTarea(nombre);
                             }
                         }
 
@@ -116,7 +123,7 @@ public class FragmentTarea extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
-        ConsultarDatosTabla(ClaseGlobal.SELECT_TAREAS_ALL, "nombre");
+        ConsultarDatosTabla(ClaseGlobal.SELECT_TAREAS_ALL);
 
         return view;
     }
@@ -137,7 +144,7 @@ public class FragmentTarea extends Fragment {
      * @param URL: Direccion web del archivo php de la consulta
      * @param pEtiquetaPHP: Etiqueta del php, se obtendra el nombre por ejemplo, entonces es 'nombre'
      */
-    private void ConsultarDatosTabla(String URL, final String pEtiquetaPHP)
+    private void ConsultarDatosTabla(String URL)
     {
         progressDialog.show();
 
@@ -156,8 +163,15 @@ public class FragmentTarea extends Fragment {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        String nombreUsuario = jsonArray.getJSONObject(i).get(pEtiquetaPHP).toString();
-                        listaElementos.add(nombreUsuario);
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
+                        listaElementos.add(nombre);
+
+                        String idTarea = jsonArray.getJSONObject(i).get("idTarea").toString();
+                        String descripcion = jsonArray.getJSONObject(i).get("descripcion").toString();
+                        String idActividad = jsonArray.getJSONObject(i).get("idActividad").toString();
+
+                        AgregarTarea(new
+                                Tarea(idTarea, nombre, descripcion, idActividad));
                     }
 
                     if (listaElementos.size() != 0)
@@ -183,6 +197,80 @@ public class FragmentTarea extends Fragment {
             }
         });queue.add(stringRequest);
 
+    }
+
+    private void AgregarTarea(Tarea pTarea)
+    {
+        listaDatosTarea.add(pTarea);
+    }
+
+    private void EliminarTarea(final String pNombre)
+    {
+        final AlertDialog.Builder builderEliminar = new AlertDialog.Builder(getActivity());
+        builderEliminar.setTitle("Atención!");
+        builderEliminar.setMessage("¿Desea eliminar la tarea " + pNombre + "?");
+
+        builderEliminar.setPositiveButton("PROCEDER", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                EliminarTareaRequest(ClaseGlobal.DELECT_TAREA +
+                        "?nombre=" + pNombre);
+
+                dialog.dismiss();
+            }
+        });
+
+        builderEliminar.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog alert = builderEliminar.create();
+        alert.show();
+    }
+
+    private void EliminarTareaRequest(String URL)
+    {
+        progressDialog.setMessage("Eliminando tarea...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha eliminado la tarea!", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al eliminar la tarea!", "Error", "Aceptar");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     /**
