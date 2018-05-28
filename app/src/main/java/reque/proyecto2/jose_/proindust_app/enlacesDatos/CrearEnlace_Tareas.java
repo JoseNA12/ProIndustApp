@@ -200,7 +200,7 @@ public class CrearEnlace_Tareas extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 // progressDialog.dismiss();
                 MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
+                        "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
 

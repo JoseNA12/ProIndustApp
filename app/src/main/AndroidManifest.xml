@@ -17,7 +17,9 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".IniciarSesionActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,44 +34,75 @@
         <activity
             android:name=".MenuPrincipal"
             android:label="@string/title_activity_menu_principal"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CRUDS.CRUDS"
-            android:label="@string/title_activity_cruds" />
+            android:label="@string/title_activity_cruds"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Muestreo"
-            android:label="@string/title_activity_muestreo" />
+            android:label="@string/title_activity_muestreo"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".CRUDS.CrearProyecto"
-            android:label="@string/title_activity_crear_proyecto" />
+            android:label="@string/title_activity_crear_proyecto"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CRUDS.CrearOperacion"
-            android:label="@string/title_activity_crear_operacion" />
+            android:label="@string/title_activity_crear_operacion"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CRUDS.CrearTarea"
-            android:label="@string/title_activity_crear_tarea" />
+            android:label="@string/title_activity_crear_tarea"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CRUDS.CrearColaborador"
-            android:label="@string/title_activity_crear_colaborador" />
+            android:label="@string/title_activity_crear_colaborador"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".CRUDS.CrearUsuario"
-            android:label="@string/title_activity_crear_usuarios" />
+            android:label="@string/title_activity_crear_usuarios"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".enlacesDatos.Enlaces_Datos"
-            android:label="@string/title_activity_enlaces_datos" />
+            android:label="@string/title_activity_enlaces_datos"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".enlacesDatos.CrearEnlace_Tareas"
-            android:label="@string/title_activity_crear_enlace_tareas" />
+            android:label="@string/title_activity_crear_enlace_tareas"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".enlacesDatos.CrearEnlace_Operaciones"
-            android:label="@string/title_activity_crear_enlace_operaciones" />
+            android:label="@string/title_activity_crear_enlace_operaciones"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".enlacesDatos.CrearEnlace_Colaboradores"
-            android:label="@string/title_activity_crear_enlace_colaboradores" />
+            android:label="@string/title_activity_crear_enlace_colaboradores"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".enlacesDatos.CrearEnlace_Usuarios"
-            android:label="@string/title_activity_crear_enlace_usuarios" >
-        </activity>
+            android:label="@string/title_activity_crear_enlace_usuarios"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HorasLibres"
+            android:label="@string/title_activity_horas_libres"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

@@ -148,6 +148,7 @@ public class FragmentUsuario extends Fragment {
     private void ConsultarDatosTabla(String URL)
     {
         progressDialog.show();
+        listaDatosUsuarios = new ArrayList<Usuario>();
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -255,6 +256,8 @@ public class FragmentUsuario extends Fragment {
                     if (!jsonObject.getString("status").equals("false"))
                     {
                         MessageDialog("Se ha eliminado el usuario!", "Éxito", "Aceptar");
+
+                        ConsultarDatosTabla(ClaseGlobal.SELECT_USUARIOS_ALL);
                     }
                     else
                     {
@@ -290,6 +293,17 @@ public class FragmentUsuario extends Fragment {
             }
         }
         return info;
+    }
+
+    /**
+     * Actualizar los datos de la lista cuando se devuelve a esta pantalla despues
+     * de una creación
+     */
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        ConsultarDatosTabla(ClaseGlobal.SELECT_USUARIOS_ALL);
     }
 
     /**

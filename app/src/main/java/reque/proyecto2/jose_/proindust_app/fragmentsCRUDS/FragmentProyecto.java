@@ -35,6 +35,7 @@ import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.CRUDS.CrearProyecto;
+import reque.proyecto2.jose_.proindust_app.HorasLibres;
 import reque.proyecto2.jose_.proindust_app.R;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
 import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
@@ -128,8 +129,8 @@ public class FragmentProyecto extends Fragment {
         fab_horaslibres.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Intent myIntent = new Intent(getActivity(), CrearProyecto.class);
-                // startActivity(myIntent);
+                Intent myIntent = new Intent(getActivity(), HorasLibres.class);
+                startActivity(myIntent);
             }
         });
 
@@ -165,6 +166,7 @@ public class FragmentProyecto extends Fragment {
     private void ConsultarDatosTabla(String URL)
     {
         progressDialog.show();
+        listaDatosProyecto = new ArrayList<Proyecto>();
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -271,6 +273,8 @@ public class FragmentProyecto extends Fragment {
                     if (!jsonObject.getString("status").equals("false"))
                     {
                         MessageDialog("Se ha eliminado el proyecto!", "Éxito", "Aceptar");
+
+                        ConsultarDatosTabla(ClaseGlobal.SELECT_PROYECTOS_ALL); // Actualizar la tabla
                     }
                     else
                     {
@@ -306,6 +310,17 @@ public class FragmentProyecto extends Fragment {
             }
         }
         return info;
+    }
+
+    /**
+     * Actualizar los datos de la lista cuando se devuelve a esta pantalla despues
+     * de una creación
+     */
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        ConsultarDatosTabla(ClaseGlobal.SELECT_PROYECTOS_ALL);
     }
 
     /**

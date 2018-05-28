@@ -150,6 +150,7 @@ public class FragmentOperacion extends Fragment {
     private void ConsultarDatosTabla(String URL)
     {
         progressDialog.show();
+        listaDatosOperaciones = new ArrayList<Operacion>();
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -251,6 +252,8 @@ public class FragmentOperacion extends Fragment {
                     if (!jsonObject.getString("status").equals("false"))
                     {
                         MessageDialog("Se ha eliminado la operación!", "Éxito", "Aceptar");
+
+                        ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL);
                     }
                     else
                     {
@@ -286,6 +289,17 @@ public class FragmentOperacion extends Fragment {
             }
         }
         return info;
+    }
+
+    /**
+     * Actualizar los datos de la lista cuando se devuelve a esta pantalla despues
+     * de una creación
+     */
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL);
     }
 
     /**

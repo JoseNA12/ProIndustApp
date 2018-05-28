@@ -76,6 +76,11 @@ public class ClaseGlobal {
     public static final String SELECT_PROYECTOUSUARIO_ALL = IP + "ProyectoUsuario/select_ProyectoUsuario.php";
     public static final String DELECT_PROYECTOUSUARIO_ID_ID = IP + "ProyectoUsuario/eliminar_proyectoUsuario.php";
 
+    // HorasLibres_C
+    public static final String INSERT_HORALIBRE = IP + "HorasLibres/insertar_horasLibres.php";
+    public static final String SELECT_HORASLIBRES_ALL = IP + "HorasLibres/select_all_horasLibres.php";
+    public static final String DELECT_HORALIBRE = IP + "HorasLibres/eliminar_horasLibres.php";
+
     // Iniciar sesion
     public static final String INICIAR_SESION = IP + "iniciar_sesion.php";
 

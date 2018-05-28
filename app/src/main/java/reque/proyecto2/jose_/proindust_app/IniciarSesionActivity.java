@@ -155,7 +155,7 @@ public class IniciarSesionActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 progressDialog.dismiss();
                 MessageDialog("Error al solicitar datos.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
+                        "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
 

@@ -26,6 +26,8 @@
     <string name="title_activity_crear_usuarios">Usuario</string>
     <string name="title_activity_enlaces_datos">Enlaces de Información</string>
 
+    <string name="title_activity_horas_libres">Horas Libres</string>
+
     <string name="title_activity_crear_enlace_tareas">Enlazar Tareas con Operaciones</string>
     <string name="title_activity_crear_enlace_operaciones">Enlazar Operaciones con Proyectos</string>
     <string name="title_activity_crear_enlace_colaboradores">Enlazar Colaboradores con Proyectos</string>

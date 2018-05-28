@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -296,7 +298,6 @@ public class FragmentEnlace_Operaciones extends Fragment {
 
     private List<String> GetOperaciones_de_Proyecto(String pNombreProyecto)
     {
-
         return GetListaNombreOperaciones(GetIdProyecto(pNombreProyecto));
     }
 
@@ -315,27 +316,26 @@ public class FragmentEnlace_Operaciones extends Fragment {
         return id;
     }
 
-    private List<String> GetListaNombreOperaciones(String pIdOperacion)
+    private List<String> GetListaNombreOperaciones(String pIdProyecto)
     {
-        List<String> idOperaciones = new ArrayList<String>();
+        List<String> idProyectos = new ArrayList<String>();
 
         for (int i = 0; i < listaProyectosOperaciones.size(); i++)
         {
-            if (pIdOperacion.equals(listaProyectosOperaciones.get(i).idProyecto))
+            if (pIdProyecto.equals(listaProyectosOperaciones.get(i).idProyecto))
             {
-                idOperaciones.add(GetNombreUsuario(listaProyectosOperaciones.get(i).idOperacion));
+                idProyectos.add(GetNombreOperacion(listaProyectosOperaciones.get(i).idOperacion));
             }
         }
-
-        return idOperaciones;
+        return idProyectos;
     }
 
-    private String GetNombreUsuario(String pIdTarea)
+    private String GetNombreOperacion(String pIdOperacion)
     {
         String nombre = "error";
         for (int i = 0; i < listaDatosOperaciones.size(); i++)
         {
-            if (pIdTarea.equals(listaDatosOperaciones.get(i).id))
+            if (pIdOperacion.equals(listaDatosOperaciones.get(i).id))
             {
                 nombre = listaDatosOperaciones.get(i).nombre;
                 break;
@@ -405,18 +405,28 @@ public class FragmentEnlace_Operaciones extends Fragment {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha eliminado el enlace!", "Éxito", "Aceptar");
+                        //MessageDialog("Se ha eliminado el enlace!", "Éxito", "Aceptar");
+                        progressDialog.dismiss();
+
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                "Se ha eliminado el enlace!", Snackbar.LENGTH_SHORT).show();
+                        RecargarFragmento();
                     }
                     else
                     {
-                        MessageDialog("Error al eliminar el enlace!", "Error", "Aceptar");
+
+                        // MessageDialog("Error al eliminar el enlace!", "Error", "Aceptar");
+                        progressDialog.dismiss();
+
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                "Error al eliminar el enlace!", Snackbar.LENGTH_SHORT).show();
                     }
 
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
 
-                progressDialog.dismiss();
+                // progressDialog.dismiss();
 
             }
         }, new Response.ErrorListener() {
@@ -427,6 +437,15 @@ public class FragmentEnlace_Operaciones extends Fragment {
                         "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
+    }
+
+    /**
+     * Utilizado para recargar los datos, al momento de hacer un cambio en la bd
+     */
+    private void RecargarFragmento()
+    {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
     }
 
     /**

@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -102,6 +104,14 @@ public class CrearColaborador extends AppCompatActivity {
             }
         });queue.add(stringRequest);
     }
+
+   /* @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            Log.d("PUTA", "back button pressed");
+        }
+        return super.onKeyDown(keyCode, event);
+    }*/
 
     private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {

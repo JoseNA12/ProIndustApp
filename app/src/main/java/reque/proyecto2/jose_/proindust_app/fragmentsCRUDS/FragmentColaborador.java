@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -59,7 +60,6 @@ public class FragmentColaborador extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -104,12 +104,11 @@ public class FragmentColaborador extends Fragment {
                                 EliminarColaborador(pseudonimo);
                             }
                         }
-
                         return true;
                     }
                 });
 
-                popup.show();//showing popup menu
+                popup.show(); //showing popup menu
             }
         });
 
@@ -152,6 +151,7 @@ public class FragmentColaborador extends Fragment {
     private void ConsultarDatosTabla(String URL)
     {
         progressDialog.show();
+        listaDatosColaborador = new ArrayList<Colaborador>();
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -254,6 +254,8 @@ public class FragmentColaborador extends Fragment {
                     if (!jsonObject.getString("status").equals("false"))
                     {
                        MessageDialog("Se ha eliminado al colaborador!", "Éxito", "Aceptar");
+
+                        ConsultarDatosTabla(ClaseGlobal.SELECT_COLABORADORES_ALL);
                     }
                     else
                     {
@@ -289,6 +291,17 @@ public class FragmentColaborador extends Fragment {
             }
         }
         return info;
+    }
+
+    /**
+     * Actualizar los datos de la lista cuando se devuelve a esta pantalla despues
+     * de una creación
+     */
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        ConsultarDatosTabla(ClaseGlobal.SELECT_COLABORADORES_ALL);
     }
 
     /**
