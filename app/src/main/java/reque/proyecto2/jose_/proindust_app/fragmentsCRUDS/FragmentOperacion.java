@@ -84,7 +84,9 @@ public class FragmentOperacion extends Fragment {
 
                         if (item.getTitle().equals("Información"))
                         {
-                            Toast.makeText(getActivity(),"Información", Toast.LENGTH_SHORT).show();
+                            String nombre = parent.getItemAtPosition(position).toString();
+                            MessageDialog(GetInformacionOperacion(nombre),
+                                    "Información", "Aceptar");
                         }
                         else
                         {
@@ -270,6 +272,20 @@ public class FragmentOperacion extends Fragment {
                         "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
+    }
+
+    private String GetInformacionOperacion(String pNombre)
+    {
+        String info = "";
+        for(int i = 0; i < listaDatosOperaciones.size(); i++)
+        {
+            if (pNombre.equals(listaDatosOperaciones.get(i).nombre))
+            {
+                info = listaDatosOperaciones.get(i).toString();
+                break;
+            }
+        }
+        return info;
     }
 
     /**

@@ -9,4 +9,10 @@ public class Operacion {
         this.nombre = nombre;
         this.descripcion = descripcion;
     }
+
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre + "\n" +
+                "Descripcion: " + descripcion;
+    }
 }

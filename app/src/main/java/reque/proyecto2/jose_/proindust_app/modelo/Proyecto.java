@@ -19,4 +19,15 @@ public class Proyecto {
         this.id = id;
         this.nombre = nombre;
     }
+
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre + "\n" +
+                "Descripcion: " + descripcion + "\n" +
+                "Nivel de confianza: " + nivelConfianza + "\n" +
+                "Rango Inicial(min): " + rangoInicial + "\n" +
+                "Rango Final(min): " + rangoFinal + "\n" +
+                "Cant. de Muestreos pre.: " + cantMuestreosP + "\n" +
+                "Tiempo del recorrido(min): " + tiempoRecorrido;
+    }
 }

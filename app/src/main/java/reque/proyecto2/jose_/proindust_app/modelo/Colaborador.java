@@ -9,4 +9,10 @@ public class Colaborador {
         this.pseudonimo = pseudonimo;
         this.descripcion = descripcion;
     }
+
+    @Override
+    public String toString() {
+        return "Pseudonimo: " + pseudonimo + "\n" +
+                "Descripcion: " + descripcion ;
+    }
 }

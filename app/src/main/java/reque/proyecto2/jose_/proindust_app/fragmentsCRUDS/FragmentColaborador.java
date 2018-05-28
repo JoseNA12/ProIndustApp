@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -80,11 +81,15 @@ public class FragmentColaborador extends Fragment {
                 //registering popup with OnMenuItemClickListener
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     public boolean onMenuItemClick(MenuItem item) {
-                        // Toast.makeText(CRUDS.this,"You Clicked : " + item.getTitle(), Toast.LENGTH_SHORT).show();
+
+                        /*Snackbar.make(view, "Error al eliminar al colaborador!", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();*/
 
                         if (item.getTitle().equals("Información"))
                         {
-                            Toast.makeText(getActivity(),"Información", Toast.LENGTH_SHORT).show();
+                            String pseudonimo = parent.getItemAtPosition(position).toString();
+                            MessageDialog(GetInformacionColaborador(pseudonimo),
+                                    "Información", "Aceptar");
                         }
                         else
                         {
@@ -115,8 +120,6 @@ public class FragmentColaborador extends Fragment {
             public void onClick(View view) {
                 Intent myIntent = new Intent(getActivity(), CrearColaborador.class);
                 startActivity(myIntent);
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
             }
         });
 
@@ -250,7 +253,7 @@ public class FragmentColaborador extends Fragment {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha eliminado al colaborador!", "Éxito", "Aceptar");
+                       MessageDialog("Se ha eliminado al colaborador!", "Éxito", "Aceptar");
                     }
                     else
                     {
@@ -272,6 +275,20 @@ public class FragmentColaborador extends Fragment {
                         "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
+    }
+
+    private String GetInformacionColaborador(String pPseudonimo)
+    {
+        String info = "";
+        for(int i = 0; i < listaDatosColaborador.size(); i++)
+        {
+            if (pPseudonimo.equals(listaDatosColaborador.get(i).pseudonimo))
+            {
+                info = listaDatosColaborador.get(i).toString();
+                break;
+            }
+        }
+        return info;
     }
 
     /**

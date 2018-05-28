@@ -50,4 +50,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.888" />
+
+    <LinearLayout
+        android:layout_width="395dp"
+        android:layout_height="77dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.125">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:tint="@color/colorBotones"
+            app:srcCompat="@drawable/ic_img_nav_view_mod_task_icon_black"
+            tools:layout_editor_absoluteX="107dp"
+            tools:layout_editor_absoluteY="26dp" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:tint="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_img_act_link_icon_hori" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:tint="@color/colorBotones"
+            app:srcCompat="@drawable/ic_business_center_black_24dp"
+            tools:layout_editor_absoluteX="213dp"
+            tools:layout_editor_absoluteY="35dp" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

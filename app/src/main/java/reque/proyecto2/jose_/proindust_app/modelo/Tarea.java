@@ -16,4 +16,23 @@ public class Tarea {
         this.id = pId;
         this.nombre = nombre;
     }
+
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre + "\n" +
+                "Descripcion: " + descripcion + "\n" +
+                "Actividad: " + getActividad(idActividad) + "\n";
+    }
+
+    private String getActividad(String pId)
+    {
+        String var = "";
+        if (pId.equals("1")) { var = "PRODUCTIVA"; }
+        else
+        {
+            if (pId.equals("2")) {   var = "COLABORATIVA"; }
+            else { var = "IMPRODUCTIVA"; }
+        }
+        return var;
+    }
 }

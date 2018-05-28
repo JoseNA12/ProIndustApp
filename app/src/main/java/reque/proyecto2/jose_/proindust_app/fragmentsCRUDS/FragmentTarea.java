@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -84,7 +85,9 @@ public class FragmentTarea extends Fragment {
 
                         if (item.getTitle().equals("Información"))
                         {
-                            Toast.makeText(getActivity(),"Información", Toast.LENGTH_SHORT).show();
+                            String nombre = parent.getItemAtPosition(position).toString();
+                            MessageDialog(GetInformacionTarea(nombre),
+                                    "Información", "Aceptar");
                         }
                         else
                         {
@@ -271,6 +274,20 @@ public class FragmentTarea extends Fragment {
                         "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
+    }
+
+    private String GetInformacionTarea(String pNombre)
+    {
+        String info = "";
+        for(int i = 0; i < listaDatosTarea.size(); i++)
+        {
+            if (pNombre.equals(listaDatosTarea.get(i).nombre))
+            {
+                info = listaDatosTarea.get(i).toString();
+                break;
+            }
+        }
+        return info;
     }
 
     /**

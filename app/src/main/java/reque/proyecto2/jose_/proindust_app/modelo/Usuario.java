@@ -21,14 +21,18 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return "Usuario{" +
-                "id='" + id + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", apellidos='" + apellidos + '\'' +
-                ", idRolUsuario='" + idRolUsuario + '\'' +
-                ", nombreUsuario='" + nombreUsuario + '\'' +
-                ", correo='" + correo + '\'' +
-                ", contrasenia='" + contrasenia + '\'' +
-                '}';
+        return "Nombre: " + nombre + "\n" +
+                "Apellidos: " + apellidos + "\n" +
+                "Rol de Usuario: " + getRol(idRolUsuario) + "\n" +
+                "Nombre de Usuario: " + nombreUsuario + "\n" +
+                "Correo: " + correo + "\n";
+    }
+
+    private String getRol(String pId)
+    {
+        String var = "";
+        if (pId.equals("1")) { var = "ADMINISTRADOR"; }
+        else { var = "ANALISTA"; }
+        return var;
     }
 }
