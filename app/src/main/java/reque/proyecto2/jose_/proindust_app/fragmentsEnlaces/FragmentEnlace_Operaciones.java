@@ -452,6 +452,13 @@ public class FragmentEnlace_Operaciones extends Fragment {
         ft.detach(this).attach(this).commit();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        isBackFromB = true;
+    }
+
+
     /**
      * Recargar el fragmento cuando se presiona el boton de atras en la pantalla de Crear
      */

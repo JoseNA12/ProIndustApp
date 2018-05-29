@@ -94,5 +94,10 @@ public class ClaseGlobal {
     // Muestra
     public static final String INSERT_MUESTRA = IP + "insertar_muestra.php";
 
+    public static String longitud;
+    public static String latitud;
+    public static String humedad;
+    public static String temperatura;
+
 
 }

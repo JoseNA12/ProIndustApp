@@ -1,7 +1,11 @@
 package reque.proyecto2.jose_.proindust_app;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -18,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -33,6 +38,7 @@ public class MenuPrincipal extends AppCompatActivity
     private FloatingActionButton fab_enlaces;
 
     private TextView tv_usuario, tv_rolUsuario;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,23 +79,22 @@ public class MenuPrincipal extends AppCompatActivity
         bt_Muestreo = (Button) findViewById(R.id.bt_muestreo_ID);
         bt_Muestreo.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Intent intent_menuPrincipal = new Intent(MenuPrincipal.this, Muestreo.class);
                 startActivity(intent_menuPrincipal);
             }
         });
 
-        View hView =  navigationView.getHeaderView(0);
+        View hView = navigationView.getHeaderView(0);
         tv_usuario = (TextView) hView.findViewById(R.id.tv_usuario_ID);
         tv_usuario.setText(ClaseGlobal.usuarioActual.nombre);
 
-        tv_rolUsuario= (TextView) hView.findViewById(R.id.tv_rolUsuario_ID);
+        tv_rolUsuario = (TextView) hView.findViewById(R.id.tv_rolUsuario_ID);
         tv_rolUsuario.setText(ClaseGlobal.usuarioActual.correo);
 
-
-
         MostrarComponentes_usuario(savedInstanceState);
+
+        // GetTiempo();
     }
 
     /**

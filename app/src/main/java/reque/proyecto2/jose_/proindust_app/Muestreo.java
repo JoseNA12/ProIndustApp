@@ -1,13 +1,23 @@
 package reque.proyecto2.jose_.proindust_app;
 
 // PUMA
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -66,6 +76,11 @@ public class Muestreo extends AppCompatActivity {
     private ArrayList<Colaborador> listaColaborador;
 
     private ArrayList<String> listaTarea, listaIDTarea;
+
+    String m_Text = "";
+
+    static final int REQUEST_LOCATION = 1;
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,21 +165,23 @@ public class Muestreo extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, GetTareas());
 
-        txt_tarea.setThreshold(3);
+        txt_tarea.setThreshold(3); // al 3er caracter insertado mostrar los resultados que concuerdan
         txt_tarea.setAdapter(adapter);
 
         // Mensaje de carga
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Insertando nueva información...");
         progressDialog.setCancelable(false);
+
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
+        ParametrosAmbiente(); // Temperatura y humedad
     }
 
-    private void Boton_RegistrarMuestra() {
+    private void Boton_RegistrarMuestra()
+    {
         Date date = new Date();
         DateFormat hourdateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-
-        String humedad = "0";
-        String temperatura = "0";
 
         String tipoMuestra = "1"; //Esto debería ser una variable global que cambie cuando se alcance
         //el limite de 30 muestreos preliminares
@@ -203,9 +220,9 @@ public class Muestreo extends AppCompatActivity {
             RegistrarMuestra(ClaseGlobal.INSERT_MUESTRA +
                     "?comentario=" + comentario +
                     "&fecha_hora=" + hourdateFormat.format(date).toString() +
-                    "&humedad=" + humedad +//Hay que buscar la manera de obtenerla
+                    "&humedad=" + ClaseGlobal.humedad +//Hay que buscar la manera de obtenerla
                     "&idTipoMuestra=" + tipoMuestra +
-                    "&temperatura=" + temperatura +//Hay que buscar la manera de obtenerla
+                    "&temperatura=" + ClaseGlobal.temperatura +//Hay que buscar la manera de obtenerla
                     "&idUsuario=" + ClaseGlobal.usuarioActual.id +
                     "&idColaborador=" + idColaborador +
                     "&idProyecto=" + idProyecto +
@@ -213,7 +230,8 @@ public class Muestreo extends AppCompatActivity {
         }
     }
 
-    private void RegistrarMuestra(String URL){
+    private void RegistrarMuestra(String URL)
+    {
         progressDialog.show();
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -414,6 +432,126 @@ public class Muestreo extends AppCompatActivity {
         return arraySpinner;
     }
 
+    private void ParametrosAmbiente()
+    {
+        GetLocacion();
+
+        if (!ClaseGlobal.latitud.equals("error") && !ClaseGlobal.longitud.equals("error"))
+        {
+            GetTiempo();
+        }
+        else
+        {
+            MensajeErrorConexion();
+        }
+    }
+
+    private void GetTiempo()
+    {
+        ClaseGlobal.humedad = "error"; ClaseGlobal.temperatura = "error";
+
+        Weather.placeIdTask asyncTask = new Weather.placeIdTask(new Weather.AsyncResponse()
+        {
+            public void processFinish(String weather_city, String weather_description, String weather_temperature, String weather_humidity, String weather_pressure, String weather_updatedOn) {
+
+                ClaseGlobal.humedad = weather_humidity;
+                ClaseGlobal.temperatura = weather_temperature;
+
+                if (ClaseGlobal.humedad.equals("error") || ClaseGlobal.temperatura.equals("error"))
+                {
+                    MensajeErrorConexion();
+                }
+            }
+        });
+        asyncTask.execute(ClaseGlobal.latitud, ClaseGlobal.longitud); //  asyncTask.execute("Latitude", "Longitude")
+    }
+
+    private void GetLocacion()
+    {
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+
+        }
+        else
+        {
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+            if (location != null)
+            {
+                ClaseGlobal.latitud = Double.toString(location.getLatitude());
+                ClaseGlobal.longitud = Double.toString(location.getLongitude());
+            }
+            else
+            {
+                ClaseGlobal.latitud = "error"; // Caso de fallo
+                ClaseGlobal.longitud = "error";
+
+                Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                        "La funcionalidad de GPS del dispositivo se encuentra desactivada!", Snackbar.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void MensajeErrorConexion()
+    {
+        final AlertDialog.Builder builderEliminar = new AlertDialog.Builder(this);
+        builderEliminar.setTitle("Atención!");
+        builderEliminar.setMessage("No es posible obtener la humedad y la temperatura!");
+        builderEliminar.setCancelable(false);
+
+        builderEliminar.setPositiveButton("MANUAL", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+
+                InsertarParemetrosManual();
+                dialog.dismiss();
+            }
+        });
+
+        builderEliminar.setNegativeButton("REINTENTAR", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+                ParametrosAmbiente();
+            }
+        });
+
+        builderEliminar.setNeutralButton("CANCELAR", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+                Intent intent_ = new Intent(Muestreo.this, MenuPrincipal.class);
+                startActivity(intent_);
+            }
+        });
+
+        AlertDialog alert = builderEliminar.create();
+        alert.show();
+    }
+
+    public void InsertarParemetrosManual()
+    {
+
+        
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case REQUEST_LOCATION:
+                GetLocacion();
+                break;
+        }
+    }
 
     private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {
