@@ -370,7 +370,7 @@ public class HorasLibres extends AppCompatActivity {
                         progressDialog.dismiss();
 
                         Snackbar.make(HorasLibres.this.findViewById(android.R.id.content),
-                                "Se ha eliminado el enlace!", Snackbar.LENGTH_SHORT).show();
+                                "Se ha eliminado el lapso de tiempo!", Snackbar.LENGTH_SHORT).show();
 
                         RefrecarActivity();
                     }
@@ -380,7 +380,7 @@ public class HorasLibres extends AppCompatActivity {
                         progressDialog.dismiss();
 
                         Snackbar.make(HorasLibres.this.findViewById(android.R.id.content),
-                                "Error al eliminar el enlace!", Snackbar.LENGTH_SHORT).show();
+                                "Error al eliminar el lapso de tiempo!", Snackbar.LENGTH_SHORT).show();
                     }
 
                 }catch (JSONException e){
