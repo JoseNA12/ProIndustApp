@@ -31,6 +31,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
+import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
+import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
+
 public class Muestreo extends AppCompatActivity {
 
     // sp_proyecto_ID, sp_operacion_ID, sp_colaborador_ID, atctv_tarea_ID, tv_descripcion_ID, bt_Registrar_ID
@@ -43,24 +47,51 @@ public class Muestreo extends AppCompatActivity {
 
     private Button bt_registrar;
 
+    private String msgProyecto = "Seleccione un proyecto...";
+    private String msgOperacion = "Seleccione una operación...";
+    private String msgColaborador = "Seleccione un colaborador...";
+
     private ProgressDialog progressDialog;
 
     private String proyectoSeleccionado;
     private String operacionSeleccionada;
     private String colaboradorSeleccionado;
 
-    private List<String> listaTarea;
+    private ArrayAdapter<String> adapterSpinner_proyecto, adapterSpinner_operacion, adapterSpinner_colaborador;
+
+    private ArrayList<Proyecto> listaProyectos;
+    private ArrayList<Operacion> listaOperaciones;
+    private ArrayList<Colaborador> listaColaborador;
+
+    private ArrayList<String> listaTarea, listaIDTarea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_muestreo);
 
-        listaTarea = GetTareas();
+//        listaTarea = GetTareas();
 
         sp_proyecto = (Spinner) findViewById(R.id.sp_proyecto_ID);
+        adapterSpinner_proyecto = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetProyectos());
+        adapterSpinner_proyecto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_proyecto.setAdapter(adapterSpinner_proyecto);
+
+        listaProyectos = new ArrayList<Proyecto>();
+
         sp_operacion = (Spinner) findViewById(R.id.sp_operacion_ID);
+        adapterSpinner_operacion = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetOperaciones());
+        adapterSpinner_operacion.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_operacion.setAdapter(adapterSpinner_operacion);
+
+        listaOperaciones = new ArrayList<Operacion>();
+
         sp_colaborador = (Spinner) findViewById(R.id.sp_colaborador_ID);
+        adapterSpinner_colaborador = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetColaboradores());
+        adapterSpinner_colaborador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_colaborador.setAdapter(adapterSpinner_colaborador);
+
+        listaColaborador = new ArrayList<Colaborador>();
 
         txt_tarea = (AutoCompleteTextView) findViewById(R.id.atctv_tarea_ID);
 
@@ -76,7 +107,7 @@ public class Muestreo extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                proyectoSeleccionado = null;
+
             }
         });
 
@@ -88,7 +119,7 @@ public class Muestreo extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                operacionSeleccionada = null;
+
             }
         });
 
@@ -100,18 +131,22 @@ public class Muestreo extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                colaboradorSeleccionado = null;
+
             }
         });
 
         bt_registrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Boton_RegistrarMuestra();
             }
         });
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.activity_muestreo, listaTarea);
+        listaTarea = new ArrayList<String>();
+        listaIDTarea = new ArrayList<String>();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, GetTareas());
 
         txt_tarea.setThreshold(3);
         txt_tarea.setAdapter(adapter);
@@ -141,16 +176,38 @@ public class Muestreo extends AppCompatActivity {
         if(tarea.equals("") || proyectoSeleccionado.equals("") || operacionSeleccionada.equals("") || colaboradorSeleccionado.equals("")){
             MessageDialog("es necesario que complete todos los datos para continuar", "Error", "Aceptar");
         } else {
-            /*RegistrarMuestra(ClaseGlobal.INSERT_MUESTRA +
+            String idProyecto = "-1";
+            String idColaborador = "-1";
+            String idTarea = "-1";
+
+            for(int i=0; i<listaProyectos.size(); i++){
+                if(listaProyectos.get(i).nombre.equals(proyectoSeleccionado)){
+                    idProyecto = listaProyectos.get(i).id;
+                }
+            }
+
+            for(int i=0; i<listaColaborador.size(); i++){
+                if(listaColaborador.get(i).pseudonimo.equals(colaboradorSeleccionado)){
+                    idColaborador = listaColaborador.get(i).id;
+                }
+            }
+
+            for(int i=0; i<listaTarea.size(); i++){
+                if(listaTarea.get(i).equals(tarea)){
+                    idTarea = listaIDTarea.get(i);
+                }
+            }
+
+            RegistrarMuestra(ClaseGlobal.INSERT_MUESTRA +
                     "?comentario=" + comentario +
                     "&fecha_hora=" + hourdateFormat.format(date) +
                     "&humedad=" + humedad +//Hay que buscar la manera de obtenerla
                     "&idTipoMuestra=" + tipoMuestra +
                     "&temperatura=" + temperatura +//Hay que buscar la manera de obtenerla
-                    "idUsuario=" + ClaseGlobal.ID_USUARIO_ACTUAL +
-                    "idColaborador=" + GetIdColaborador(colaboradorSeleccionado) +//Cambiar por URL
-                    "idProyecto=" + GetIdProyecto(proyectoSeleccionado) +//Cambiar por URL
-                    "idTarea=" + GetIdtarea(tarea));//Cambiar por URL*/
+                    "&idUsuario=" + ClaseGlobal.usuarioActual +
+                    "&idColaborador=" + idColaborador +
+                    "&idProyecto=" + idProyecto +
+                    "&idTarea=" + idTarea);
         }
     }
 
@@ -202,8 +259,11 @@ public class Muestreo extends AppCompatActivity {
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
                         String tarea = jsonArray.getJSONObject(i).get("nombre").toString();
+                        String id = jsonArray.getJSONObject(i).get("idTarea").toString();
 
                         listaTareas.add(tarea);
+                        listaTarea.add(tarea);
+                        listaIDTarea.add(id);
                     }
 
                 }catch (JSONException e){
@@ -219,9 +279,11 @@ public class Muestreo extends AppCompatActivity {
         return listaTareas;
     }
 
-    private String GetIdProyecto(String URL)
+    private List<String> GetProyectos()
     {
+        String URL = ClaseGlobal.SELECT_PROYECTOS_ALL;
         final List<String> arraySpinner = new ArrayList<String>();
+        arraySpinner.add(msgProyecto);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -233,28 +295,39 @@ public class Muestreo extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("value");
 
-                    String idProyecto = jsonArray.getJSONObject(0).get("idProyecto").toString();
-                    arraySpinner.add(idProyecto);
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String id = jsonArray.getJSONObject(i).get("idProyecto").toString();
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
 
+                        arraySpinner.add(nombre);
+
+                        listaProyectos.add(new Proyecto(id, nombre));
+                    }
 
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
 
-        return arraySpinner.get(0);
+        return arraySpinner;
     }
 
-    private String GetIdColaborador(String URL)
+
+    private List<String> GetOperaciones()
     {
-        final List<String> arraySpinner = new ArrayList<String>();
+
+        String URL = ClaseGlobal.SELECT_OPERACIONES_ALL;
+        final List<String> arraySpinner2 = new ArrayList<String>();
+        arraySpinner2.add(msgOperacion);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -266,28 +339,38 @@ public class Muestreo extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("value");
 
-                    String idProyecto = jsonArray.getJSONObject(0).get("idColaborador").toString();
-                    arraySpinner.add(idProyecto);
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String id = jsonArray.getJSONObject(i).get("idOperacion").toString();
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
 
+                        arraySpinner2.add(nombre);
+
+                        listaOperaciones.add(new Operacion(id, nombre, ""));
+                    }
 
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+
+                MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
 
-        return arraySpinner.get(0);
+        return arraySpinner2;
     }
 
-    private String GetIdtarea(String URL)
+    private List<String> GetColaboradores()
     {
+        String URL = ClaseGlobal.SELECT_COLABORADORES_ALL;
         final List<String> arraySpinner = new ArrayList<String>();
+        arraySpinner.add(msgColaborador);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -299,24 +382,32 @@ public class Muestreo extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(response);
                     JSONArray jsonArray = jsonObject.getJSONArray("value");
 
-                    String idProyecto = jsonArray.getJSONObject(0).get("idTarea").toString();
-                    arraySpinner.add(idProyecto);
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String id = jsonArray.getJSONObject(i).get("idColaborador").toString();
+                        String pseudonimo = jsonArray.getJSONObject(i).get("pseudonimo").toString();
 
+                        arraySpinner.add(pseudonimo);
+
+                        listaColaborador.add(new Colaborador(id, pseudonimo, ""));
+                    }
 
                 }catch (JSONException e){
                     e.printStackTrace();
                 }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                MessageDialog("Error al solicitar colaboradores.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
 
-        return arraySpinner.get(0);
+        return arraySpinner;
     }
+
 
     private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {
