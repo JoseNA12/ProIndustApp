@@ -31,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import reque.proyecto2.jose_.proindust_app.modelo.Tarea;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentTarea extends Fragment {
+public class FragmentTarea extends Fragment implements Serializable {
 
     private View view;
 
@@ -93,8 +94,13 @@ public class FragmentTarea extends Fragment {
                         {
                             if (item.getTitle().equals("Modificar"))
                             {
+                                Intent intent_ = new Intent(getActivity(), CrearTarea.class); // reusar codigo y utilizar la pantalla de crear
+                                intent_.putExtra("ACCION", "MODIFICAR");
 
-                                Toast.makeText(getActivity(),"Modificar", Toast.LENGTH_SHORT).show();
+                                String nombre = parent.getItemAtPosition(position).toString();
+                                intent_.putExtra("OBJETO", GetObjetoTarea(nombre));
+
+                                startActivity(intent_);
                             }
                             else // Eliminar
                             {
@@ -116,8 +122,10 @@ public class FragmentTarea extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearTarea.class);
-                startActivity(myIntent);
+                Intent intent_ = new Intent(getActivity(), CrearTarea.class); // reusar codigo y utilizar la pantalla de crear
+                intent_.putExtra("ACCION", "CREAR");
+
+                startActivity(intent_);
             }
         });
 
@@ -291,6 +299,20 @@ public class FragmentTarea extends Fragment {
             }
         }
         return info;
+    }
+
+    private Tarea GetObjetoTarea(String pNombre)
+    {
+        Tarea obj = null;
+        for(int i = 0; i < listaDatosTarea.size(); i++)
+        {
+            if (pNombre.equals(listaDatosTarea.get(i).nombre))
+            {
+                obj = listaDatosTarea.get(i);
+                break;
+            }
+        }
+        return obj;
     }
 
     /**

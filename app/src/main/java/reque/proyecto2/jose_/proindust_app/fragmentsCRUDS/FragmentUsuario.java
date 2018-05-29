@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentUsuario extends Fragment {
+public class FragmentUsuario extends Fragment implements Serializable {
 
     private View view;
 
@@ -91,8 +92,13 @@ public class FragmentUsuario extends Fragment {
                         {
                             if (item.getTitle().equals("Modificar"))
                             {
+                                Intent intent_ = new Intent(getActivity(), CrearUsuario.class); // reusar codigo y utilizar la pantalla de crear
+                                intent_.putExtra("ACCION", "MODIFICAR");
 
-                                Toast.makeText(getActivity(),"Modificar", Toast.LENGTH_SHORT).show();
+                                String nombreUsuario = parent.getItemAtPosition(position).toString();
+                                intent_.putExtra("OBJETO", GetObjetoUsuario(nombreUsuario));
+
+                                startActivity(intent_);
                             }
                             else // Eliminar
                             {
@@ -114,8 +120,10 @@ public class FragmentUsuario extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearUsuario.class);
-                startActivity(myIntent);
+                Intent intent_ = new Intent(getActivity(), CrearUsuario.class); // reusar codigo y utilizar la pantalla de crear
+                intent_.putExtra("ACCION", "CREAR");
+
+                startActivity(intent_);
             }
         });
 
@@ -293,6 +301,20 @@ public class FragmentUsuario extends Fragment {
             }
         }
         return info;
+    }
+
+    private Usuario GetObjetoUsuario(String pNombreUsuario)
+    {
+        Usuario obj = null;
+        for(int i = 0; i < listaDatosUsuarios.size(); i++)
+        {
+            if (pNombreUsuario.equals(listaDatosUsuarios.get(i).nombreUsuario))
+            {
+                obj = listaDatosUsuarios.get(i);
+                break;
+            }
+        }
+        return obj;
     }
 
     /**

@@ -5,12 +5,14 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -78,12 +80,55 @@ public class CrearTarea extends AppCompatActivity {
         });
 
         bt_crear = (Button) findViewById(R.id.bt_crear_ID);
-        bt_crear.setOnClickListener(new View.OnClickListener() {
+        /*bt_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Boton_CrearTarea();
             }
-        });
+        });*/
+
+        DeterminarAccionBoton(savedInstanceState);
+    }
+
+    private void DeterminarAccionBoton(Bundle savedInstanceState)
+    {
+        String accion;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                accion = null;
+            }
+            else {
+                accion = extras.getString("ACCION");
+
+                if (accion.equals("CREAR"))
+                {
+                    bt_crear.setText("CREAR");
+                    bt_crear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Boton_CrearTarea();
+                        }
+                    });
+                }
+                else // MODIFICAR
+                {
+                    final Tarea miTarea = (Tarea) getIntent().getSerializableExtra("OBJETO");
+                    SetValoresComponentes(miTarea);
+
+                    bt_crear.setText("MODIFICAR");
+                    bt_crear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Boton_ModificarTarea(miTarea);
+                        }
+                    });
+                }
+            }
+        }
+        else {
+            accion = (String) savedInstanceState.getSerializable("ACCION");
+        }
     }
 
     /**
@@ -183,11 +228,11 @@ public class CrearTarea extends AppCompatActivity {
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
                         String id = jsonArray.getJSONObject(i).get("idActividad").toString();
-                        String rol = jsonArray.getJSONObject(i).get("tipo").toString();
+                        String tipo = jsonArray.getJSONObject(i).get("tipo").toString();
 
-                        listaActividades.add(new Actividad(id, rol));
+                        listaActividades.add(new Actividad(id, tipo));
 
-                        arraySpinner.add(rol);
+                        arraySpinner.add(tipo);
                     }
 
                 }catch (JSONException e){
@@ -210,15 +255,108 @@ public class CrearTarea extends AppCompatActivity {
 
     private String GetIdActividad(String pTipo)
     {
-        String id = "1"; // siempre existirá
+        String id = "error"; // siempre existirá
         for (int i = 0; i < listaActividades.size(); i++)
         {
             if (pTipo.equals(listaActividades.get(i).tipo))
             {
                 id = listaActividades.get(i).id;
+                break;
             }
         }
         return id;
+    }
+
+    private String GetNombreActividad(String pId)
+    {
+        String nombre = "error"; // siempre existirá
+        for (int i = 0; i < listaActividades.size(); i++)
+        {
+            if (pId.equals(listaActividades.get(i).id))
+            {
+                nombre = listaActividades.get(i).tipo;
+                break;
+            }
+        }
+        return nombre;
+    }
+
+    /**
+     * Establecer los datos del objeto selccionado en los componentes de la pantalla
+     * @param miColaborador
+     */
+    private void SetValoresComponentes(Tarea miTarea)
+    {
+        String nombre = miTarea.nombre;
+        String descripcion = miTarea.descripcion;
+        String tipoActividad = GetNombreActividad(miTarea.idActividad);
+
+        et_nombreTarea.setText(nombre);
+        et_descripcion.setText(descripcion);
+
+        // no sirve, lista vacia
+        /*for(int i=0; i < adapterSpinner_actividades.getCount(); i++) {
+            if(tipoActividad.equals(adapterSpinner_actividades.getItem(i).toString())){
+                sp_tipoActividad.setSelection(i);
+                break;
+            }
+        }*/
+    }
+
+    private void Boton_ModificarTarea(Tarea miTarea)
+    {
+        String nombre = et_nombreTarea.getText().toString();
+        String descripcion = et_descripcion.getText().toString();
+
+        if(!nombre.equals(""))
+        {
+            ModificarTarea(ClaseGlobal.UPDATE_TAREA +
+                    "?idTarea=" + miTarea.id +
+                    "&nombre=" + nombre +
+                    "&descripcion=" + descripcion +
+                    "&idActividad=" + GetIdActividad(actividadSeleccionada)
+            );
+        }
+        else
+        {
+            MessageDialog("Por favor, llene los campos de texto requeridos.","Error", "Aceptar");
+        }
+    }
+
+    private void ModificarTarea(String URL)
+    {
+        progressDialog.setMessage("Modificando información...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha modificado la tarea.", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al modificar la tarea.", "Error", "Aceptar");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde.","Error de conexión","Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     /**

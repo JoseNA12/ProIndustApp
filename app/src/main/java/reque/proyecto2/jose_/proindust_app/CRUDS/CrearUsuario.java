@@ -37,6 +37,7 @@ import java.util.List;
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.R;
 import reque.proyecto2.jose_.proindust_app.modelo.RolUsuario;
+import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
 
 public class CrearUsuario extends AppCompatActivity {
 
@@ -95,14 +96,57 @@ public class CrearUsuario extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) { }
         });
 
-
         bt_crear = (Button) findViewById(R.id.bt_crear_ID);
-        bt_crear.setOnClickListener(new View.OnClickListener() {
+        /*bt_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Boton_CrearUsuario();
             }
-        });
+        });*/
+
+        DeterminarAccionBoton(savedInstanceState);
+    }
+
+    private void DeterminarAccionBoton(Bundle savedInstanceState)
+    {
+        String accion;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                accion = null;
+            }
+            else {
+                accion = extras.getString("ACCION");
+
+                if (accion.equals("CREAR"))
+                {
+                    bt_crear.setText("CREAR");
+                    bt_crear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Boton_CrearUsuario();
+                        }
+                    });
+                }
+                else // MODIFICAR
+                {
+                    final Usuario miUsuario = (Usuario) getIntent().getSerializableExtra("OBJETO");
+                    SetValoresComponentes(miUsuario);
+
+                    bt_crear.setText("MODIFICAR");
+                    bt_crear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Boton_ModificarUsuario(miUsuario);
+                        }
+                    });
+                }
+            }
+        }
+        else {
+            accion = (String) savedInstanceState.getSerializable("ACCION");
+        }
+
     }
 
     /**
@@ -245,6 +289,112 @@ public class CrearUsuario extends AppCompatActivity {
     }
 
     /**
+     * Establecer los datos del objeto selccionado en los componentes de la pantalla
+     * @param miColaborador
+     */
+    private void SetValoresComponentes(Usuario miUsuario)
+    {
+        String nombre = miUsuario.nombre;
+        String apellidos = miUsuario.apellidos;
+        String nombreUsuario = miUsuario.nombreUsuario;
+        String correoElectronico = miUsuario.correo;
+        String contrasenia = miUsuario.contrasenia;
+
+        et_nombre.setText(nombre);
+        et_apellidos.setText(apellidos);
+        et_nombreUsuario.setText(nombreUsuario);
+        et_correo.setText(correoElectronico);
+        et_contrasenia.setText(contrasenia);
+        et_repetirContrasenia.setText(contrasenia);
+
+        // no sirve, lista vacia
+        /*for(int i=0; i < adapterSpinner_rolUsuario.getCount(); i++) {
+            if(listaRoles.equals(adapterSpinner_rolUsuario.getItem(i).toString())){
+                sp_rolUsuario.setSelection(i);
+                break;
+            }
+        }*/
+    }
+
+    private void Boton_ModificarUsuario(Usuario miTarea)
+    {
+        String nombre = et_nombre.getText().toString();
+        String apellidos = et_apellidos.getText().toString();
+        String nombreUsuario = et_nombreUsuario.getText().toString();
+        String correoElectronico = et_correo.getText().toString();
+        String contrasenia = et_contrasenia.getText().toString();
+        String repetirContrasenia = et_repetirContrasenia.getText().toString();
+
+        if(!nombre.equals("") && !apellidos.equals("") && !nombreUsuario.equals("") &&
+                !contrasenia.equals("") && !repetirContrasenia.equals("") && !correoElectronico.equals("")) {
+
+            if (!rolSeleccionado.equals(msgRol))
+            {
+                if (contrasenia.equals(repetirContrasenia))
+                {
+                    ModificarUsuario(ClaseGlobal.UPDATE_USUARIO +
+                            "?idUsuario=" + miTarea.id +
+                            "&nombre=" + nombre +
+                            "&apellidos=" + apellidos +
+                            "&idRolUsuario=" + GetIdRol(rolSeleccionado) +
+                            "&nombreUsuario=" + nombreUsuario +
+                            "&correoElectronico=" + correoElectronico +
+                            "&contrasenia=" + contrasenia
+                    );
+                }
+                else
+                {
+                    MessageDialog("Las contraseñas ingresadas no concuerdan!", "Error", "Aceptar");
+                }
+            }
+            else
+            {
+                MessageDialog("Por favor, seleccione un rol de usuario!", "Error", "Aceptar");
+            }
+        }
+        else
+        {
+            MessageDialog("Por favor, complete todos los campos!", "Error", "Aceptar");
+        }
+    }
+
+    private void ModificarUsuario(String URL)
+    {
+        progressDialog.setMessage("Modificando información...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha modificado el usuario.", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al modificar el usuario.", "Error", "Aceptar");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde.","Error de conexión","Aceptar");
+            }
+        });queue.add(stringRequest);
+    }
+
+    /**
      * Despliega un mensaje emergente en pantalla
      * @param message
      * @param pTitulo
@@ -263,7 +413,7 @@ public class CrearUsuario extends AppCompatActivity {
 
     private String GetIdRol(String pRol)
     {
-        String id = "1";  // siempre existirá
+        String id = "error";  // siempre existirá
         for (int i = 0; i < listaRoles.size(); i++)
         {
             if (pRol.equals(listaRoles.get(i).rol))

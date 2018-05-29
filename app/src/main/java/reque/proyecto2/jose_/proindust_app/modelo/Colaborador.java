@@ -1,6 +1,8 @@
 package reque.proyecto2.jose_.proindust_app.modelo;
 
-public class Colaborador {
+import java.io.Serializable;
+
+public class Colaborador implements Serializable {
 
     public String id, pseudonimo, descripcion;
 

@@ -1,6 +1,8 @@
 package reque.proyecto2.jose_.proindust_app.modelo;
 
-public class Proyecto {
+import java.io.Serializable;
+
+public class Proyecto implements Serializable {
 
     public String id, nombre, descripcion, nivelConfianza, rangoInicial, rangoFinal, cantMuestreosP, tiempoRecorrido;
 

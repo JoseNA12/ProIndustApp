@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -136,6 +137,7 @@ public class HorasLibres extends AppCompatActivity {
         });
 
         et_horaInicio = (EditText) findViewById(R.id.et_horaInicio_ID);
+        et_horaInicio.setInputType(InputType.TYPE_NULL); // no mostrar el teclado
         et_horaInicio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,6 +161,7 @@ public class HorasLibres extends AppCompatActivity {
         });
 
         et_horaFinal = (EditText) findViewById(R.id.et_horaFinal_ID);
+        et_horaFinal.setInputType(InputType.TYPE_NULL);
         et_horaFinal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

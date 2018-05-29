@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentProyecto extends Fragment {
+public class FragmentProyecto extends Fragment implements Serializable {
 
     private View view;
 
@@ -96,8 +97,13 @@ public class FragmentProyecto extends Fragment {
                         {
                             if (item.getTitle().equals("Modificar"))
                             {
+                                Intent intent_ = new Intent(getActivity(), CrearProyecto.class); // reusar codigo y utilizar la pantalla de crear
+                                intent_.putExtra("ACCION", "MODIFICAR");
 
-                                Toast.makeText(getActivity(),"Modificar", Toast.LENGTH_SHORT).show();
+                                String nombre = parent.getItemAtPosition(position).toString();
+                                intent_.putExtra("OBJETO", GetObjetoProyecto(nombre));
+
+                                startActivity(intent_);
                             }
                             else // Eliminar
                             {
@@ -119,8 +125,10 @@ public class FragmentProyecto extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearProyecto.class);
-                startActivity(myIntent);
+                Intent intent_ = new Intent(getActivity(), CrearProyecto.class); // reusar codigo y utilizar la pantalla de crear
+                intent_.putExtra("ACCION", "CREAR");
+
+                startActivity(intent_);
             }
         });
 
@@ -310,6 +318,20 @@ public class FragmentProyecto extends Fragment {
             }
         }
         return info;
+    }
+
+    private Proyecto GetObjetoProyecto(String pNombre)
+    {
+        Proyecto obj = null;
+        for(int i = 0; i < listaDatosProyecto.size(); i++)
+        {
+            if (pNombre.equals(listaDatosProyecto.get(i).nombre))
+            {
+                obj = listaDatosProyecto.get(i);
+                break;
+            }
+        }
+        return obj;
     }
 
     /**

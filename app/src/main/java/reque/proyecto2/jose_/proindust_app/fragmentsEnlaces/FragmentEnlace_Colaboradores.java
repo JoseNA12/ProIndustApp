@@ -449,6 +449,16 @@ public class FragmentEnlace_Colaboradores extends Fragment {
     }
 
     /**
+     * Actualizar los datos de la lista cuando se devuelve a esta pantalla despues
+     * de una creación
+     */
+    @Override
+    public void onResume()
+    {
+        RecargarFragmento();
+    }
+
+    /**
      * Despliega un mensaje emergente en pantalla
      * @param message
      * @param pTitulo

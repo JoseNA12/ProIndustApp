@@ -32,19 +32,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.CRUDS.CrearColaborador;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.fragmentsEnlaces.FragmentEnlace_Colaboradores;
 import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentColaborador extends Fragment {
+public class FragmentColaborador extends Fragment implements Serializable {
 
     private View view;
 
@@ -95,8 +97,13 @@ public class FragmentColaborador extends Fragment {
                         {
                             if (item.getTitle().equals("Modificar"))
                             {
+                                Intent intent_ = new Intent(getActivity(), CrearColaborador.class); // reusar codigo y utilizar la pantalla de crear
+                                intent_.putExtra("ACCION", "MODIFICAR");
 
-                                Toast.makeText(getActivity(),"Modificar", Toast.LENGTH_SHORT).show();
+                                String pseudonimo = parent.getItemAtPosition(position).toString();
+                                intent_.putExtra("OBJETO", GetObjetoColaborador(pseudonimo));
+
+                                startActivity(intent_);
                             }
                             else // Eliminar
                             {
@@ -117,8 +124,10 @@ public class FragmentColaborador extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearColaborador.class);
-                startActivity(myIntent);
+                Intent intent_ = new Intent(getActivity(), CrearColaborador.class);
+                intent_.putExtra("ACCION", "CREAR");
+
+                startActivity(intent_);
             }
         });
 
@@ -291,6 +300,20 @@ public class FragmentColaborador extends Fragment {
             }
         }
         return info;
+    }
+
+    private Colaborador GetObjetoColaborador(String pPseudonimo)
+    {
+        Colaborador obj = null;
+        for(int i = 0; i < listaDatosColaborador.size(); i++)
+        {
+            if (pPseudonimo.equals(listaDatosColaborador.get(i).pseudonimo))
+            {
+                obj = listaDatosColaborador.get(i);
+                break;
+            }
+        }
+        return obj;
     }
 
     /**

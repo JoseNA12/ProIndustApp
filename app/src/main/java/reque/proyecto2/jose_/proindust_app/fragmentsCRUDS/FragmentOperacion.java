@@ -30,6 +30,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FragmentOperacion extends Fragment {
+public class FragmentOperacion extends Fragment implements Serializable {
 
     private View view;
 
@@ -92,8 +93,13 @@ public class FragmentOperacion extends Fragment {
                         {
                             if (item.getTitle().equals("Modificar"))
                             {
+                                Intent intent_ = new Intent(getActivity(), CrearOperacion.class); // reusar codigo y utilizar la pantalla de crear
+                                intent_.putExtra("ACCION", "MODIFICAR");
 
-                                Toast.makeText(getActivity(),"Modificar", Toast.LENGTH_SHORT).show();
+                                String nombre = parent.getItemAtPosition(position).toString();
+                                intent_.putExtra("OBJETO", GetObjetoOperacion(nombre));
+
+                                startActivity(intent_);
                             }
                             else // Eliminar
                             {
@@ -115,8 +121,10 @@ public class FragmentOperacion extends Fragment {
         fab_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), CrearOperacion.class);
-                startActivity(myIntent);
+                Intent intent_ = new Intent(getActivity(), CrearOperacion.class); // reusar codigo y utilizar la pantalla de crear
+                intent_.putExtra("ACCION", "CREAR");
+
+                startActivity(intent_);
 
             }
         });
@@ -289,6 +297,20 @@ public class FragmentOperacion extends Fragment {
             }
         }
         return info;
+    }
+
+    private Operacion GetObjetoOperacion(String pNombre)
+    {
+        Operacion obj = null;
+        for(int i = 0; i < listaDatosOperaciones.size(); i++)
+        {
+            if (pNombre.equals(listaDatosOperaciones.get(i).nombre))
+            {
+                obj = listaDatosOperaciones.get(i);
+                break;
+            }
+        }
+        return obj;
     }
 
     /**

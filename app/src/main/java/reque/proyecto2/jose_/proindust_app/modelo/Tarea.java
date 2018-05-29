@@ -1,6 +1,8 @@
 package reque.proyecto2.jose_.proindust_app.modelo;
 
-public class Tarea {
+import java.io.Serializable;
+
+public class Tarea implements Serializable {
 
     public String id, nombre, descripcion, idActividad;
 

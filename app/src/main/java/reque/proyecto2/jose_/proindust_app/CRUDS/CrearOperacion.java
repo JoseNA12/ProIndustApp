@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
 
 
 public class CrearOperacion extends AppCompatActivity {
@@ -43,16 +45,59 @@ public class CrearOperacion extends AppCompatActivity {
         et_nombre = (EditText) findViewById(R.id.et_nombre_ID);
         et_descripcion = (EditText) findViewById(R.id.et_descripcion_ID);
 
-        bt_crear.setOnClickListener(new View.OnClickListener() {
+        /*bt_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Boton_CrearOperacion();
             }
-        });
+        });*/
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Insertando nueva información...");
         progressDialog.setCancelable(false);
+
+        DeterminarAccionBoton(savedInstanceState);
+    }
+
+    private void DeterminarAccionBoton(Bundle savedInstanceState)
+    {
+        String accion;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                accion = null;
+            }
+            else {
+                accion = extras.getString("ACCION");
+
+                if (accion.equals("CREAR"))
+                {
+                    bt_crear.setText("CREAR");
+                    bt_crear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Boton_CrearOperacion();
+                        }
+                    });
+                }
+                else // MODIFICAR
+                {
+                    final Operacion miOperacion = (Operacion) getIntent().getSerializableExtra("OBJETO");
+                    SetValoresComponentes(miOperacion);
+
+                    bt_crear.setText("MODIFICAR");
+                    bt_crear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Boton_ModificarOperacion(miOperacion);
+                        }
+                    });
+                }
+            }
+        }
+        else {
+            accion = (String) savedInstanceState.getSerializable("ACCION");
+        }
 
     }
 
@@ -66,9 +111,9 @@ public class CrearOperacion extends AppCompatActivity {
         }
         else
         {
-                CrearOperacion(ClaseGlobal.INSERT_OPERACION +
-                        "?nombre=" + nombre +
-                        "&descripcion=" + descripcion);
+            CrearOperacion(ClaseGlobal.INSERT_OPERACION +
+                    "?nombre=" + nombre +
+                    "&descripcion=" + descripcion);
         }
     }
 
@@ -109,6 +154,74 @@ public class CrearOperacion extends AppCompatActivity {
             }
         });
         queue.add(stringRequest);
+    }
+
+    /**
+     * Establecer los datos del objeto selccionado en los componentes de la pantalla
+     * @param miColaborador
+     */
+    private void SetValoresComponentes(Operacion miOperacion)
+    {
+        String pseudonimo = miOperacion.nombre;
+        String descripcion = miOperacion.descripcion;
+
+        et_nombre.setText(pseudonimo);
+        et_descripcion.setText(descripcion);
+    }
+
+    private void Boton_ModificarOperacion(Operacion miOperacion)
+    {
+        String nombre = et_nombre.getText().toString();
+        String descripcion = et_descripcion.getText().toString();
+
+        if(!nombre.equals(""))
+        {
+            ModificarOperacion(ClaseGlobal.UPDATE_OPERACION +
+                    "?idOperacion=" + miOperacion.id +
+                    "&nombre=" + nombre +
+                    "&descripcion=" + descripcion
+            );
+        }
+        else
+        {
+            MessageDialog("Por favor, llene los campos de texto requeridos.","Error", "Aceptar");
+        }
+    }
+
+    private void ModificarOperacion(String URL)
+    {
+        progressDialog.setMessage("Modificando información...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        MessageDialog("Se ha modificado la operación.", "Éxito", "Aceptar");
+                    }
+                    else
+                    {
+                        MessageDialog("Error al modificar la operación.", "Error", "Aceptar");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde.","Error de conexión","Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     /**

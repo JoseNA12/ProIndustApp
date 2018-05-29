@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
 
 public class CrearProyecto extends AppCompatActivity {
 
@@ -90,17 +92,60 @@ public class CrearProyecto extends AppCompatActivity {
             }
         });
 
-        bt_crear.setOnClickListener(new View.OnClickListener() {
+        /*bt_crear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Boton_CrearProyecto();
             }
-        });
+        });*/
 
         // Mensaje de carga
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Insertando nueva información...");
         progressDialog.setCancelable(false);
+
+        DeterminarAccionBoton(savedInstanceState);
+    }
+
+    private void DeterminarAccionBoton(Bundle savedInstanceState)
+    {
+        String accion;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                accion = null;
+            }
+            else {
+                accion = extras.getString("ACCION");
+
+                if (accion.equals("CREAR"))
+                {
+                    bt_crear.setText("CREAR");
+                    bt_crear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Boton_CrearProyecto();
+                        }
+                    });
+                }
+                else // MODIFICAR
+                {
+                    final Proyecto miProyecto = (Proyecto) getIntent().getSerializableExtra("OBJETO");
+
+                    bt_crear.setText("MODIFICAR");
+                    bt_crear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+                }
+            }
+        }
+        else {
+            accion = (String) savedInstanceState.getSerializable("ACCION");
+        }
+
     }
 
     private void Boton_CrearProyecto()

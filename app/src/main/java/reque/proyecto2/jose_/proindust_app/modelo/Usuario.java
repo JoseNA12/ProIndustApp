@@ -1,6 +1,8 @@
 package reque.proyecto2.jose_.proindust_app.modelo;
 
-public class Usuario {
+import java.io.Serializable;
+
+public class Usuario implements Serializable {
 
     public String id, nombre, apellidos, idRolUsuario, nombreUsuario, correo, contrasenia;
 
