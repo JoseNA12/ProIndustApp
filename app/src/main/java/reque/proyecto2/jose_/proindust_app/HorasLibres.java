@@ -38,6 +38,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
+import reque.proyecto2.jose_.proindust_app.CRUDS.CrearUsuario;
 import reque.proyecto2.jose_.proindust_app.modelo.HorasLibres_C;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
 import reque.proyecto2.jose_.proindust_app.modelo.ProyectoOperacion;
@@ -231,13 +232,16 @@ public class HorasLibres extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha creado el registro!", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha creado el registro!", "Éxito", "Aceptar");
+
+                        Snackbar.make(HorasLibres.this.findViewById(android.R.id.content),
+                                "Se ha creado el lapso de tiempo!", Snackbar.LENGTH_SHORT).show();
 
                         RefrecarActivity();
                     }
                     else
                     {
-                        MessageDialog("Error al crear el registro!", "Error", "Aceptar");
+                        MessageDialog("Error al crear el lapso de tiempo!", "Error", "Aceptar");
                     }
 
                 }catch (JSONException e){
