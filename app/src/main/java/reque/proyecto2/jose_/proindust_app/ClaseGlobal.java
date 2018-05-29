@@ -91,5 +91,8 @@ public class ClaseGlobal {
     // Iniciar sesion
     public static final String INICIAR_SESION = IP + "iniciar_sesion.php";
 
+    // Muestra
+    public static final String INSERT_MUESTRA = IP + "insertar_muestra.php";
+
 
 }

@@ -69,6 +69,8 @@ public class FragmentEnlace_Tareas extends Fragment {
     private List<Tarea> listaDatosTareas;
     private List<OperacionTarea> listaOperacionesTareas;
 
+    private boolean isBackFromB;
+
     public FragmentEnlace_Tareas() {
         // Required empty public constructor
     }
@@ -77,6 +79,8 @@ public class FragmentEnlace_Tareas extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_enlace__tareas, container, false);
+
+        isBackFromB = false;
 
         // Mensaje de carga
         progressDialog = new ProgressDialog(getActivity());
@@ -448,6 +452,16 @@ public class FragmentEnlace_Tareas extends Fragment {
     {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this).attach(this).commit();
+    }
+
+    /**
+     * Recargar el fragmento cuando se presiona el boton de atras en la pantalla de Crear
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (isBackFromB) { RecargarFragmento(); } //Do something
     }
 
     /**
