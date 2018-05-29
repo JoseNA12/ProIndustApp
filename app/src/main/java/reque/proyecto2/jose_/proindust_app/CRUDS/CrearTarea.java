@@ -310,12 +310,19 @@ public class CrearTarea extends AppCompatActivity {
 
         if(!nombre.equals(""))
         {
-            ModificarTarea(ClaseGlobal.UPDATE_TAREA +
-                    "?idTarea=" + miTarea.id +
-                    "&nombre=" + nombre +
-                    "&descripcion=" + descripcion +
-                    "&idActividad=" + GetIdActividad(actividadSeleccionada)
-            );
+            if (!actividadSeleccionada.equals(msgActividad))
+            {
+                ModificarTarea(ClaseGlobal.UPDATE_TAREA +
+                        "?idTarea=" + miTarea.id +
+                        "&nombre=" + nombre +
+                        "&descripcion=" + descripcion +
+                        "&idActividad=" + GetIdActividad(actividadSeleccionada)
+                );
+            }
+            else
+            {
+                MessageDialog("Por favor, seleccione el tipo de actividad para la tarea!", "Error", "Aceptar");
+            }
         }
         else
         {

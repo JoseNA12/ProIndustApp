@@ -1,8 +1,10 @@
 package reque.proyecto2.jose_.proindust_app;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -15,6 +17,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import reque.proyecto2.jose_.proindust_app.CRUDS.CRUDS;
 import reque.proyecto2.jose_.proindust_app.enlacesDatos.Enlaces_Datos;
@@ -27,6 +32,7 @@ public class MenuPrincipal extends AppCompatActivity
     private FloatingActionButton fab;
     private FloatingActionButton fab_enlaces;
 
+    private TextView tv_usuario, tv_rolUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +79,15 @@ public class MenuPrincipal extends AppCompatActivity
                 startActivity(intent_menuPrincipal);
             }
         });
+
+        View hView =  navigationView.getHeaderView(0);
+        tv_usuario = (TextView) hView.findViewById(R.id.tv_usuario_ID);
+        tv_usuario.setText(ClaseGlobal.usuarioActual.nombre);
+
+        tv_rolUsuario= (TextView) hView.findViewById(R.id.tv_rolUsuario_ID);
+        tv_rolUsuario.setText(ClaseGlobal.usuarioActual.correo);
+
+
 
         MostrarComponentes_usuario(savedInstanceState);
     }
@@ -155,11 +170,12 @@ public class MenuPrincipal extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_info_contacto) {
-            // Handle the camera action
+            MessageDialog(ClaseGlobal.usuarioActual.toString(), "", "Cerrar");
         }
         else if (id == R.id.nav_cerrar_sesion)
         {
             Intent intent_iniciarsesion = new Intent(MenuPrincipal.this, IniciarSesionActivity.class);
+            ClaseGlobal.usuarioActual = null;
             startActivity(intent_iniciarsesion);
         }
 
@@ -181,6 +197,17 @@ public class MenuPrincipal extends AppCompatActivity
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
+        AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 }
