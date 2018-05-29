@@ -2,6 +2,7 @@ package reque.proyecto2.jose_.proindust_app.CRUDS;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -178,7 +179,10 @@ public class CrearTarea extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha creado la tarea!", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha creado la tarea!", "Éxito", "Aceptar");
+
+                        Snackbar.make(CrearTarea.this.findViewById(android.R.id.content),
+                                "Se ha creado la tarea!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
@@ -345,11 +349,13 @@ public class CrearTarea extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha modificado la tarea.", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha modificado la tarea!", "Éxito", "Aceptar");
+                        Snackbar.make(CrearTarea.this.findViewById(android.R.id.content),
+                                "Se ha modificado la tarea!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        MessageDialog("Error al modificar la tarea.", "Error", "Aceptar");
+                        MessageDialog("Error al modificar la tarea!", "Error", "Aceptar");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

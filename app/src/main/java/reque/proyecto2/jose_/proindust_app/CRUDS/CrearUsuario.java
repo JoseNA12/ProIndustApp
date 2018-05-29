@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -212,7 +213,10 @@ public class CrearUsuario extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha creado el usuario!", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha creado el usuario!", "Éxito", "Aceptar");
+
+                        Snackbar.make(CrearUsuario.this.findViewById(android.R.id.content),
+                                "Se ha creado el usuario!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
@@ -373,11 +377,13 @@ public class CrearUsuario extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha modificado el usuario.", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha modificado el usuario!", "Éxito", "Aceptar");
+                        Snackbar.make(CrearUsuario.this.findViewById(android.R.id.content),
+                                "Se ha modificado el usuario!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        MessageDialog("Error al modificar el usuario.", "Error", "Aceptar");
+                        MessageDialog("Error al modificar el usuario!", "Error", "Aceptar");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

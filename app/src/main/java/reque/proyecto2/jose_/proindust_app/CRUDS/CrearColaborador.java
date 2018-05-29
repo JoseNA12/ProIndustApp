@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.enlacesDatos.CrearEnlace_Operaciones;
 import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
 
 public class CrearColaborador extends AppCompatActivity {
@@ -140,7 +141,9 @@ public class CrearColaborador extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha creado el colaborador.", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha creado el colaborador.", "Éxito", "Aceptar");
+                        Snackbar.make(CrearColaborador.this.findViewById(android.R.id.content),
+                                "Se ha creado el colaborador!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
@@ -208,11 +211,14 @@ public class CrearColaborador extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha modificado al colaborador.", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha modificado al colaborador!", "Éxito", "Aceptar");
+
+                        Snackbar.make(CrearColaborador.this.findViewById(android.R.id.content),
+                                "Se ha modificado al colaborador!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        MessageDialog("Error al modificar al colaborador.", "Error", "Aceptar");
+                        MessageDialog("Error al modificar al colaborador!", "Error", "Aceptar");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

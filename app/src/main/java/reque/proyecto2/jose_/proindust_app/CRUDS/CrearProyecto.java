@@ -3,15 +3,19 @@ package reque.proyecto2.jose_.proindust_app.CRUDS;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +44,10 @@ public class CrearProyecto extends AppCompatActivity {
     private Button bt_crear;
     private SeekBar barraNivelConfianza;
     private TextView textoNivelConfianza;
+
+    private Spinner sp_estado;
+    private ArrayAdapter<String> adapterSpinner_estado;
+    private String estadoSeleccionado;
 
     private ProgressDialog progressDialog;
 
@@ -99,6 +107,21 @@ public class CrearProyecto extends AppCompatActivity {
             }
         });*/
 
+        sp_estado = (Spinner) findViewById(R.id.sp_estado_ID);
+        adapterSpinner_estado = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, ClaseGlobal.estadosProyecto);
+        adapterSpinner_estado.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_estado.setAdapter(adapterSpinner_estado);
+        sp_estado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                estadoSeleccionado = sp_estado.getSelectedItem().toString();
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
         // Mensaje de carga
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Insertando nueva información...");
@@ -152,8 +175,8 @@ public class CrearProyecto extends AppCompatActivity {
     {
         if(!et_nombre.getText().toString().equals("") &&
                 !et_rangoInicio.getText().toString().equals("") && !et_rangoFinal.getText().toString().equals("") &&
-                !et_cantMuestreosP.getText().toString().equals("") && !et_tiempoRecorrido.getText().toString().equals("")) {
-
+                !et_cantMuestreosP.getText().toString().equals("") && !et_tiempoRecorrido.getText().toString().equals(""))
+        {
             CrearProyecto(ClaseGlobal.INSERT_PROYECTO +
                     "?nombre=" + et_nombre.getText().toString() +
                     "&descripcion=" + et_descripcion.getText().toString() +
@@ -161,7 +184,8 @@ public class CrearProyecto extends AppCompatActivity {
                     "&rangoInicial=" + et_rangoInicio.getText().toString() +
                     "&rangoFinal=" + et_rangoFinal.getText().toString() +
                     "&cantMuestreosP=" + et_cantMuestreosP.getText().toString() +
-                    "&tiempoRecorrido=" + et_tiempoRecorrido.getText().toString()
+                    "&tiempoRecorrido=" + et_tiempoRecorrido.getText().toString() +
+                    "&estado=" + estadoSeleccionado
             );
 
         }
@@ -184,13 +208,15 @@ public class CrearProyecto extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(response);
 
-                    if (jsonObject.getString("status").equals("false"))
+                    if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Error al crear el proyecto!", "Error", "Aceptar");
+                        // MessageDialog("Se ha creado el proyecto!", "Éxito", "Aceptar");
+                        Snackbar.make(CrearProyecto.this.findViewById(android.R.id.content),
+                                "Se ha creado el proyecto!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        MessageDialog("Se ha creado el proyecto!", "Éxito", "Aceptar");
+                        MessageDialog("Error al crear el proyecto!", "Error", "Aceptar");
                     }
 
                 }catch (JSONException e){

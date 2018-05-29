@@ -2,6 +2,7 @@ package reque.proyecto2.jose_.proindust_app.enlacesDatos;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -136,7 +137,10 @@ public class CrearEnlace_Operaciones extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha creado el enlace!", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha creado el enlace!", "Éxito", "Aceptar");
+
+                        Snackbar.make(CrearEnlace_Operaciones.this.findViewById(android.R.id.content),
+                                "Se ha creado el enlace!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {

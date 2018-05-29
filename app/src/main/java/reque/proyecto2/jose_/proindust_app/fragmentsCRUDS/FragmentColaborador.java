@@ -262,7 +262,10 @@ public class FragmentColaborador extends Fragment implements Serializable {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                       MessageDialog("Se ha eliminado al colaborador!", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha eliminado al colaborador!", "Éxito", "Aceptar");
+
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                "Se ha eliminado al colaborador!", Snackbar.LENGTH_SHORT).show();
 
                         ConsultarDatosTabla(ClaseGlobal.SELECT_COLABORADORES_ALL);
                     }

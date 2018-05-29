@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -201,9 +202,10 @@ public class FragmentProyecto extends Fragment implements Serializable {
                         String rangoFinal = jsonArray.getJSONObject(i).get("rangoFinal").toString();
                         String cantMuestreosP = jsonArray.getJSONObject(i).get("cantMuestreosP").toString();
                         String tiempoRecorrido = jsonArray.getJSONObject(i).get("tiempoRecorrido").toString();
+                        String estado = jsonArray.getJSONObject(i).get("estado").toString();
 
                         AgregarProyecto(new
-                                Proyecto(idProyecto, nombre, descripcion, nivelConfianza, rangoInicial, rangoFinal, cantMuestreosP, tiempoRecorrido));
+                                Proyecto(idProyecto, nombre, descripcion, nivelConfianza, rangoInicial, rangoFinal, cantMuestreosP, tiempoRecorrido, estado));
                     }
 
                     if (listaElementos.size() != 0)
@@ -280,7 +282,10 @@ public class FragmentProyecto extends Fragment implements Serializable {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha eliminado el proyecto!", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha eliminado el proyecto!", "Éxito", "Aceptar");
+
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                "Se ha eliminado el proyecto!", Snackbar.LENGTH_SHORT).show();
 
                         ConsultarDatosTabla(ClaseGlobal.SELECT_PROYECTOS_ALL); // Actualizar la tabla
                     }

@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -259,7 +260,10 @@ public class FragmentOperacion extends Fragment implements Serializable {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha eliminado la operación!", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha eliminado la operación!", "Éxito", "Aceptar");
+
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                "Se ha eliminado la operación!", Snackbar.LENGTH_SHORT).show();
 
                         ConsultarDatosTabla(ClaseGlobal.SELECT_OPERACIONES_ALL);
                     }

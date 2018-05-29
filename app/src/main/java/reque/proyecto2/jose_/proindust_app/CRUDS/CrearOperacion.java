@@ -2,6 +2,7 @@ package reque.proyecto2.jose_.proindust_app.CRUDS;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
@@ -130,13 +131,16 @@ public class CrearOperacion extends AppCompatActivity {
                 try {
                     JSONObject object = new JSONObject(response);
 
-                    if (object.getString("status").equals("false"))
+                    if (!object.getString("status").equals("false"))
                     {
-                        MessageDialog("Error al crear la operación!", "Error", "Aceptar");
+                        // MessageDialog("Se ha creado la operación!", "Éxito", "Aceptar");
+
+                        Snackbar.make(CrearOperacion.this.findViewById(android.R.id.content),
+                                "Se ha creado la operación!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        MessageDialog("Se ha creado la operación!", "Éxito", "Aceptar");
+                        MessageDialog("Error al crear la operación!", "Error", "Aceptar");
                     }
 
                 } catch (JSONException e) {
@@ -203,11 +207,13 @@ public class CrearOperacion extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        MessageDialog("Se ha modificado la operación.", "Éxito", "Aceptar");
+                        // MessageDialog("Se ha modificado la operación.", "Éxito", "Aceptar");
+                        Snackbar.make(CrearOperacion.this.findViewById(android.R.id.content),
+                                "Se ha modificado la operación!", Snackbar.LENGTH_SHORT).show();
                     }
                     else
                     {
-                        MessageDialog("Error al modificar la operación.", "Error", "Aceptar");
+                        MessageDialog("Error al modificar la operación!", "Error", "Aceptar");
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
