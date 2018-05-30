@@ -232,6 +232,7 @@ public class Muestreo extends AppCompatActivity {
 
     private void RegistrarMuestra(String URL)
     {
+        progressDialog.setMessage("Insertando nueva información...");
         progressDialog.show();
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -434,6 +435,9 @@ public class Muestreo extends AppCompatActivity {
 
     private void ParametrosAmbiente()
     {
+        progressDialog.setMessage("Obteniendo la temperatura y humedad...");
+        progressDialog.show();
+
         GetLocacion();
 
         if (!ClaseGlobal.latitud.equals("error") && !ClaseGlobal.longitud.equals("error"))
@@ -444,6 +448,7 @@ public class Muestreo extends AppCompatActivity {
         {
             MensajeErrorConexion();
         }
+        progressDialog.dismiss();
     }
 
     private void GetTiempo()
@@ -460,6 +465,12 @@ public class Muestreo extends AppCompatActivity {
                 if (ClaseGlobal.humedad.equals("error") || ClaseGlobal.temperatura.equals("error"))
                 {
                     MensajeErrorConexion();
+                }
+                else
+                {
+                    Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                            "Temperatura: " + ClaseGlobal.temperatura + " | " +
+                                    "Humedad: " + ClaseGlobal.humedad, Snackbar.LENGTH_LONG).show();
                 }
             }
         });
