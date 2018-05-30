@@ -538,7 +538,7 @@ public class Muestreo extends AppCompatActivity {
     public void InsertarParemetrosManual()
     {
 
-        
+
 
     }
 
