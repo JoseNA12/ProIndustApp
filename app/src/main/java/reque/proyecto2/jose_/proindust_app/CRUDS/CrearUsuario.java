@@ -320,7 +320,7 @@ public class CrearUsuario extends AppCompatActivity {
         }*/
     }
 
-    private void Boton_ModificarUsuario(Usuario miTarea)
+    private void Boton_ModificarUsuario(Usuario miUsuario)
     {
         String nombre = et_nombre.getText().toString();
         String apellidos = et_apellidos.getText().toString();
@@ -337,7 +337,7 @@ public class CrearUsuario extends AppCompatActivity {
                 if (contrasenia.equals(repetirContrasenia))
                 {
                     ModificarUsuario(ClaseGlobal.UPDATE_USUARIO +
-                            "?idUsuario=" + miTarea.id +
+                            "?idUsuario=" + miUsuario.id +
                             "&nombre=" + nombre +
                             "&apellidos=" + apellidos +
                             "&idRolUsuario=" + GetIdRol(rolSeleccionado) +

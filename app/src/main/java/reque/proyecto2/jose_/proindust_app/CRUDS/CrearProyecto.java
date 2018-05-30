@@ -154,12 +154,13 @@ public class CrearProyecto extends AppCompatActivity {
                 else // MODIFICAR
                 {
                     final Proyecto miProyecto = (Proyecto) getIntent().getSerializableExtra("OBJETO");
+                    SetValoresComponentes(miProyecto);
 
                     bt_crear.setText("MODIFICAR");
                     bt_crear.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                            Boton_ModificarProyecto(miProyecto);
                         }
                     });
                 }
@@ -174,20 +175,59 @@ public class CrearProyecto extends AppCompatActivity {
     private void Boton_CrearProyecto()
     {
         if(!et_nombre.getText().toString().equals("") &&
-                !et_rangoInicio.getText().toString().equals("") && !et_rangoFinal.getText().toString().equals("") &&
                 !et_cantMuestreosP.getText().toString().equals("") && !et_tiempoRecorrido.getText().toString().equals(""))
         {
-            CrearProyecto(ClaseGlobal.INSERT_PROYECTO +
-                    "?nombre=" + et_nombre.getText().toString() +
-                    "&descripcion=" + et_descripcion.getText().toString() +
-                    "&nivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
-                    "&rangoInicial=" + et_rangoInicio.getText().toString() +
-                    "&rangoFinal=" + et_rangoFinal.getText().toString() +
-                    "&cantMuestreosP=" + et_cantMuestreosP.getText().toString() +
-                    "&tiempoRecorrido=" + et_tiempoRecorrido.getText().toString() +
-                    "&estado=" + estadoSeleccionado
-            );
+            int cantMuestreosP_int = Integer.parseInt(et_cantMuestreosP.getText().toString());
+            if (cantMuestreosP_int >= 30)
+            {
+                if (!sch_rangoAleatorio.isChecked())
+                {
+                    if (!et_rangoInicio.getText().toString().equals("") && !et_rangoFinal.getText().toString().equals(""))
+                    {
+                        int rangoInicio_int = Integer.parseInt(et_rangoInicio.getText().toString());
+                        int rangoFinal_int = Integer.parseInt(et_rangoFinal.getText().toString());
 
+                        if (rangoInicio_int < rangoFinal_int)
+                        {
+                            CrearProyecto(ClaseGlobal.INSERT_PROYECTO +
+                                    "?nombre=" + et_nombre.getText().toString() +
+                                    "&descripcion=" + et_descripcion.getText().toString() +
+                                    "&nivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
+                                    "&rangoInicial=" + et_rangoInicio.getText().toString() +
+                                    "&rangoFinal=" + et_rangoFinal.getText().toString() +
+                                    "&cantMuestreosP=" + et_cantMuestreosP.getText().toString() +
+                                    "&tiempoRecorrido=" + et_tiempoRecorrido.getText().toString() +
+                                    "&estado=" + estadoSeleccionado
+                            );
+                        }
+                        else
+                        {
+                            MessageDialog("El valor inicial de tiempo debe ser mayor al valor final de tiempo!", "Error", "Aceptar");
+                        }
+                    }
+                    else
+                    {
+                        MessageDialog("Por favor, ingrese los rangos de tiempo!", "Error", "Aceptar");
+                    }
+                }
+                else // rangos aleatorios
+                {
+                    CrearProyecto(ClaseGlobal.INSERT_PROYECTO +
+                            "?nombre=" + et_nombre.getText().toString() +
+                            "&descripcion=" + et_descripcion.getText().toString() +
+                            "&nivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
+                            "&rangoInicial=" + "123123123" +
+                            "&rangoFinal=" + "123123123" +
+                            "&cantMuestreosP=" + et_cantMuestreosP.getText().toString() +
+                            "&tiempoRecorrido=" + et_tiempoRecorrido.getText().toString() +
+                            "&estado=" + estadoSeleccionado
+                    );
+                }
+            }
+            else
+            {
+                MessageDialog("La cantidad de muestreos preliminares debe ser igual o mayor a 30!", "Error", "Aceptar");
+            }
         }
         else
         {
@@ -234,6 +274,137 @@ public class CrearProyecto extends AppCompatActivity {
                         "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
+    }
+
+    private void Boton_ModificarProyecto(Proyecto miProyecto)
+    {
+        if(!et_nombre.getText().toString().equals("") &&
+                !et_cantMuestreosP.getText().toString().equals("") && !et_tiempoRecorrido.getText().toString().equals(""))
+        {
+            int cantMuestreosP_int = Integer.parseInt(et_cantMuestreosP.getText().toString());
+            if (cantMuestreosP_int >= 30)
+            {
+                if (!sch_rangoAleatorio.isChecked())
+                {
+                    if (!et_rangoInicio.getText().toString().equals("") && !et_rangoFinal.getText().toString().equals(""))
+                    {
+                        int rangoInicio_int = Integer.parseInt(et_rangoInicio.getText().toString());
+                        int rangoFinal_int = Integer.parseInt(et_rangoFinal.getText().toString());
+
+                        if (rangoInicio_int < rangoFinal_int)
+                        {
+                            ModificarProyecto(ClaseGlobal.UPDATE_PROYECTO +
+                                    "?idProyecto=" + miProyecto.id +
+                                    "&nombre=" + et_nombre.getText().toString() +
+                                    "&descripcion=" + et_descripcion.getText().toString() +
+                                    "&nivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
+                                    "&rangoInicial=" + et_rangoInicio.getText().toString() +
+                                    "&rangoFinal=" + et_rangoFinal.getText().toString() +
+                                    "&cantMuestreosP=" + et_cantMuestreosP.getText().toString() +
+                                    "&tiempoRecorrido=" + et_tiempoRecorrido.getText().toString() +
+                                    "&estado=" + estadoSeleccionado
+                            );
+                        }
+                        else
+                        {
+                            MessageDialog("El valor inicial de tiempo debe ser mayor al valor final de tiempo!", "Error", "Aceptar");
+                        }
+                    }
+                    else
+                    {
+                        MessageDialog("Por favor, ingrese los rangos de tiempo!", "Error", "Aceptar");
+                    }
+                }
+                else // rangos aleatorios
+                {
+                    ModificarProyecto(ClaseGlobal.UPDATE_PROYECTO +
+                            "?nombre=" + et_nombre.getText().toString() +
+                            "&descripcion=" + et_descripcion.getText().toString() +
+                            "&nivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
+                            "&rangoInicial=" + "123123123" +
+                            "&rangoFinal=" + "123123123" +
+                            "&cantMuestreosP=" + et_cantMuestreosP.getText().toString() +
+                            "&tiempoRecorrido=" + et_tiempoRecorrido.getText().toString() +
+                            "&estado=" + estadoSeleccionado
+                    );
+                }
+            }
+            else
+            {
+                MessageDialog("La cantidad de muestreos preliminares debe ser igual o mayor a 30!", "Error", "Aceptar");
+            }
+        }
+        else
+        {
+            MessageDialog("Por favor, complete todos los campos!", "Error", "Aceptar");
+        }
+
+    }
+
+    private void ModificarProyecto(String URL)
+    {
+        progressDialog.setMessage("Modificando información...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        // MessageDialog("Se ha modificado el usuario!", "Éxito", "Aceptar");
+                        Snackbar.make(CrearProyecto.this.findViewById(android.R.id.content),
+                                "Se ha modificado el proyecto!", Snackbar.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        MessageDialog("Error al modificar el usuario!", "Error", "Aceptar");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde.","Error de conexión","Aceptar");
+            }
+        });queue.add(stringRequest);
+    }
+
+    /**
+     * Establecer los datos del objeto selccionado en los componentes de la pantalla
+     * @param miColaborador
+     */
+    private void SetValoresComponentes(Proyecto miProyecto)
+    {
+        String nombre = miProyecto.nombre;
+        String descripcion = miProyecto.descripcion;
+        String nivelConfianza = miProyecto.nivelConfianza;
+        String rangoInicial = miProyecto.rangoInicial;
+        String rangoFinal = miProyecto.rangoFinal;
+        String cantMuestresP = miProyecto.cantMuestreosP;
+        String tiempoRecorrido = miProyecto.tiempoRecorrido;
+        String estado = miProyecto.estado;
+
+        et_nombre.setText(nombre);
+        et_descripcion.setText(descripcion);
+        textoNivelConfianza.setText(nivelConfianza);
+        barraNivelConfianza.setProgress(Integer.parseInt(nivelConfianza));
+        et_rangoInicio.setText(rangoInicial);
+        et_rangoFinal.setText(rangoFinal);
+        et_cantMuestreosP.setText(cantMuestresP);
+        et_tiempoRecorrido.setText(tiempoRecorrido);
+
+        int posicion = adapterSpinner_estado.getPosition(estado);
+        sp_estado.setSelection(posicion);
     }
 
     /**
