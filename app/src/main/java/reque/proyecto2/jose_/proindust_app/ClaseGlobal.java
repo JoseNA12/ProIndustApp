@@ -19,7 +19,7 @@ import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
 public class ClaseGlobal {
 
     public static Usuario usuarioActual;
-    public static final String[] estadosProyecto = {"ACTIVO", "PAUSADO"};
+    public static final String[] estadosProyecto = {"EN CURSO", "PAUSADO"};
 
     // IP del servidor
     private static final String IP = "https://proindustapp.000webhostapp.com/";

@@ -30,6 +30,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.R;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
@@ -44,6 +47,7 @@ public class CrearProyecto extends AppCompatActivity {
     private Button bt_crear;
     private SeekBar barraNivelConfianza;
     private TextView textoNivelConfianza;
+    private int nivelConfianza = 90;
 
     private Spinner sp_estado;
     private ArrayAdapter<String> adapterSpinner_estado;
@@ -72,21 +76,27 @@ public class CrearProyecto extends AppCompatActivity {
                 et_rangoFinal.setEnabled(!isChecked);
             }
         });
+        sch_rangoAleatorio.setVisibility(View.INVISIBLE);
+        sch_rangoAleatorio.setEnabled(false);
 
         bt_crear = (Button) findViewById(R.id.bt_crear_ID);
 
-        barraNivelConfianza = (SeekBar) findViewById(R.id.sb_nivelConfianza_ID);
-
         textoNivelConfianza = (TextView) findViewById(R.id.tv_porcentaje_ID);
+        barraNivelConfianza = (SeekBar) findViewById(R.id.sb_nivelConfianza_ID);
+        final int MIN = 90; final int MAX = 100; final int STEP = 1;
+        // int value = (100 * (STEP - MIN)) / (MAX - MIN);
+        textoNivelConfianza.setText("90%");
 
         barraNivelConfianza.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                // TODO Auto-generated method stub
-                String valor = String.valueOf(progress) + "%";
-                textoNivelConfianza.setText(valor);
+
+                double value = Math.round((progress * (MAX - MIN)) / 100);
+                nivelConfianza = (((int) value + MIN) / STEP) * STEP;
+
+                textoNivelConfianza.setText(Integer.toString(nivelConfianza) + "%");
             }
 
             @Override
@@ -192,7 +202,7 @@ public class CrearProyecto extends AppCompatActivity {
                             CrearProyecto(ClaseGlobal.INSERT_PROYECTO +
                                     "?nombre=" + et_nombre.getText().toString() +
                                     "&descripcion=" + et_descripcion.getText().toString() +
-                                    "&nivelConfianza=" + Integer.toString(barraNivelConfianza.getProgress()) +
+                                    "&nivelConfianza=" + Integer.toString(nivelConfianza) +
                                     "&rangoInicial=" + et_rangoInicio.getText().toString() +
                                     "&rangoFinal=" + et_rangoFinal.getText().toString() +
                                     "&cantMuestreosP=" + et_cantMuestreosP.getText().toString() +
@@ -274,6 +284,13 @@ public class CrearProyecto extends AppCompatActivity {
                         "Error de conexión", "Aceptar");
             }
         });queue.add(stringRequest);
+    }
+
+    private List<Integer> ObtenerValorAleatorio()
+    {
+        List<Integer> valores = new ArrayList<Integer>();
+
+        return valores;
     }
 
     private void Boton_ModificarProyecto(Proyecto miProyecto)

@@ -32,7 +32,7 @@ import reque.proyecto2.jose_.proindust_app.enlacesDatos.Enlaces_Datos;
 public class MenuPrincipal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Button bt_Muestreo;
+    private Button bt_Muestreo, bt_graficos;
     private Toolbar toolbar_operaciones;
     private FloatingActionButton fab;
     private FloatingActionButton fab_enlaces;
@@ -85,6 +85,16 @@ public class MenuPrincipal extends AppCompatActivity
             }
         });
 
+        // Boton de los graficos
+        bt_graficos = (Button) findViewById(R.id.bt_graficos_ID);
+        bt_graficos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_ = new Intent(MenuPrincipal.this, GraficosActivity.class);
+                startActivity(intent_);
+            }
+        });
+
         View hView = navigationView.getHeaderView(0);
         tv_usuario = (TextView) hView.findViewById(R.id.tv_usuario_ID);
         tv_usuario.setText(ClaseGlobal.usuarioActual.nombre);
@@ -94,12 +104,11 @@ public class MenuPrincipal extends AppCompatActivity
 
         MostrarComponentes_usuario(savedInstanceState);
 
-        // GetTiempo();
     }
 
     /**
-     * Indentificar en tipo de usuario al momento de crear la pantalla
-     * recibe un parametro "ROL" por parte de la pantalla del login
+     * Indentificar el tipo de usuario al momento de crear la pantalla
+     * Recibe un parametro "ROL" por parte de la pantalla del login
      * @param savedInstanceState
      */
     private void MostrarComponentes_usuario(Bundle savedInstanceState)
@@ -117,17 +126,23 @@ public class MenuPrincipal extends AppCompatActivity
                 {
                     fab_enlaces.setEnabled(true);
                     fab.setEnabled(true);
+                    bt_graficos.setEnabled(true);
 
                     fab_enlaces.setVisibility(View.VISIBLE);
                     fab.setVisibility(View.VISIBLE);
+                    bt_graficos.setVisibility(View.VISIBLE);
+
                 }
-                else
+                else // es ANALISTA
                 {
                     fab_enlaces.setEnabled(false);
                     fab.setEnabled(false);
+                    bt_graficos.setEnabled(false);
 
                     fab_enlaces.setVisibility(View.INVISIBLE);
                     fab.setVisibility(View.INVISIBLE);
+                    bt_graficos.setVisibility(View.INVISIBLE);
+
                 }
             }
         }

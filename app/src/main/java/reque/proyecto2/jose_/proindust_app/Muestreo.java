@@ -24,7 +24,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -77,10 +79,9 @@ public class Muestreo extends AppCompatActivity {
 
     private ArrayList<String> listaTarea, listaIDTarea;
 
-    String m_Text = "";
-
+    // request temperatura y humedad
     static final int REQUEST_LOCATION = 1;
-    LocationManager locationManager;
+    private LocationManager locationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +179,9 @@ public class Muestreo extends AppCompatActivity {
         ParametrosAmbiente(); // Temperatura y humedad
     }
 
+    /**
+     * Función atada al boton de registrar
+     */
     private void Boton_RegistrarMuestra()
     {
         Date date = new Date();
@@ -220,9 +224,9 @@ public class Muestreo extends AppCompatActivity {
             RegistrarMuestra(ClaseGlobal.INSERT_MUESTRA +
                     "?comentario=" + comentario +
                     "&fecha_hora=" + hourdateFormat.format(date).toString() +
-                    "&humedad=" + ClaseGlobal.humedad +//Hay que buscar la manera de obtenerla
+                    "&humedad=" + ClaseGlobal.humedad +
                     "&idTipoMuestra=" + tipoMuestra +
-                    "&temperatura=" + ClaseGlobal.temperatura +//Hay que buscar la manera de obtenerla
+                    "&temperatura=" + ClaseGlobal.temperatura +
                     "&idUsuario=" + ClaseGlobal.usuarioActual.id +
                     "&idColaborador=" + idColaborador +
                     "&idProyecto=" + idProyecto +
@@ -230,6 +234,10 @@ public class Muestreo extends AppCompatActivity {
         }
     }
 
+    /**
+     * Función encargada de realizar el request a la base de datos para almacenar la muestra
+     * @param URL
+     */
     private void RegistrarMuestra(String URL)
     {
         progressDialog.setMessage("Insertando nueva información...");
@@ -433,6 +441,11 @@ public class Muestreo extends AppCompatActivity {
         return arraySpinner;
     }
 
+    /**
+     * Función llamada en onCreate.
+     * Solicita primero los parametros de latitud y longitud para posteriormente ejecutar
+     * la función encargada de hacer el request de los valores de humedad y temperatura
+     */
     private void ParametrosAmbiente()
     {
         progressDialog.setMessage("Obteniendo la temperatura y humedad...");
@@ -451,6 +464,9 @@ public class Muestreo extends AppCompatActivity {
         progressDialog.dismiss();
     }
 
+    /**
+     * Función encargada de obtener y hacer el request de los valores de humedad y temperatura
+     */
     private void GetTiempo()
     {
         ClaseGlobal.humedad = "error"; ClaseGlobal.temperatura = "error";
@@ -469,14 +485,18 @@ public class Muestreo extends AppCompatActivity {
                 else
                 {
                     Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
-                            "Temperatura: " + ClaseGlobal.temperatura + " | " +
-                                    "Humedad: " + ClaseGlobal.humedad, Snackbar.LENGTH_LONG).show();
+                            "Temperatura: " + ClaseGlobal.temperatura + "°" + "  |  " +
+                                    "Humedad: " + ClaseGlobal.humedad + "%", Snackbar.LENGTH_LONG).show();
                 }
             }
         });
         asyncTask.execute(ClaseGlobal.latitud, ClaseGlobal.longitud); //  asyncTask.execute("Latitude", "Longitude")
     }
 
+    /**
+     * Función encargada de obtener la latitud y longitud de la ubicación actual de la
+     * persona
+     */
     private void GetLocacion()
     {
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -505,6 +525,11 @@ public class Muestreo extends AppCompatActivity {
         }
     }
 
+    /**
+     * Despliega un cuadro en pantalla indicando que no ha sido posible obtener
+     * los valores de temperatura y humedad.
+     * Se pregunta si desea cancelar, reintentar o insertar los valores manualmente
+     */
     private void MensajeErrorConexion()
     {
         final AlertDialog.Builder builderEliminar = new AlertDialog.Builder(this);
@@ -537,8 +562,20 @@ public class Muestreo extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 dialog.dismiss();
-                Intent intent_ = new Intent(Muestreo.this, MenuPrincipal.class);
-                startActivity(intent_);
+
+                // ADMINISTRADOR
+                if (ClaseGlobal.usuarioActual.idRolUsuario.equals("1"))
+                {
+                    Intent intent_ = new Intent(Muestreo.this, MenuPrincipal.class);
+                    intent_.putExtra("ROL", "ADMINISTRADOR");
+                    startActivity(intent_);
+                }
+                else // ANALISTA
+                {
+                    Intent intent_ = new Intent(Muestreo.this, MenuPrincipal.class);
+                    intent_.putExtra("ROL", "ANALISTA");
+                    startActivity(intent_);
+                }
             }
         });
 
@@ -546,13 +583,75 @@ public class Muestreo extends AppCompatActivity {
         alert.show();
     }
 
+    /**
+     * Función que despliega un cuadro en pantalla para insertar los valores
+     * de temperatura y humedad en caso de querer realizar el procedimiento manual
+     * o por problemas con GPS
+     */
     public void InsertarParemetrosManual()
     {
+        AlertDialog.Builder alert = new AlertDialog.Builder(Muestreo.this);
+        alert.setTitle("Registrar valores");
 
+        LinearLayout layout = new LinearLayout(Muestreo.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
 
+        final EditText et_temperatura = new EditText(Muestreo.this);
+        et_temperatura.setHint("Temperatura");
+            et_temperatura.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(et_temperatura);
 
+        final EditText et_humedad = new EditText(Muestreo.this);
+        et_humedad.setHint("Humedad");
+        et_humedad.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(et_humedad);
+
+        alert.setView(layout);
+
+        alert.setPositiveButton("REGISTRAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                String pTemperatura = et_temperatura.getText().toString();
+                String pHumedad = et_humedad.getText().toString();
+
+                if (!pTemperatura.equals("") && !pHumedad .equals(""))
+                {
+                    ClaseGlobal.temperatura = pTemperatura;
+                    ClaseGlobal.humedad = pHumedad;
+
+                    Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                            "Valores registrados!\n" + "Temperatura: " + ClaseGlobal.temperatura + "°" + "  |  " +
+                                    "Humedad: " + ClaseGlobal.humedad + "%", Snackbar.LENGTH_LONG).show();
+                }
+                else
+                {
+                    // no insertó alguno o ninguno de loa valores
+
+                    InsertarParemetrosManual();
+                    Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                            "Debe ingresar todos los valores!", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        alert.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                // Intent intent_menuPrincipal = new Intent(Muestreo.this, MenuPrincipal.class);
+                // startActivity(intent_menuPrincipal);
+                MensajeErrorConexion();
+            }
+        });
+
+        alert.show();
     }
 
+    /**
+     * Función requisito para solicitar la latitud y longitud actual del usuario
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -564,6 +663,12 @@ public class Muestreo extends AppCompatActivity {
         }
     }
 
+    /**
+     * Despliega un mensaje emergente en pantalla
+     * @param message
+     * @param pTitulo
+     * @param pLabelBoton
+     */
     private void MessageDialog(String message, String pTitulo, String pLabelBoton){ // mostrar mensaje emergente
         AlertDialog.Builder builder = new AlertDialog.Builder(this).setMessage(message).setTitle(pTitulo).setPositiveButton(pLabelBoton, new DialogInterface.OnClickListener() {
             @Override
