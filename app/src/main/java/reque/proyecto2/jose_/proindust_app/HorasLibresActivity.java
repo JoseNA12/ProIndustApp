@@ -2,7 +2,6 @@ package reque.proyecto2.jose_.proindust_app;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,18 +31,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
-import reque.proyecto2.jose_.proindust_app.CRUDS.CrearUsuario;
 import reque.proyecto2.jose_.proindust_app.modelo.HorasLibres_C;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
-import reque.proyecto2.jose_.proindust_app.modelo.ProyectoOperacion;
 
-public class HorasLibres extends AppCompatActivity {
+public class HorasLibresActivity extends AppCompatActivity {
 
     private EditText et_horaInicio;
     private EditText et_horaFinal;
@@ -146,7 +141,7 @@ public class HorasLibres extends AppCompatActivity {
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
 
-                timePickerDialog = new TimePickerDialog(HorasLibres.this, new TimePickerDialog.OnTimeSetListener() {
+                timePickerDialog = new TimePickerDialog(HorasLibresActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hour, int minute)
                     {
@@ -170,7 +165,7 @@ public class HorasLibres extends AppCompatActivity {
                 int hour = calendar.get(Calendar.HOUR_OF_DAY);
                 int minute = calendar.get(Calendar.MINUTE);
 
-                timePickerDialog = new TimePickerDialog(HorasLibres.this, new TimePickerDialog.OnTimeSetListener() {
+                timePickerDialog = new TimePickerDialog(HorasLibresActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
                         String strHour = String.valueOf(hour);
@@ -234,7 +229,7 @@ public class HorasLibres extends AppCompatActivity {
                     {
                         // MessageDialog("Se ha creado el registro!", "Éxito", "Aceptar");
 
-                        Snackbar.make(HorasLibres.this.findViewById(android.R.id.content),
+                        Snackbar.make(HorasLibresActivity.this.findViewById(android.R.id.content),
                                 "Se ha creado el lapso de tiempo!", Snackbar.LENGTH_SHORT).show();
 
                         RefrecarActivity();
@@ -369,7 +364,7 @@ public class HorasLibres extends AppCompatActivity {
                         //MessageDialog("Se ha eliminado el enlace!", "Éxito", "Aceptar");
                         progressDialog.dismiss();
 
-                        Snackbar.make(HorasLibres.this.findViewById(android.R.id.content),
+                        Snackbar.make(HorasLibresActivity.this.findViewById(android.R.id.content),
                                 "Se ha eliminado el lapso de tiempo!", Snackbar.LENGTH_SHORT).show();
 
                         RefrecarActivity();
@@ -379,7 +374,7 @@ public class HorasLibres extends AppCompatActivity {
                         // MessageDialog("Error al eliminar el enlace!", "Error", "Aceptar");
                         progressDialog.dismiss();
 
-                        Snackbar.make(HorasLibres.this.findViewById(android.R.id.content),
+                        Snackbar.make(HorasLibresActivity.this.findViewById(android.R.id.content),
                                 "Error al eliminar el lapso de tiempo!", Snackbar.LENGTH_SHORT).show();
                     }
 

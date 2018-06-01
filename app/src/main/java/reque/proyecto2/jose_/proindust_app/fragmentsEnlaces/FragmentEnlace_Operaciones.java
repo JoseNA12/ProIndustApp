@@ -458,7 +458,6 @@ public class FragmentEnlace_Operaciones extends Fragment {
         isBackFromB = true;
     }
 
-
     /**
      * Recargar el fragmento cuando se presiona el boton de atras en la pantalla de Crear
      */

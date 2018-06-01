@@ -37,10 +37,9 @@ import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.CRUDS.CrearProyecto;
-import reque.proyecto2.jose_.proindust_app.HorasLibres;
+import reque.proyecto2.jose_.proindust_app.HorasLibresActivity;
 import reque.proyecto2.jose_.proindust_app.R;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
-import reque.proyecto2.jose_.proindust_app.modelo.Usuario;
 
 
 /**
@@ -138,7 +137,7 @@ public class FragmentProyecto extends Fragment implements Serializable {
         fab_horaslibres.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(getActivity(), HorasLibres.class);
+                Intent myIntent = new Intent(getActivity(), HorasLibresActivity.class);
                 startActivity(myIntent);
             }
         });
@@ -197,15 +196,9 @@ public class FragmentProyecto extends Fragment implements Serializable {
 
                         String idProyecto = jsonArray.getJSONObject(i).get("idProyecto").toString();
                         String descripcion = jsonArray.getJSONObject(i).get("descripcion").toString();
-                        String nivelConfianza = jsonArray.getJSONObject(i).get("nivelConfianza").toString();
-                        String rangoInicial = jsonArray.getJSONObject(i).get("rangoInicial").toString();
-                        String rangoFinal = jsonArray.getJSONObject(i).get("rangoFinal").toString();
-                        String cantMuestreosP = jsonArray.getJSONObject(i).get("cantMuestreosP").toString();
-                        String tiempoRecorrido = jsonArray.getJSONObject(i).get("tiempoRecorrido").toString();
-                        String estado = jsonArray.getJSONObject(i).get("estado").toString();
 
                         AgregarProyecto(new
-                                Proyecto(idProyecto, nombre, descripcion, nivelConfianza, rangoInicial, rangoFinal, cantMuestreosP, tiempoRecorrido, estado));
+                                Proyecto(idProyecto, nombre, descripcion));
                     }
 
                     if (listaElementos.size() != 0)

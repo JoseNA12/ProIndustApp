@@ -1,15 +1,10 @@
 package reque.proyecto2.jose_.proindust_app;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,20 +17,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import reque.proyecto2.jose_.proindust_app.CRUDS.CRUDS;
 import reque.proyecto2.jose_.proindust_app.enlacesDatos.Enlaces_Datos;
 
-public class MenuPrincipal extends AppCompatActivity
+public class MenuPrincipalActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Button bt_Muestreo, bt_graficos;
     private Toolbar toolbar_operaciones;
-    private FloatingActionButton fab;
+    private FloatingActionButton fab_;
     private FloatingActionButton fab_enlaces;
+    private FloatingActionButton fab_muestreos;
 
     private TextView tv_usuario, tv_rolUsuario;
 
@@ -48,11 +41,11 @@ public class MenuPrincipal extends AppCompatActivity
         setSupportActionBar(toolbar_operaciones);
 
         // Boton flotante, lado derecha abajo (simbolo de una llave)
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab_ = (FloatingActionButton) findViewById(R.id.fab);
+        fab_.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent_cruds = new Intent(MenuPrincipal.this, CRUDS.class);
+                Intent intent_cruds = new Intent(MenuPrincipalActivity.this, CRUDS.class);
                 startActivity(intent_cruds);
             }
         });
@@ -61,7 +54,16 @@ public class MenuPrincipal extends AppCompatActivity
         fab_enlaces.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent_cruds = new Intent(MenuPrincipal.this, Enlaces_Datos.class);
+                Intent intent_cruds = new Intent(MenuPrincipalActivity.this, Enlaces_Datos.class);
+                startActivity(intent_cruds);
+            }
+        });
+
+        fab_muestreos = (FloatingActionButton) findViewById(R.id.fab_muestreos_ID);
+        fab_muestreos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent_cruds = new Intent(MenuPrincipalActivity.this, MuestreoActivity.class);
                 startActivity(intent_cruds);
             }
         });
@@ -80,7 +82,7 @@ public class MenuPrincipal extends AppCompatActivity
         bt_Muestreo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_menuPrincipal = new Intent(MenuPrincipal.this, Muestreo.class);
+                Intent intent_menuPrincipal = new Intent(MenuPrincipalActivity.this, ObservacionActivity.class);
                 startActivity(intent_menuPrincipal);
             }
         });
@@ -90,7 +92,7 @@ public class MenuPrincipal extends AppCompatActivity
         bt_graficos.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent_ = new Intent(MenuPrincipal.this, GraficosActivity.class);
+                Intent intent_ = new Intent(MenuPrincipalActivity.this, GraficosActivity.class);
                 startActivity(intent_);
             }
         });
@@ -124,23 +126,27 @@ public class MenuPrincipal extends AppCompatActivity
 
                 if (rol.equals("ADMINISTRADOR"))
                 {
+                    fab_muestreos.setEnabled(true);
                     fab_enlaces.setEnabled(true);
-                    fab.setEnabled(true);
+                    fab_.setEnabled(true);
                     bt_graficos.setEnabled(true);
 
+                    fab_muestreos.setVisibility(View.VISIBLE);
                     fab_enlaces.setVisibility(View.VISIBLE);
-                    fab.setVisibility(View.VISIBLE);
+                    fab_.setVisibility(View.VISIBLE);
                     bt_graficos.setVisibility(View.VISIBLE);
 
                 }
                 else // es ANALISTA
                 {
+                    fab_muestreos.setEnabled(false);
                     fab_enlaces.setEnabled(false);
-                    fab.setEnabled(false);
+                    fab_.setEnabled(false);
                     bt_graficos.setEnabled(false);
 
+                    fab_muestreos.setVisibility(View.INVISIBLE);
                     fab_enlaces.setVisibility(View.INVISIBLE);
-                    fab.setVisibility(View.INVISIBLE);
+                    fab_.setVisibility(View.INVISIBLE);
                     bt_graficos.setVisibility(View.INVISIBLE);
 
                 }
@@ -194,7 +200,7 @@ public class MenuPrincipal extends AppCompatActivity
         }
         else if (id == R.id.nav_cerrar_sesion)
         {
-            Intent intent_iniciarsesion = new Intent(MenuPrincipal.this, IniciarSesionActivity.class);
+            Intent intent_iniciarsesion = new Intent(MenuPrincipalActivity.this, IniciarSesionActivity.class);
             ClaseGlobal.usuarioActual = null;
             startActivity(intent_iniciarsesion);
         }

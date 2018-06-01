@@ -34,7 +34,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".MenuPrincipal"
+            android:name=".MenuPrincipalActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_menu_principal"
             android:screenOrientation="portrait"
@@ -45,9 +45,9 @@
             android:label="@string/title_activity_cruds"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Muestreo"
+            android:name=".ObservacionActivity"
             android:configChanges="orientation"
-            android:label="@string/title_activity_muestreo"
+            android:label="@string/title_activity_observacion"
             android:screenOrientation="portrait" />
         <activity
             android:name=".CRUDS.CrearProyecto"
@@ -100,15 +100,18 @@
             android:label="@string/title_activity_crear_enlace_usuarios"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".HorasLibres"
+            android:name=".HorasLibresActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_horas_libres"
             android:screenOrientation="portrait" />
         <activity
             android:name=".GraficosActivity"
-            android:label="@string/title_activity_graficos">
+            android:label="@string/title_activity_graficos" />
 
-        </activity>
+        <activity
+            android:name=".MuestreoActivity"
+            android:label="@string/title_activity_muestreo"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

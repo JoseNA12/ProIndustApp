@@ -1,38 +1,35 @@
-package reque.proyecto2.jose_.proindust_app.CRUDS;
+package reque.proyecto2.jose_.proindust_app;
 
-import android.support.v4.app.FragmentTransaction;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.view.MenuItem;
 
 import reque.proyecto2.jose_.proindust_app.R;
-import reque.proyecto2.jose_.proindust_app.fragmentsCRUDS.FragmentColaborador;
-import reque.proyecto2.jose_.proindust_app.fragmentsCRUDS.FragmentOperacion;
-import reque.proyecto2.jose_.proindust_app.fragmentsCRUDS.FragmentProyecto;
-import reque.proyecto2.jose_.proindust_app.fragmentsCRUDS.FragmentTarea;
-import reque.proyecto2.jose_.proindust_app.fragmentsCRUDS.FragmentUsuario;
+import reque.proyecto2.jose_.proindust_app.fragmentsMuestreo.FragmentMuestreo_Crear;
+import reque.proyecto2.jose_.proindust_app.fragmentsMuestreo.FragmentMuestreo_CrearMuestreoPre;
+import reque.proyecto2.jose_.proindust_app.fragmentsMuestreo.FragmentMuestreo_Modificar;
 
-
-public class CRUDS extends AppCompatActivity {
+public class MuestreoActivity extends AppCompatActivity {
 
     private BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cruds);
+        setContentView(R.layout.activity_muestreo);
 
         // Barra que contiene proyectos, operaciones, tareas, colaboradores y tareas
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        // Mostrar por defecto el frame de proyectos
+        // Mostrar por defecto el frame de crear muestreos
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentProyecto()).commit();
+        fragmentTransaction.replace(R.id.frameLayout_muestreo, new FragmentMuestreo_Crear()).commit();
     }
 
     /**
@@ -55,31 +52,22 @@ public class CRUDS extends AppCompatActivity {
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
             switch (item.getItemId()) {
-                case R.id.navigation_proyectos:
+                case R.id.navigation_crear_muestreo:
 
                     // cambiar de fragmento al momento de presionar un elemento de la barra
-                    fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentProyecto()).commit();
+                    fragmentTransaction.replace(R.id.frameLayout_muestreo, new FragmentMuestreo_Crear()).commit();
                     return true;
 
-                case R.id.navigation_operaciones:
+                case R.id.navigation_modificar_muestreo:
 
-                    fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentOperacion()).commit();
+                    fragmentTransaction.replace(R.id.frameLayout_muestreo, new FragmentMuestreo_Modificar()).commit();
                     return true;
 
-                case R.id.navigation_tareas:
+                case R.id.navigation_crear_muestreo_preliminar:
 
-                    fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentTarea()).commit();
+                    fragmentTransaction.replace(R.id.frameLayout_muestreo, new FragmentMuestreo_CrearMuestreoPre()).commit();
                     return true;
 
-                case R.id.navigation_colaboradores:
-
-                    fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentColaborador()).commit();
-                    return true;
-
-                case R.id.navigation_usuarios:
-
-                    fragmentTransaction.replace(R.id.frameLayout_cruds, new FragmentUsuario()).commit();
-                    return true;
             }
 
             return false;

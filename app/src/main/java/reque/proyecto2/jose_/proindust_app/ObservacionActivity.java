@@ -16,8 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +24,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,7 +46,7 @@ import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
 import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
 
-public class Muestreo extends AppCompatActivity {
+public class ObservacionActivity extends AppCompatActivity {
 
     // sp_proyecto_ID, sp_operacion_ID, sp_colaborador_ID, atctv_tarea_ID, tv_descripcion_ID, bt_Registrar_ID
 
@@ -86,7 +83,7 @@ public class Muestreo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_muestreo);
+        setContentView(R.layout.activity_observacion);
 
 //        listaTarea = GetTareas();
 
@@ -259,7 +256,7 @@ public class Muestreo extends AppCompatActivity {
 
                     if (jsonObject.getString("status").equals("true"))
                     {
-                        Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                        Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                                 "Se ha creado la muestra!", Snackbar.LENGTH_SHORT).show();
                         // MessageDialog("Se ha creado la muestra!", "Éxito", "Aceptar");
                     }
@@ -491,7 +488,7 @@ public class Muestreo extends AppCompatActivity {
                 }
                 else
                 {
-                    Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                    Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                             "Temperatura: " + ClaseGlobal.temperatura + "°" + "  |  " +
                                     "Humedad: " + ClaseGlobal.humedad + "%", Snackbar.LENGTH_LONG).show();
                 }
@@ -526,7 +523,7 @@ public class Muestreo extends AppCompatActivity {
                 ClaseGlobal.latitud = "error"; // Caso de fallo
                 ClaseGlobal.longitud = "error";
 
-                Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                         "La funcionalidad de GPS del dispositivo se encuentra desactivada!", Snackbar.LENGTH_LONG).show();
             }
         }
@@ -573,13 +570,13 @@ public class Muestreo extends AppCompatActivity {
                 // ADMINISTRADOR
                 if (ClaseGlobal.usuarioActual.idRolUsuario.equals("1"))
                 {
-                    Intent intent_ = new Intent(Muestreo.this, MenuPrincipal.class);
+                    Intent intent_ = new Intent(ObservacionActivity.this, MenuPrincipalActivity.class);
                     intent_.putExtra("ROL", "ADMINISTRADOR");
                     startActivity(intent_);
                 }
                 else // ANALISTA
                 {
-                    Intent intent_ = new Intent(Muestreo.this, MenuPrincipal.class);
+                    Intent intent_ = new Intent(ObservacionActivity.this, MenuPrincipalActivity.class);
                     intent_.putExtra("ROL", "ANALISTA");
                     startActivity(intent_);
                 }
@@ -597,18 +594,18 @@ public class Muestreo extends AppCompatActivity {
      */
     public void InsertarParemetrosManual()
     {
-        AlertDialog.Builder alert = new AlertDialog.Builder(Muestreo.this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
         alert.setTitle("Registrar valores");
 
-        LinearLayout layout = new LinearLayout(Muestreo.this);
+        LinearLayout layout = new LinearLayout(ObservacionActivity.this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        final EditText et_temperatura = new EditText(Muestreo.this);
+        final EditText et_temperatura = new EditText(ObservacionActivity.this);
         et_temperatura.setHint("Temperatura");
             et_temperatura.setInputType(InputType.TYPE_CLASS_NUMBER);
         layout.addView(et_temperatura);
 
-        final EditText et_humedad = new EditText(Muestreo.this);
+        final EditText et_humedad = new EditText(ObservacionActivity.this);
         et_humedad.setHint("Humedad");
         et_humedad.setInputType(InputType.TYPE_CLASS_NUMBER);
         layout.addView(et_humedad);
@@ -626,7 +623,7 @@ public class Muestreo extends AppCompatActivity {
                     ClaseGlobal.temperatura = pTemperatura;
                     ClaseGlobal.humedad = pHumedad;
 
-                    Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                    Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                             "Valores registrados!\n" + "Temperatura: " + ClaseGlobal.temperatura + "°" + "  |  " +
                                     "Humedad: " + ClaseGlobal.humedad + "%", Snackbar.LENGTH_LONG).show();
                 }
@@ -635,7 +632,7 @@ public class Muestreo extends AppCompatActivity {
                     // no insertó alguno o ninguno de loa valores
 
                     InsertarParemetrosManual();
-                    Snackbar.make(Muestreo.this.findViewById(android.R.id.content),
+                    Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                             "Debe ingresar todos los valores!", Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -644,7 +641,7 @@ public class Muestreo extends AppCompatActivity {
         alert.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
-                // Intent intent_menuPrincipal = new Intent(Muestreo.this, MenuPrincipal.class);
+                // Intent intent_menuPrincipal = new Intent(ObservacionActivity.this, MenuPrincipalActivity.class);
                 // startActivity(intent_menuPrincipal);
                 MensajeErrorConexion();
             }
