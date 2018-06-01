@@ -202,6 +202,7 @@ public class Muestreo extends AppCompatActivity {
             String idProyecto = "-1";
             String idColaborador = "-1";
             String idTarea = "-1";
+            String idOperacion = "-1";
 
             for(int i=0; i<listaProyectos.size(); i++){
                 if(listaProyectos.get(i).nombre.equals(proyectoSeleccionado)){
@@ -212,6 +213,12 @@ public class Muestreo extends AppCompatActivity {
             for(int i=0; i<listaColaborador.size(); i++){
                 if(listaColaborador.get(i).pseudonimo.equals(colaboradorSeleccionado)){
                     idColaborador = listaColaborador.get(i).id;
+                }
+            }
+
+            for(int i = 0; i < listaOperaciones.size(); i++){
+                if(listaOperaciones.get(i).nombre.equals(operacionSeleccionada)){
+                    idOperacion = listaOperaciones.get(i).id;
                 }
             }
 
@@ -229,7 +236,7 @@ public class Muestreo extends AppCompatActivity {
                     "&temperatura=" + ClaseGlobal.temperatura +
                     "&idUsuario=" + ClaseGlobal.usuarioActual.id +
                     "&idColaborador=" + idColaborador +
-                    "&idProyecto=" + idProyecto +
+                    "&idOperacion=" + idProyecto +
                     "&idTarea=" + idTarea);
         }
     }
