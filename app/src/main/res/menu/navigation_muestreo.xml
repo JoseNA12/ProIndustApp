@@ -11,10 +11,5 @@
         android:icon="@drawable/modificar_muestreo"
         android:title="@string/title_modificar_muestreo" />
 
-    <item
-        android:id="@+id/navigation_crear_muestreo_preliminar"
-        android:icon="@drawable/crear_muestreo_p"
-        android:title="@string/title_muestreo_preliminar" />
-
 
 </menu>

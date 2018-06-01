@@ -63,10 +63,10 @@ public class MuestreoActivity extends AppCompatActivity {
                     fragmentTransaction.replace(R.id.frameLayout_muestreo, new FragmentMuestreo_Modificar()).commit();
                     return true;
 
-                case R.id.navigation_crear_muestreo_preliminar:
+                /*case R.id.navigation_crear_muestreo_preliminar:
 
                     fragmentTransaction.replace(R.id.frameLayout_muestreo, new FragmentMuestreo_CrearMuestreoPre()).commit();
-                    return true;
+                    return true;*/
 
             }
 
