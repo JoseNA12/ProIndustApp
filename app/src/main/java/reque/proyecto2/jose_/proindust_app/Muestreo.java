@@ -64,6 +64,7 @@ public class Muestreo extends AppCompatActivity {
     private ArrayList<Colaborador> listaColaborador;
 
     private ArrayList<String> listaTarea, listaIDTarea;
+    String idProyecto = "-1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,11 @@ public class Muestreo extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 proyectoSeleccionado = sp_proyecto.getSelectedItem().toString();
+                for(int i=0; i<listaProyectos.size(); i++){
+                    if(listaProyectos.get(i).nombre.equals(proyectoSeleccionado)){
+                        idProyecto = listaProyectos.get(i).id;
+                    }
+                }
             }
 
             @Override
@@ -176,15 +182,8 @@ public class Muestreo extends AppCompatActivity {
         if(tarea.equals("") || proyectoSeleccionado.equals("") || operacionSeleccionada.equals("") || colaboradorSeleccionado.equals("")){
             MessageDialog("es necesario que complete todos los datos para continuar", "Error", "Aceptar");
         } else {
-            String idProyecto = "-1";
             String idColaborador = "-1";
             String idTarea = "-1";
-
-            for(int i=0; i<listaProyectos.size(); i++){
-                if(listaProyectos.get(i).nombre.equals(proyectoSeleccionado)){
-                    idProyecto = listaProyectos.get(i).id;
-                }
-            }
 
             for(int i=0; i<listaColaborador.size(); i++){
                 if(listaColaborador.get(i).pseudonimo.equals(colaboradorSeleccionado)){
@@ -281,7 +280,7 @@ public class Muestreo extends AppCompatActivity {
 
     private List<String> GetProyectos()
     {
-        String URL = ClaseGlobal.SELECT_PROYECTOS_ALL;
+        String URL = ClaseGlobal.SELECT_PROYECTO_USUARIO + "?idUsuario=" + ClaseGlobal.usuarioActual.id;
         final List<String> arraySpinner = new ArrayList<String>();
         arraySpinner.add(msgProyecto);
 
@@ -324,8 +323,8 @@ public class Muestreo extends AppCompatActivity {
 
     private List<String> GetOperaciones()
     {
-
-        String URL = ClaseGlobal.SELECT_OPERACIONES_ALL;
+        //MessageDialog(idProyecto, idProyecto, idProyecto);
+        String URL = ClaseGlobal.SELECT_PROYECTO_OPERACION + "?idProyecto=" + idProyecto;
         final List<String> arraySpinner2 = new ArrayList<String>();
         arraySpinner2.add(msgOperacion);
 
@@ -368,7 +367,8 @@ public class Muestreo extends AppCompatActivity {
 
     private List<String> GetColaboradores()
     {
-        String URL = ClaseGlobal.SELECT_COLABORADORES_ALL;
+
+        String URL = ClaseGlobal.SELECT_PROYECTO_COLABORADOR + "?idProyecto=" + idProyecto;
         final List<String> arraySpinner = new ArrayList<String>();
         arraySpinner.add(msgColaborador);
 
