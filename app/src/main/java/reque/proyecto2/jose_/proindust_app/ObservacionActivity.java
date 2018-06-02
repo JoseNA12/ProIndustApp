@@ -177,7 +177,15 @@ public class ObservacionActivity extends AppCompatActivity {
      */
     private void DeterminarProyectos()
     {
-        Log.d("PUTA", "pasa");
+        if (ClaseGlobal.usuarioActual.idRolUsuario.equals("2")) // Analista
+        {
+            Get_Proyectos_activos_de_usuario(ClaseGlobal.usuarioActual.id);
+        }
+    }
+
+    private List<String> Get_Proyectos_activos_de_usuario(String pIdUsuario)
+    {
+
     }
 
     private void ActualizarListaDatos_Proyectos(List<String> lista)

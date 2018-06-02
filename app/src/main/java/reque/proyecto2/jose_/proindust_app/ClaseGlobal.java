@@ -35,6 +35,7 @@ public class ClaseGlobal {
     public static final String UPDATE_PROYECTO = IP + "Proyecto/actualizar_proyecto.php";
     public static final String SELECT_PROYECTOS_SIN_MUESTREOS_ACTIVOS = IP + "Proyecto/select_proyectos_sin_muestreos_activos.php";
     public static final String SELECT_PROYECTOS_CON_MUESTREOS_ACTIVOS_PAUSADOS = IP + "Proyecto/select_proyectos_con_muestreos_activos_pausados.php";
+    public static final String SELECT_PROYECTOS_ACTIVOS_DE_USUARIO = IP + "Proyecto/select_proyectos_activos_de_usuario.php";
 
     // Operaciones
     public static final String INSERT_OPERACION = IP + "Operacion/insertar_operacion.php";
