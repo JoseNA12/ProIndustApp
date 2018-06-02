@@ -98,7 +98,7 @@ public class ClaseGlobal {
 
     // Muestreo
     public static final String INSERT_MUESTREO = IP + "Muestreo/insertar_muestreo.php";
-    public static final String SELECT_MUESTREOS_ALL = IP +  "Muestreo/select_muestreos_all.php";
+    public static final String SELECT_MUESTREOS_ALL = IP + "Muestreo/select_muestreos_all.php";
 
     public static String longitud;
     public static String latitud;

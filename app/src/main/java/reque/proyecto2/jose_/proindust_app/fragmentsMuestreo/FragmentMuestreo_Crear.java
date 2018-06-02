@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -51,6 +52,7 @@ import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.R;
 import reque.proyecto2.jose_.proindust_app.modelo.Muestreo;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -104,6 +106,9 @@ public class FragmentMuestreo_Crear extends Fragment {
         adapterSpinner_proyecto = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, listaProyectos);
         adapterSpinner_proyecto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_proyecto.setAdapter(adapterSpinner_proyecto);
+
+        // ActualizarSpinner(listaProyectos);
+
         sp_proyecto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -111,7 +116,7 @@ public class FragmentMuestreo_Crear extends Fragment {
                 proyectoSeleccionado = sp_proyecto.getSelectedItem().toString();
             }
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {  }
+            public void onNothingSelected(AdapterView<?> parent) {   }
         });
 
         et_fecha_inicio = (EditText) view.findViewById(R.id.et_fecha_inicio_ID);
@@ -153,8 +158,20 @@ public class FragmentMuestreo_Crear extends Fragment {
             }
         });
 
-
         return view;
+    }
+
+    private void ActualizarSpinner(List<String> lista)
+    {
+        adapterSpinner_proyecto = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, lista);
+        adapterSpinner_proyecto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_proyecto.setAdapter(adapterSpinner_proyecto);
+    }
+
+    private void Prueba()
+    {
+        String e = ObtenerHoraMuestreo(Integer.parseInt(et_tiempo_recorrido.getText().toString()));
+        Log.d("PUTA", e);
     }
 
     private void Boton_CrearMuestreo()
@@ -186,13 +203,12 @@ public class FragmentMuestreo_Crear extends Fragment {
                                 "&lapsoFinal=" + lapsoFinal +
                                 "&horaObservacion=" +
                                     ObtenerHoraMuestreo(
-                                            GetTiempoAleatorio(lapsoInicial_int, lapsoFinal_int) + tiempoExtra_int) +
+                                            GetTiempoAleatorio(lapsoInicial_int, lapsoFinal_int)) +
                                 "&estado=" + "EN CURSO" +
                                 "&descripcion=" + et_descripcion.getText().toString() +
                                 "&cantObservRegistradas=" + "0" +
                                 "&cantObservRequeridas=" + ClaseGlobal.cantObservRequeridas_default
                         );
-
                     }
                     else
                     {
@@ -231,6 +247,7 @@ public class FragmentMuestreo_Crear extends Fragment {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
+                        RecargarFragmento();
                         // MessageDialog("Se ha creado el enlace!", "Éxito", "Aceptar");
                         Snackbar.make(getActivity().findViewById(android.R.id.content),
                                 "Se ha creado el muestreo!", Snackbar.LENGTH_SHORT).show();
@@ -299,19 +316,21 @@ public class FragmentMuestreo_Crear extends Fragment {
     }
 
     /**
-     *
+     * Obtener la hora del primer muestreo preliminar segun el valor generado aleatoriamente
+     * acorde al rango de minutos ingresado
      * @param pValor
      * @return
      */
     private String ObtenerHoraMuestreo(int pValor)
     {
         Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, pValor);
 
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int minute = cal.get(Calendar.MINUTE);
         int second = cal.get(Calendar.SECOND);
 
-        String nuevaHora = Integer.toString(hour) + ":" + Integer.toString(minute + pValor) + ":" + second;
+        String nuevaHora = Integer.toString(hour) + ":" + Integer.toString(minute) + ":" + second;
 
         return nuevaHora;
     }
@@ -439,23 +458,6 @@ public class FragmentMuestreo_Crear extends Fragment {
         ft.detach(this).attach(this).commit();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        isBackFromB = true;
-    }
-
-
-    /**
-     * Recargar el fragmento cuando se presiona el boton de atras en la pantalla de Crear
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (isBackFromB) { RecargarFragmento(); } //Do something
-    }
-
     /**
      * Despliega un mensaje emergente en pantalla
      * @param message
@@ -474,28 +476,4 @@ public class FragmentMuestreo_Crear extends Fragment {
     }
 
 
-    /**
-     * Effettua una web request sincrona tramite Volley API, restituendo in risposta
-     * l'oggetto JSON scaricato.
-     */
-    public static JSONObject volleySyncRequest(Context c, String url) {
-
-        // configurazione della webRequest
-        RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(url, null, future, future);
-        RequestQueue requestQueue = Volley.newRequestQueue(c);
-        requestQueue.add(request);
-
-        // esecuzione sincrona della webRequest
-        try {
-            // limita la richiesta bloccante a un massimo di 10 secondi, quindi restituisci
-            // la risposta.
-            return future.get(10, TimeUnit.SECONDS);
-
-        } catch (InterruptedException | TimeoutException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
 }

@@ -106,7 +106,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".GraficosActivity"
-            android:label="@string/title_activity_graficos" />
+            android:label="@string/title_activity_graficos"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".MuestreoActivity"

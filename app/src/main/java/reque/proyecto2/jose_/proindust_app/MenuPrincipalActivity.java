@@ -153,7 +153,7 @@ public class MenuPrincipalActivity extends AppCompatActivity
             }
         }
         else {
-            rol= (String) savedInstanceState.getSerializable("ROL");
+            rol = (String) savedInstanceState.getSerializable("ROL");
         }
     }
 
