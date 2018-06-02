@@ -16,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -76,7 +77,10 @@ public class ObservacionActivity extends AppCompatActivity {
     private ArrayList<Tarea> listaDatosTareas;
     private ArrayList<Colaborador> listaDatosColaborador;
 
-    private ArrayList<String> listaProyectos, listaOperaciones, listaColaboradores, listaTareas;
+    // contienen todos los datos registrados en la base de datos (solo el nombre)
+    private List<String> listaProyectos_todos, listaOperaciones_todos, listaColaboradores_todos, listaTareas_todos;
+    // contiene los datos filtrados por parametros, proyectos de acuerdo a usuarios, operaciones de acuerdo a proyectos, etc
+    private List<String> listaProyectos_filtro, listaOperaciones_filtro, listaColaboradores_filtro, listaTareas_filtro;
 
     // request temperatura y humedad
     static final int REQUEST_LOCATION = 1;
@@ -97,10 +101,15 @@ public class ObservacionActivity extends AppCompatActivity {
         listaDatosColaborador = new ArrayList<Colaborador>();
         listaDatosTareas = new ArrayList<Tarea>();
 
-        listaProyectos = new ArrayList<String>();
-        listaOperaciones = new ArrayList<String>();
-        listaColaboradores = new ArrayList<String>();
-        listaTareas = new ArrayList<String>();
+        listaProyectos_filtro = GetProyectos();
+        listaOperaciones_filtro = GetOperaciones();
+        listaColaboradores_filtro = GetColaboradores();
+        listaTareas_filtro = GetTareas();
+
+        listaProyectos_todos = new ArrayList<String>();
+        listaOperaciones_todos = new ArrayList<String>();
+        listaColaboradores_todos = new ArrayList<String>();
+        listaTareas_todos = new ArrayList<String>();
 
         et_descripcion = (EditText) findViewById(R.id.tv_descripcion_ID);
         bt_registrar = (Button) findViewById(R.id.bt_Registrar_ID);
@@ -160,6 +169,15 @@ public class ObservacionActivity extends AppCompatActivity {
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
         ParametrosAmbiente(); // Temperatura y humedad
+    }
+
+    /**
+     * GetTiempo(): apenas se registren las valores (temp. y humedad) cargar los proyectos
+     * InsertarParemetrosManual(): apenas se inserten los valores (temp. y humedad) cargar los proyectos
+     */
+    private void DeterminarProyectos()
+    {
+        Log.d("PUTA", "pasa");
     }
 
     private void ActualizarListaDatos_Proyectos(List<String> lista)
@@ -505,9 +523,12 @@ public class ObservacionActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    DeterminarProyectos();
+
                     Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                             "Temperatura: " + ClaseGlobal.temperatura + "°" + "  |  " +
                                     "Humedad: " + ClaseGlobal.humedad + "%", Snackbar.LENGTH_LONG).show();
+
                 }
             }
         });
@@ -639,6 +660,8 @@ public class ObservacionActivity extends AppCompatActivity {
                 {
                     ClaseGlobal.temperatura = pTemperatura;
                     ClaseGlobal.humedad = pHumedad;
+
+                    DeterminarProyectos();
 
                     Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                             "Valores registrados!\n" + "Temperatura: " + ClaseGlobal.temperatura + "°" + "  |  " +
