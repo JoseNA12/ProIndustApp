@@ -3,12 +3,16 @@ package reque.proyecto2.jose_.proindust_app.fragmentsMuestreo;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.IntegerRes;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +27,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -36,10 +42,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.R;
+import reque.proyecto2.jose_.proindust_app.modelo.Muestreo;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
 
 /**
@@ -63,7 +73,10 @@ public class FragmentMuestreo_Crear extends Fragment {
     private List<String> listaProyectos;
     private List<Proyecto> listaDatosProyectos;
 
+    private List<Muestreo> listaDatosMuestreos;
+
     private DatePickerDialog datePickerDialog;
+
 
     public FragmentMuestreo_Crear() {
         // Required empty public constructor
@@ -80,7 +93,10 @@ public class FragmentMuestreo_Crear extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
+        // GetMuestreos();
+
         listaDatosProyectos = new ArrayList<Proyecto>();
+        listaDatosMuestreos = new ArrayList<Muestreo>();
 
         listaProyectos = GetProyectos();
 
@@ -99,6 +115,7 @@ public class FragmentMuestreo_Crear extends Fragment {
         });
 
         et_fecha_inicio = (EditText) view.findViewById(R.id.et_fecha_inicio_ID);
+        et_fecha_inicio.setInputType(InputType.TYPE_NULL); // no mostrar el teclado
         et_fecha_inicio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,8 +138,11 @@ public class FragmentMuestreo_Crear extends Fragment {
         });
 
         et_lapso_inicial = (EditText) view.findViewById(R.id.et_lapso_inicial_ID);
+
         et_lapso_final = (EditText) view.findViewById(R.id.et_lapso_final_ID);
+
         et_tiempo_recorrido = (EditText) view.findViewById(R.id.et_tiempo_recorrido_ID);
+
         et_descripcion = (EditText) view.findViewById(R.id.et_descripcion_ID);
 
         bt_registrar = (Button) view.findViewById(R.id.bt_registrar_ID);
@@ -132,6 +152,7 @@ public class FragmentMuestreo_Crear extends Fragment {
                 Boton_CrearMuestreo();
             }
         });
+
 
         return view;
     }
@@ -156,6 +177,21 @@ public class FragmentMuestreo_Crear extends Fragment {
                 {
                     if (ValidarFecha(fechaInicio))
                     {
+                        int tiempoExtra_int = Integer.parseInt(tiempoExtra);
+
+                        CrearMuestreo(ClaseGlobal.INSERT_MUESTREO +
+                                "?idProyecto=" + GetIdProyecto(proyectoSeleccionado) +
+                                "&fechaInicio=" + fechaInicio +
+                                "&lapsoInicial=" + lapsoInicial +
+                                "&lapsoFinal=" + lapsoFinal +
+                                "&horaObservacion=" +
+                                    ObtenerHoraMuestreo(
+                                            GetTiempoAleatorio(lapsoInicial_int, lapsoFinal_int) + tiempoExtra_int) +
+                                "&estado=" + "EN CURSO" +
+                                "&descripcion=" + et_descripcion.getText().toString() +
+                                "&cantObservRegistradas=" + "0" +
+                                "&cantObservRequeridas=" + ClaseGlobal.cantObservRequeridas_default
+                        );
 
                     }
                     else
@@ -180,9 +216,45 @@ public class FragmentMuestreo_Crear extends Fragment {
 
     }
 
-    private Integer GetTiempoAleatorio(int pLapsoInicial, int pLapsoFinal)
+    private void CrearMuestreo(String URL)
     {
-        return ThreadLocalRandom.current().nextInt(pLapsoInicial, pLapsoFinal + 1);
+        progressDialog.setMessage("Creando muestreo...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        // MessageDialog("Se ha creado el enlace!", "Éxito", "Aceptar");
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                "Se ha creado el muestreo!", Snackbar.LENGTH_SHORT).show();
+                    }
+                    else
+                    {
+                        MessageDialog("Error al crear el muestreo!", "Error", "Aceptar");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     /**
@@ -201,7 +273,7 @@ public class FragmentMuestreo_Crear extends Fragment {
             Calendar calendar = Calendar.getInstance();
             int calendarYear = calendar.get(Calendar.YEAR);
             int calendarMonth = calendar.get(Calendar.MONTH);
-            int calendarDay = calendar.get(Calendar.DAY_OF_MONTH);
+            int calendarDay = calendar.get(Calendar.DAY_OF_MONTH) - 1; // -1 para contar el dia actual
             String strMonth = String.valueOf(calendarMonth + 1);
             String strDay = String.valueOf(calendarDay);
 
@@ -215,6 +287,22 @@ public class FragmentMuestreo_Crear extends Fragment {
         catch (ParseException e) { e.printStackTrace(); return false; }
     }
 
+    /**
+     * Dado un rango (valor minimo y maximo) obtener un valor aleatorio dentro de ese rango
+     * @param pLapsoInicial
+     * @param pLapsoFinal
+     * @return
+     */
+    private Integer GetTiempoAleatorio(int pLapsoInicial, int pLapsoFinal)
+    {
+        return ThreadLocalRandom.current().nextInt(pLapsoInicial, pLapsoFinal + 1);
+    }
+
+    /**
+     *
+     * @param pValor
+     * @return
+     */
     private String ObtenerHoraMuestreo(int pValor)
     {
         Calendar cal = Calendar.getInstance();
@@ -270,9 +358,61 @@ public class FragmentMuestreo_Crear extends Fragment {
                 MessageDialog("Error al solicitar proyectos.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
-        });queue.add(stringRequest);
+        });
+        queue.add(stringRequest);
 
         return arraySpinner;
+    }
+
+    private void GetMuestreos()
+    {
+        progressDialog.setMessage("Solicitando información...");
+        progressDialog.show();
+
+        String URL = ClaseGlobal.SELECT_MUESTREOS_ALL;
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String idMuestreo = jsonArray.getJSONObject(i).get("idMuestreo").toString();
+                        String idProyecto = jsonArray.getJSONObject(i).get("idProyecto").toString();
+                        String fechaInicio = jsonArray.getJSONObject(i).get("fechaInicio").toString();
+                        String lapsoInicial = jsonArray.getJSONObject(i).get("lapsoInicial").toString();
+                        String lapsoFinal = jsonArray.getJSONObject(i).get("lapsoFinal").toString();
+                        String horaObservacion = jsonArray.getJSONObject(i).get("horaObservacion").toString();
+                        String estado = jsonArray.getJSONObject(i).get("estado").toString();
+                        String descripcion = jsonArray.getJSONObject(i).get("descripcion").toString();
+                        String cantObservRegistradas = jsonArray.getJSONObject(i).get("cantObservRegistradas").toString();
+                        String cantObservRequeridas = jsonArray.getJSONObject(i).get("cantObservRequeridas").toString();
+
+                        listaDatosMuestreos.add(new
+                                Muestreo(idMuestreo, idProyecto, fechaInicio, lapsoInicial, lapsoFinal, horaObservacion,
+                                estado, descripcion, cantObservRegistradas, cantObservRequeridas));
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar proyectos.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     private String GetIdProyecto(String pNombre)
@@ -333,4 +473,29 @@ public class FragmentMuestreo_Crear extends Fragment {
         dialog.show();
     }
 
+
+    /**
+     * Effettua una web request sincrona tramite Volley API, restituendo in risposta
+     * l'oggetto JSON scaricato.
+     */
+    public static JSONObject volleySyncRequest(Context c, String url) {
+
+        // configurazione della webRequest
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(url, null, future, future);
+        RequestQueue requestQueue = Volley.newRequestQueue(c);
+        requestQueue.add(request);
+
+        // esecuzione sincrona della webRequest
+        try {
+            // limita la richiesta bloccante a un massimo di 10 secondi, quindi restituisci
+            // la risposta.
+            return future.get(10, TimeUnit.SECONDS);
+
+        } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

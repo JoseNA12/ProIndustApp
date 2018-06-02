@@ -93,8 +93,12 @@ public class ClaseGlobal {
     // Iniciar sesion
     public static final String INICIAR_SESION = IP + "iniciar_sesion.php";
 
-    // Muestra
-    public static final String INSERT_MUESTRA = IP + "insertar_muestra.php";
+    // Observacion
+    public static final String INSERT_MUESTRA = IP + "Observacion/insertar_muestra.php";
+
+    // Muestreo
+    public static final String INSERT_MUESTREO = IP + "Muestreo/insertar_muestreo.php";
+    public static final String SELECT_MUESTREOS_ALL = IP +  "Muestreo/select_muestreos_all.php";
 
     public static String longitud;
     public static String latitud;
