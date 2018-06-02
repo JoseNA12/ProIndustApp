@@ -4,22 +4,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import reque.proyecto2.jose_.proindust_app.CRUDS.CRUDS;
 import reque.proyecto2.jose_.proindust_app.enlacesDatos.Enlaces_Datos;
@@ -28,6 +25,7 @@ public class MenuPrincipal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Button bt_Muestreo;
+    private Button bt_Graficos;
     private Toolbar toolbar_operaciones;
     private FloatingActionButton fab;
     private FloatingActionButton fab_enlaces;
@@ -38,11 +36,11 @@ public class MenuPrincipal extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_principal);
-        toolbar_operaciones = (Toolbar) findViewById(R.id.toolbar);
+        toolbar_operaciones = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar_operaciones);
 
         // Boton flotante, lado derecha abajo (simbolo de una llave)
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,7 +49,7 @@ public class MenuPrincipal extends AppCompatActivity
             }
         });
 
-        fab_enlaces = (FloatingActionButton) findViewById(R.id.fab_enlaces_ID);
+        fab_enlaces = findViewById(R.id.fab_enlaces_ID);
         fab_enlaces.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,17 +58,17 @@ public class MenuPrincipal extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar_operaciones, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         // Boton Registrar Observación
-        bt_Muestreo = (Button) findViewById(R.id.bt_muestreo_ID);
+        bt_Muestreo = findViewById(R.id.bt_muestreo_ID);
         bt_Muestreo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -80,11 +78,20 @@ public class MenuPrincipal extends AppCompatActivity
             }
         });
 
+        bt_Graficos = findViewById(R.id.bt_graficos_ID);
+        bt_Graficos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent_graficas = new Intent(MenuPrincipal.this, Graficos.class);
+                startActivity(intent_graficas);
+            }
+        });
+
         View hView =  navigationView.getHeaderView(0);
-        tv_usuario = (TextView) hView.findViewById(R.id.tv_usuario_ID);
+        tv_usuario = hView.findViewById(R.id.tv_usuario_ID);
         tv_usuario.setText(ClaseGlobal.usuarioActual.nombre);
 
-        tv_rolUsuario= (TextView) hView.findViewById(R.id.tv_rolUsuario_ID);
+        tv_rolUsuario= hView.findViewById(R.id.tv_rolUsuario_ID);
         tv_rolUsuario.setText(ClaseGlobal.usuarioActual.correo);
 
 
@@ -133,7 +140,7 @@ public class MenuPrincipal extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -179,7 +186,7 @@ public class MenuPrincipal extends AppCompatActivity
             startActivity(intent_iniciarsesion);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

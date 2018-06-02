@@ -102,6 +102,11 @@
             android:label="@string/title_activity_horas_libres"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".Graficos"
+            android:configChanges="orientation"
+            android:label="@string/title_graficos"
+            android:screenOrientation="portrait" />
 
     </application>
 

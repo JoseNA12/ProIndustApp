@@ -27,6 +27,7 @@
     <string name="title_activity_enlaces_datos">Enlaces de Información</string>
 
     <string name="title_activity_horas_libres">Horas Libres</string>
+    <string name="title_graficos">Graficos</string>
 
     <string name="title_activity_crear_enlace_tareas">Enlazar Tareas con Operaciones</string>
     <string name="title_activity_crear_enlace_operaciones">Enlazar Operaciones con Proyectos</string>
