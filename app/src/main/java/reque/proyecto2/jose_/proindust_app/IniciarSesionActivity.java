@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -157,6 +158,21 @@ public class IniciarSesionActivity extends AppCompatActivity {
     private void SetUsuarioActual(Usuario pU)
     {
         ClaseGlobal.usuarioActual = pU;
+    }
+
+    /**
+     * Impedir que el usuario retroceda mediante el boton de atras del dispositivo
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //preventing default implementation previous to android.os.Build.VERSION_CODES.ECLAIR
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**
