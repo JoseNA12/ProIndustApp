@@ -20,7 +20,7 @@ public class ClaseGlobal {
 
     public static Usuario usuarioActual;
     // public static final String[] estadosProyecto = {"EN CURSO", "PAUSADO"};
-    public static final String[] estadosMuestreo = {"EN CURSO", "PAUSADO", "CONCLUIDO"};
+    public static final String[] estadosMuestreo = {"EN CURSO", "PAUSADO"}; // CONCLUIDO
     public static final String cantObservRequeridas_default = "30";
 
     // IP del servidor
@@ -33,6 +33,8 @@ public class ClaseGlobal {
     public static final String SELECT_PROYECTOS_ALL = IP + "Proyecto/select_proyectos_all.php";
     public static final String DELECT_PROYECTO = IP + "Proyecto/eliminar_proyecto.php";
     public static final String UPDATE_PROYECTO = IP + "Proyecto/actualizar_proyecto.php";
+    public static final String SELECT_PROYECTOS_SIN_MUESTREOS_ACTIVOS = IP + "Proyecto/select_proyectos_sin_muestreos_activos.php";
+    public static final String SELECT_PROYECTOS_CON_MUESTREOS_ACTIVOS_PAUSADOS = IP + "Proyecto/select_proyectos_con_muestreos_activos_pausados.php";
 
     // Operaciones
     public static final String INSERT_OPERACION = IP + "Operacion/insertar_operacion.php";
@@ -99,6 +101,7 @@ public class ClaseGlobal {
     // Muestreo
     public static final String INSERT_MUESTREO = IP + "Muestreo/insertar_muestreo.php";
     public static final String SELECT_MUESTREOS_ALL = IP + "Muestreo/select_muestreos_all.php";
+    public static final String UPDATE_MUESTREO = IP + "Muestreo/actualizar_muestreo.php";
 
     public static String longitud;
     public static String latitud;

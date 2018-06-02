@@ -18,7 +18,6 @@
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:fadeScrollbars="false"
             android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -43,48 +42,6 @@
                     app:layout_constraintVertical_bias="0.0" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="25dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:text="Fecha de inicio:"
-                        android:textSize="16dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.127"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.146" />
-
-                    <EditText
-                        android:id="@+id/et_fecha_inicio_ID"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:inputType="number"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.19" />
-                </LinearLayout>
-
-                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="25dp"
@@ -95,11 +52,11 @@
                         android:layout_width="282dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Lapsos del muestreo: (minutos)"
+                        android:text="Lapsos de los muestreos: (min)"
                         android:textSize="16sp" />
 
                     <EditText
-                        android:id="@+id/et_hora_inicial_ID"
+                        android:id="@+id/et_lapso_inicial_ID"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
@@ -117,7 +74,7 @@
                         app:layout_constraintVertical_bias="0.356" />
 
                     <EditText
-                        android:id="@+id/et_hora_final_ID"
+                        android:id="@+id/et_lapso_final_ID"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
@@ -178,6 +135,26 @@
                         app:layout_constraintVertical_bias="0.63" />
                 </LinearLayout>
 
+                <EditText
+                    android:id="@+id/et_descripcion_ID"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:hint="Descripción (opcional)"
+                    android:inputType="textMultiLine"
+                    android:lines="4"
+                    android:singleLine="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.481"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.498" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -202,35 +179,24 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.744" />
 
-                    <TextView
-                        android:id="@+id/textView14"
+                    <Spinner
+                        android:id="@+id/sp_estado_ID"
                         android:layout_width="match_parent"
-                        android:layout_height="20dp"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:text="ACTIVO"
-                        android:textSize="16sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.401"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.744" />
+                        android:layout_height="40dp"
+                        android:layout_weight="1" />
+
                 </LinearLayout>
 
                 <Button
-                    android:id="@+id/bt_registrar_ID"
+                    android:id="@+id/bt_modificar_ID"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="75dp"
+                    android:layout_marginTop="25dp"
                     android:background="@color/colorBotones"
-                    android:text="REGISTRAR"
+                    android:text="ACTUALIZAR"
                     android:textColor="@color/cardview_light_background"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

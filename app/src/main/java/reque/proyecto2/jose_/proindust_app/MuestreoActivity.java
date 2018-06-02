@@ -9,9 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import reque.proyecto2.jose_.proindust_app.R;
 import reque.proyecto2.jose_.proindust_app.fragmentsMuestreo.FragmentMuestreo_Crear;
-import reque.proyecto2.jose_.proindust_app.fragmentsMuestreo.FragmentMuestreo_CrearMuestreoPre;
 import reque.proyecto2.jose_.proindust_app.fragmentsMuestreo.FragmentMuestreo_Modificar;
 
 public class MuestreoActivity extends AppCompatActivity {
@@ -62,11 +60,6 @@ public class MuestreoActivity extends AppCompatActivity {
 
                     fragmentTransaction.replace(R.id.frameLayout_muestreo, new FragmentMuestreo_Modificar()).commit();
                     return true;
-
-                /*case R.id.navigation_crear_muestreo_preliminar:
-
-                    fragmentTransaction.replace(R.id.frameLayout_muestreo, new FragmentMuestreo_CrearMuestreoPre()).commit();
-                    return true;*/
 
             }
 

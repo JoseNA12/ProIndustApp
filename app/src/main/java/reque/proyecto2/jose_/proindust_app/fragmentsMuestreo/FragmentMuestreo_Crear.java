@@ -47,6 +47,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import reque.proyecto2.jose_.proindust_app.ClaseGlobal;
 import reque.proyecto2.jose_.proindust_app.R;
@@ -61,7 +62,6 @@ public class FragmentMuestreo_Crear extends Fragment {
 
     private View view;
 
-    private boolean isBackFromB;
     private Spinner sp_proyecto;
     private String proyectoSeleccionado;
     private EditText et_fecha_inicio; // año-mes-dia
@@ -75,10 +75,7 @@ public class FragmentMuestreo_Crear extends Fragment {
     private List<String> listaProyectos;
     private List<Proyecto> listaDatosProyectos;
 
-    private List<Muestreo> listaDatosMuestreos;
-
     private DatePickerDialog datePickerDialog;
-
 
     public FragmentMuestreo_Crear() {
         // Required empty public constructor
@@ -95,10 +92,7 @@ public class FragmentMuestreo_Crear extends Fragment {
         progressDialog.setMessage("Cargado información...");
         progressDialog.setCancelable(false);
 
-        // GetMuestreos();
-
         listaDatosProyectos = new ArrayList<Proyecto>();
-        listaDatosMuestreos = new ArrayList<Muestreo>();
 
         listaProyectos = GetProyectos();
 
@@ -107,7 +101,6 @@ public class FragmentMuestreo_Crear extends Fragment {
         adapterSpinner_proyecto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp_proyecto.setAdapter(adapterSpinner_proyecto);
 
-        // ActualizarSpinner(listaProyectos);
 
         sp_proyecto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -161,31 +154,18 @@ public class FragmentMuestreo_Crear extends Fragment {
         return view;
     }
 
-    private void ActualizarSpinner(List<String> lista)
-    {
-        adapterSpinner_proyecto = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, lista);
-        adapterSpinner_proyecto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_proyecto.setAdapter(adapterSpinner_proyecto);
-    }
-
-    private void Prueba()
-    {
-        String e = ObtenerHoraMuestreo(Integer.parseInt(et_tiempo_recorrido.getText().toString()));
-        Log.d("PUTA", e);
-    }
-
     private void Boton_CrearMuestreo()
     {
         String fechaInicio = et_fecha_inicio.getText().toString();
         String lapsoInicial = et_lapso_inicial.getText().toString();
         String lapsoFinal = et_lapso_final.getText().toString();
-        String tiempoExtra = et_tiempo_recorrido.getText().toString();
+        String tiempoRecorrido = et_tiempo_recorrido.getText().toString();
         String descripcion = et_descripcion.getText().toString();
 
         if (!proyectoSeleccionado.equals(msgProyecto))
         {
             if (!fechaInicio.equals("") && !lapsoInicial.equals("") && !lapsoFinal.equals("") &&
-                    !tiempoExtra.equals(""))
+                    !tiempoRecorrido.equals(""))
             {
                 int lapsoInicial_int = Integer.parseInt(lapsoInicial);
                 int lapsoFinal_int = Integer.parseInt(lapsoFinal);
@@ -194,21 +174,22 @@ public class FragmentMuestreo_Crear extends Fragment {
                 {
                     if (ValidarFecha(fechaInicio))
                     {
-                        int tiempoExtra_int = Integer.parseInt(tiempoExtra);
+                        int tiempoRecorrido_int = Integer.parseInt(tiempoRecorrido);
+                        String horaInicio  = ObtenerHoraMuestreo(
+                                GetTiempoAleatorio(lapsoInicial_int, lapsoFinal_int) + tiempoRecorrido_int);
 
                         CrearMuestreo(ClaseGlobal.INSERT_MUESTREO +
                                 "?idProyecto=" + GetIdProyecto(proyectoSeleccionado) +
                                 "&fechaInicio=" + fechaInicio +
                                 "&lapsoInicial=" + lapsoInicial +
                                 "&lapsoFinal=" + lapsoFinal +
-                                "&horaObservacion=" +
-                                    ObtenerHoraMuestreo(
-                                            GetTiempoAleatorio(lapsoInicial_int, lapsoFinal_int)) +
+                                "&horaObservacion=" + horaInicio +
+                                "&tiempoRecorrido=" + tiempoRecorrido +
                                 "&estado=" + "EN CURSO" +
                                 "&descripcion=" + et_descripcion.getText().toString() +
                                 "&cantObservRegistradas=" + "0" +
                                 "&cantObservRequeridas=" + ClaseGlobal.cantObservRequeridas_default
-                        );
+                        , horaInicio);
                     }
                     else
                     {
@@ -232,7 +213,7 @@ public class FragmentMuestreo_Crear extends Fragment {
 
     }
 
-    private void CrearMuestreo(String URL)
+    private void CrearMuestreo(String URL, final String pHoraInicio)
     {
         progressDialog.setMessage("Creando muestreo...");
         progressDialog.show();
@@ -250,7 +231,8 @@ public class FragmentMuestreo_Crear extends Fragment {
                         RecargarFragmento();
                         // MessageDialog("Se ha creado el enlace!", "Éxito", "Aceptar");
                         Snackbar.make(getActivity().findViewById(android.R.id.content),
-                                "Se ha creado el muestreo!", Snackbar.LENGTH_SHORT).show();
+                                "Se ha creado el muestreo!" +
+                                        "\nHora de inicio: " + pHoraInicio, Snackbar.LENGTH_LONG).show();
                     }
                     else
                     {
@@ -335,12 +317,13 @@ public class FragmentMuestreo_Crear extends Fragment {
         return nuevaHora;
     }
 
+
     private List<String> GetProyectos()
     {
         progressDialog.setMessage("Solicitando información...");
         progressDialog.show();
 
-        String URL = ClaseGlobal.SELECT_PROYECTOS_ALL;
+        String URL = ClaseGlobal.SELECT_PROYECTOS_SIN_MUESTREOS_ACTIVOS;
         final List<String> arraySpinner = new ArrayList<String>();
         arraySpinner.add(msgProyecto);
 
@@ -365,6 +348,7 @@ public class FragmentMuestreo_Crear extends Fragment {
                     }
 
                 }catch (JSONException e){
+
                     e.printStackTrace();
                 }
                 progressDialog.dismiss();
@@ -381,57 +365,6 @@ public class FragmentMuestreo_Crear extends Fragment {
         queue.add(stringRequest);
 
         return arraySpinner;
-    }
-
-    private void GetMuestreos()
-    {
-        progressDialog.setMessage("Solicitando información...");
-        progressDialog.show();
-
-        String URL = ClaseGlobal.SELECT_MUESTREOS_ALL;
-
-        RequestQueue queue = Volley.newRequestQueue(getActivity());
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) { // response -> {"status":"false"} o true
-                try
-                {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray jsonArray = jsonObject.getJSONArray("value");
-
-                    for (int i = 0; i < jsonArray.length(); i++)
-                    {
-                        String idMuestreo = jsonArray.getJSONObject(i).get("idMuestreo").toString();
-                        String idProyecto = jsonArray.getJSONObject(i).get("idProyecto").toString();
-                        String fechaInicio = jsonArray.getJSONObject(i).get("fechaInicio").toString();
-                        String lapsoInicial = jsonArray.getJSONObject(i).get("lapsoInicial").toString();
-                        String lapsoFinal = jsonArray.getJSONObject(i).get("lapsoFinal").toString();
-                        String horaObservacion = jsonArray.getJSONObject(i).get("horaObservacion").toString();
-                        String estado = jsonArray.getJSONObject(i).get("estado").toString();
-                        String descripcion = jsonArray.getJSONObject(i).get("descripcion").toString();
-                        String cantObservRegistradas = jsonArray.getJSONObject(i).get("cantObservRegistradas").toString();
-                        String cantObservRequeridas = jsonArray.getJSONObject(i).get("cantObservRequeridas").toString();
-
-                        listaDatosMuestreos.add(new
-                                Muestreo(idMuestreo, idProyecto, fechaInicio, lapsoInicial, lapsoFinal, horaObservacion,
-                                estado, descripcion, cantObservRegistradas, cantObservRequeridas));
-                    }
-
-                }catch (JSONException e){
-                    e.printStackTrace();
-                }
-                progressDialog.dismiss();
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                MessageDialog("Error al solicitar proyectos.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
-            }
-        });queue.add(stringRequest);
     }
 
     private String GetIdProyecto(String pNombre)
@@ -474,6 +407,8 @@ public class FragmentMuestreo_Crear extends Fragment {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
 
 
 }

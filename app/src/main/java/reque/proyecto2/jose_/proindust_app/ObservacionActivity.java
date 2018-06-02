@@ -45,6 +45,7 @@ import java.util.List;
 import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
 import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
+import reque.proyecto2.jose_.proindust_app.modelo.Tarea;
 
 public class ObservacionActivity extends AppCompatActivity {
 
@@ -52,7 +53,7 @@ public class ObservacionActivity extends AppCompatActivity {
 
     private Spinner sp_proyecto, sp_operacion, sp_colaborador;
 
-    private AutoCompleteTextView txt_tarea;
+    private AutoCompleteTextView atctv_tarea;
 
     private EditText et_descripcion;
 
@@ -70,11 +71,12 @@ public class ObservacionActivity extends AppCompatActivity {
 
     private ArrayAdapter<String> adapterSpinner_proyecto, adapterSpinner_operacion, adapterSpinner_colaborador;
 
-    private ArrayList<Proyecto> listaProyectos;
-    private ArrayList<Operacion> listaOperaciones;
-    private ArrayList<Colaborador> listaColaborador;
+    private ArrayList<Proyecto> listaDatosProyectos;
+    private ArrayList<Operacion> listaDatosOperaciones;
+    private ArrayList<Tarea> listaDatosTareas;
+    private ArrayList<Colaborador> listaDatosColaborador;
 
-    private ArrayList<String> listaTarea, listaIDTarea;
+    private ArrayList<String> listaProyectos, listaOperaciones, listaColaboradores, listaTareas;
 
     // request temperatura y humedad
     static final int REQUEST_LOCATION = 1;
@@ -85,38 +87,28 @@ public class ObservacionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_observacion);
 
-//        listaTarea = GetTareas();
-
         sp_proyecto = (Spinner) findViewById(R.id.sp_proyecto_ID);
-        adapterSpinner_proyecto = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetProyectos());
-        adapterSpinner_proyecto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_proyecto.setAdapter(adapterSpinner_proyecto);
-
-        listaProyectos = new ArrayList<Proyecto>();
-
         sp_operacion = (Spinner) findViewById(R.id.sp_operacion_ID);
-        adapterSpinner_operacion = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetOperaciones());
-        adapterSpinner_operacion.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_operacion.setAdapter(adapterSpinner_operacion);
-
-        listaOperaciones = new ArrayList<Operacion>();
-
         sp_colaborador = (Spinner) findViewById(R.id.sp_colaborador_ID);
-        adapterSpinner_colaborador = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, GetColaboradores());
-        adapterSpinner_colaborador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sp_colaborador.setAdapter(adapterSpinner_colaborador);
+        atctv_tarea = (AutoCompleteTextView) findViewById(R.id.atctv_tarea_ID);
 
-        listaColaborador = new ArrayList<Colaborador>();
+        listaDatosProyectos = new ArrayList<Proyecto>();
+        listaDatosOperaciones = new ArrayList<Operacion>();
+        listaDatosColaborador = new ArrayList<Colaborador>();
+        listaDatosTareas = new ArrayList<Tarea>();
 
-        txt_tarea = (AutoCompleteTextView) findViewById(R.id.atctv_tarea_ID);
+        listaProyectos = new ArrayList<String>();
+        listaOperaciones = new ArrayList<String>();
+        listaColaboradores = new ArrayList<String>();
+        listaTareas = new ArrayList<String>();
 
         et_descripcion = (EditText) findViewById(R.id.tv_descripcion_ID);
-
         bt_registrar = (Button) findViewById(R.id.bt_Registrar_ID);
 
         sp_proyecto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 proyectoSeleccionado = sp_proyecto.getSelectedItem().toString();
             }
 
@@ -128,7 +120,8 @@ public class ObservacionActivity extends AppCompatActivity {
 
         sp_operacion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 operacionSeleccionada = sp_operacion.getSelectedItem().toString();
             }
 
@@ -140,7 +133,8 @@ public class ObservacionActivity extends AppCompatActivity {
 
         sp_colaborador.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
                 colaboradorSeleccionado = sp_colaborador.getSelectedItem().toString();
             }
 
@@ -158,14 +152,6 @@ public class ObservacionActivity extends AppCompatActivity {
             }
         });
 
-        listaTarea = new ArrayList<String>();
-        listaIDTarea = new ArrayList<String>();
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, GetTareas());
-
-        txt_tarea.setThreshold(3); // al 3er caracter insertado mostrar los resultados que concuerdan
-        txt_tarea.setAdapter(adapter);
-
         // Mensaje de carga
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Insertando nueva información...");
@@ -174,6 +160,35 @@ public class ObservacionActivity extends AppCompatActivity {
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
         ParametrosAmbiente(); // Temperatura y humedad
+    }
+
+    private void ActualizarListaDatos_Proyectos(List<String> lista)
+    {
+        adapterSpinner_proyecto = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lista);
+        adapterSpinner_proyecto.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_proyecto.setAdapter(adapterSpinner_proyecto);
+    }
+
+    private void ActualizarListaDatos_Operaciones(List<String> lista)
+    {
+        adapterSpinner_operacion = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lista);
+        adapterSpinner_operacion.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_operacion.setAdapter(adapterSpinner_operacion);
+    }
+
+    private void ActualizarListaDatos_Colaboradores(List<String> lista)
+    {
+        adapterSpinner_colaborador = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lista);
+        adapterSpinner_colaborador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sp_colaborador.setAdapter(adapterSpinner_colaborador);
+    }
+
+    private void ActualizarListaDatos_Tarea(List<String> lista)
+    {
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, lista);
+
+        atctv_tarea.setThreshold(3); // al 3er caracter insertado mostrar los resultados que concuerdan
+        atctv_tarea.setAdapter(adapter);
     }
 
     /**
@@ -187,7 +202,7 @@ public class ObservacionActivity extends AppCompatActivity {
         String tipoMuestra = "1"; //Esto debería ser una variable global que cambie cuando se alcance
         //el limite de 30 muestreos preliminares
 
-        String tarea = txt_tarea.getText().toString();
+        String tarea = atctv_tarea.getText().toString();
         String comentario = et_descripcion.getText().toString();
         if(comentario.equals("")){
             comentario = "Sin comentario";
@@ -201,27 +216,31 @@ public class ObservacionActivity extends AppCompatActivity {
             String idTarea = "-1";
             String idOperacion = "-1";
 
-            for(int i=0; i<listaProyectos.size(); i++){
-                if(listaProyectos.get(i).nombre.equals(proyectoSeleccionado)){
-                    idProyecto = listaProyectos.get(i).id;
+            for(int i=0; i < listaDatosProyectos.size(); i++)
+            {
+                if(listaDatosProyectos.get(i).nombre.equals(proyectoSeleccionado)){
+                    idProyecto = listaDatosProyectos.get(i).id;
                 }
             }
 
-            for(int i=0; i<listaColaborador.size(); i++){
-                if(listaColaborador.get(i).pseudonimo.equals(colaboradorSeleccionado)){
-                    idColaborador = listaColaborador.get(i).id;
+            for(int i=0; i < listaDatosColaborador.size(); i++){
+                if(listaDatosColaborador.get(i).pseudonimo.equals(colaboradorSeleccionado))
+                {
+                    idColaborador = listaDatosColaborador.get(i).id;
                 }
             }
 
-            for(int i = 0; i < listaOperaciones.size(); i++){
-                if(listaOperaciones.get(i).nombre.equals(operacionSeleccionada)){
-                    idOperacion = listaOperaciones.get(i).id;
+            for(int i = 0; i < listaDatosOperaciones.size(); i++){
+                if(listaDatosOperaciones.get(i).nombre.equals(operacionSeleccionada))
+                {
+                    idOperacion = listaDatosOperaciones.get(i).id;
                 }
             }
 
-            for(int i=0; i<listaTarea.size(); i++){
-                if(listaTarea.get(i).equals(tarea)){
-                    idTarea = listaIDTarea.get(i);
+            for(int i=0; i < listaDatosTareas.size(); i++)
+            {
+                if(listaDatosTareas.get(i).nombre.equals(tarea)){
+                    idTarea = listaDatosTareas.get(i).id;
                 }
             }
 
@@ -233,7 +252,7 @@ public class ObservacionActivity extends AppCompatActivity {
                     "&temperatura=" + ClaseGlobal.temperatura +
                     "&idUsuario=" + ClaseGlobal.usuarioActual.id +
                     "&idColaborador=" + idColaborador +
-                    "&idOperacion=" + idProyecto +
+                    "&idOperacion=" + idOperacion +
                     "&idTarea=" + idTarea);
         }
     }
@@ -296,12 +315,11 @@ public class ObservacionActivity extends AppCompatActivity {
 
                     for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        String tarea = jsonArray.getJSONObject(i).get("nombre").toString();
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
                         String id = jsonArray.getJSONObject(i).get("idTarea").toString();
 
-                        listaTareas.add(tarea);
-                        listaTarea.add(tarea);
-                        listaIDTarea.add(id);
+                        listaTareas.add(nombre);
+                        listaDatosTareas.add(new Tarea(id, nombre));
                     }
 
                 }catch (JSONException e){
@@ -340,7 +358,7 @@ public class ObservacionActivity extends AppCompatActivity {
 
                         arraySpinner.add(nombre);
 
-                        listaProyectos.add(new Proyecto(id, nombre));
+                        listaDatosProyectos.add(new Proyecto(id, nombre));
                     }
 
                 }catch (JSONException e){
@@ -361,7 +379,6 @@ public class ObservacionActivity extends AppCompatActivity {
 
     private List<String> GetOperaciones()
     {
-
         String URL = ClaseGlobal.SELECT_OPERACIONES_ALL;
         final List<String> arraySpinner2 = new ArrayList<String>();
         arraySpinner2.add(msgOperacion);
@@ -383,7 +400,7 @@ public class ObservacionActivity extends AppCompatActivity {
 
                         arraySpinner2.add(nombre);
 
-                        listaOperaciones.add(new Operacion(id, nombre, ""));
+                        listaDatosOperaciones.add(new Operacion(id, nombre, ""));
                     }
 
                 }catch (JSONException e){
@@ -426,7 +443,7 @@ public class ObservacionActivity extends AppCompatActivity {
 
                         arraySpinner.add(pseudonimo);
 
-                        listaColaborador.add(new Colaborador(id, pseudonimo, ""));
+                        listaDatosColaborador.add(new Colaborador(id, pseudonimo, ""));
                     }
 
                 }catch (JSONException e){
