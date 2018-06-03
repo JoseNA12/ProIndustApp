@@ -58,7 +58,7 @@ public class ObservacionActivity extends AppCompatActivity {
 
     private EditText et_descripcion;
 
-    private Button bt_registrar;
+    private Button bt_registrar, bt_terminar;
 
     private String msgProyecto = "Seleccione un proyecto...";
     private String msgOperacion = "Seleccione una operación...";
@@ -113,6 +113,7 @@ public class ObservacionActivity extends AppCompatActivity {
 
         et_descripcion = (EditText) findViewById(R.id.tv_descripcion_ID);
         bt_registrar = (Button) findViewById(R.id.bt_Registrar_ID);
+        bt_terminar = (Button) findViewById(R.id.bt_Terminar_ID);
 
         sp_proyecto.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -161,6 +162,15 @@ public class ObservacionActivity extends AppCompatActivity {
                 Boton_RegistrarMuestra();
             }
         });
+
+        bt_terminar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+            }
+        });
+
 
         // Mensaje de carga
         progressDialog = new ProgressDialog(this);
@@ -361,7 +371,7 @@ public class ObservacionActivity extends AppCompatActivity {
                 }
             }
 
-            RegistrarMuestra(ClaseGlobal.INSERT_MUESTRA +
+            RegistrarMuestra(ClaseGlobal.INSERT_OBSERVACION +
                     "?comentario=" + comentario +
                     "&fecha_hora=" + hourdateFormat.format(date).toString() +
                     "&humedad=" + ClaseGlobal.humedad +

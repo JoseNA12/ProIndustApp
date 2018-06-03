@@ -73,16 +73,19 @@ public class ClaseGlobal {
     public static final String INSERT_OPERACIONTAREA = IP + "OperacionTarea/insertar_OperacionTarea.php";
     public static final String SELECT_OPERACIONTAREA_ALL = IP + "OperacionTarea/select_OperacionTarea.php";
     public static final String DELECT_OPERACIONTAREA_ID_ID = IP +"OperacionTarea/eliminar_operacionTarea.php";
+    "OperacionTarea/select_tareas_de_operacion.php";
 
     // ProyectoColaborador
     public static final String INSERT_PROYECTOCOLABORADOR = IP + "ProyectoColaborador/insertar_ProyectoColaborador.php";
     public static final String SELECT_PROYECTOCOLABORADOR_ALL = IP + "ProyectoColaborador/select_ProyectoColaborador.php";
     public static final String DELECT_PROYECTOCOLABORADOR_ID_ID = IP + "ProyectoColaborador/eliminar_proyectoColaborador.php";
+    "ProyectoColaborador/select_colaboradores_de_proyecto.php";
 
     // ProyectoOperacion
     public static final String INSERT_PROYECTOOPERACION = IP + "ProyectoOperacion/insertar_ProyectoOperacion.php";
     public static final String SELECT_PROYECTOOPERACION_ALL = IP + "ProyectoOperacion/select_ProyectoOperacion.php";
     public static final String DELECT_PROYECTOOPERACION_ID_ID = IP + "ProyectoOperacion/eliminar_proyectoOperacion.php";
+    "ProyectoOperacion/select_operaciones_de_proyecto.php";
 
     // ProyectoUsuario
     public static final String INSERT_PROYECTOUSUARIO = IP + "ProyectoUsuario/insertar_ProyectoUsuario.php";
@@ -98,7 +101,7 @@ public class ClaseGlobal {
     public static final String INICIAR_SESION = IP + "iniciar_sesion.php";
 
     // Observacion
-    public static final String INSERT_MUESTRA = IP + "Observacion/insertar_muestra.php";
+    public static final String INSERT_OBSERVACION = IP + "Observacion/insertar_muestra.php";
 
     // Muestreo
     public static final String INSERT_MUESTREO = IP + "Muestreo/insertar_muestreo.php";
