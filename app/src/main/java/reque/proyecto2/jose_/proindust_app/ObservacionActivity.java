@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,6 +51,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
@@ -91,6 +94,10 @@ public class ObservacionActivity extends AppCompatActivity {
     private String horaActual;
     private String fechaActual;
 
+    private boolean registroObservacion = false;
+    private int cantObservRegistradas_actual = 0;
+    private int cantObservRequeridas_actual = 0;
+
     // contienen todos los datos registrados en la base de datos (solo el nombre)
     // private List<String> listaProyectos_todos, listaOperaciones_todos, listaColaboradores_todos, listaTareas_todos;
     // contiene los datos filtrados por parametros, proyectos de acuerdo a usuarios, operaciones de acuerdo a proyectos, etc
@@ -109,6 +116,10 @@ public class ObservacionActivity extends AppCompatActivity {
         SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
         horaActual = formatoHora.format(cal.getTime());
         fechaActual = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+        registroObservacion = false;
+        cantObservRegistradas_actual = 0;
+        cantObservRequeridas_actual = 0;
 
         GetProyectos();
         GetOperaciones();
@@ -193,7 +204,7 @@ public class ObservacionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-
+                Boton_TerminarObservaciones();
             }
         });
 
@@ -205,6 +216,112 @@ public class ObservacionActivity extends AppCompatActivity {
 
         // Llama a DeterminarProyectos()
         ParametrosAmbiente(); // Temperatura y humedad
+    }
+
+    private void Boton_TerminarObservaciones()
+    {
+        if (registroObservacion)
+        {
+            Actualizar_y_terminar_muestreos_realizados();
+        }
+        else
+        {
+            MessageDialog("Debe registrar al menos 1 observacion para poder terminar con el muestreo!",
+                    "Atención!", "Aceptar");
+        }
+    }
+
+    private void Actualizar_y_terminar_muestreos_realizados()
+    {
+        String horaInicio = ObtenerHoraMuestreo(
+                GetTiempoAleatorio(Integer.parseInt(miMuestreoActual.lapsoInicial),
+                        Integer.parseInt(miMuestreoActual.lapsoFinal) +
+                                Integer.parseInt(miMuestreoActual.tiempoRecorrido)));
+
+        String URL = ClaseGlobal.UPDATE_OBSER_REGIST_MUESTREO +
+                "?idMuestreo=" + miMuestreoActual.idMuestreo +
+                "&cantObservRegistradas=" + Integer.toString(cantObservRegistradas_actual) +
+                "&horaObservacion=" + horaInicio;
+
+        progressDialog.setMessage("Registrado muestreos...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        miMuestreoActual.cantObservRegistradas = Integer.toString(cantObservRegistradas_actual);
+                        Intent intent_ = new Intent(ObservacionActivity.this, MenuPrincipalActivity.class);
+
+                        if (ClaseGlobal.usuarioActual.idRolUsuario.equals("1")) {
+                            intent_.putExtra("ROL", "ADMINISTRADOR");
+                        }
+                        else
+                        {
+                            intent_.putExtra("ROL", "ANALISTA");
+                        }
+                        startActivity(intent_);
+                        Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                                "Muestreo finalizado!", Snackbar.LENGTH_LONG).show();
+
+                    }
+                    else
+                    {
+                        MessageDialog("Error al finalizar el muestreo!", "Error", "Aceptar");
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
+    }
+
+    /**
+     * Dado un rango (valor minimo y maximo) obtener un valor aleatorio dentro de ese rango
+     * @param pLapsoInicial
+     * @param pLapsoFinal
+     * @return
+     */
+    private Integer GetTiempoAleatorio(int pLapsoInicial, int pLapsoFinal)
+    {
+        return ThreadLocalRandom.current().nextInt(pLapsoInicial, pLapsoFinal + 1);
+    }
+
+    /**
+     * Obtener la hora del primer muestreo preliminar segun el valor generado aleatoriamente
+     * acorde al rango de minutos ingresado
+     * @param pValor
+     * @return
+     */
+    private String ObtenerHoraMuestreo(int pValor)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, pValor);
+
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        int second = cal.get(Calendar.SECOND);
+
+        String nuevaHora = Integer.toString(hour) + ":" + Integer.toString(minute) + ":" + second;
+
+        return nuevaHora;
     }
 
     /**
@@ -279,7 +396,10 @@ public class ObservacionActivity extends AppCompatActivity {
                     {
                         Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                                 "Se ha registrado la observación!", Snackbar.LENGTH_SHORT).show();
-                        // MessageDialog("Se ha creado la muestra!", "Éxito", "Aceptar");
+
+                        registroObservacion = true;
+
+                        DeterminarFinMuestreo();
                     }
                     else {
                         MessageDialog("Error al crear la observación!", "Error", "Aceptar");
@@ -297,7 +417,258 @@ public class ObservacionActivity extends AppCompatActivity {
                         "Error", "Aceptar");
             }
         }); queue.add(stringRequest);
+    }
 
+    private void DeterminarFinMuestreo()
+    {
+        cantObservRegistradas_actual += 1;
+
+        if (cantObservRegistradas_actual >= cantObservRequeridas_actual)
+        {
+            DeterminarActualizarMuestreo(miMuestreoActual.idMuestreo);
+        }
+    }
+
+    private void DeterminarActualizarMuestreo(String pIdMuestreo)
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
+        alert.setTitle("Atención!");
+
+        LinearLayout layout = new LinearLayout(ObservacionActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final TextView et_mensaje = new TextView(ObservacionActivity.this);
+        et_mensaje.setText("Se ha alcanzado el tope de muestreos preliminares definidos!. \n" +
+                "¿Que desea hacer, continuar registrando muestras o finalizar?");
+        layout.addView(et_mensaje);
+
+        alert.setView(layout);
+
+        alert.setPositiveButton("FINALIZAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                InsertarValoresFormula();
+            }
+        });
+
+        alert.setNegativeButton("CONTINUAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                InsertarCantMuestreosNuevos();
+            }
+        });
+
+        alert.show();
+
+    }
+
+    private void InsertarCantMuestreosNuevos()
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
+        alert.setTitle("Continuar muestreo");
+
+        LinearLayout layout = new LinearLayout(ObservacionActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText et_cantMuestreos = new EditText(ObservacionActivity.this);
+        et_cantMuestreos.setHint("Cant. de muestreos por agregar");
+        et_cantMuestreos.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(et_cantMuestreos);
+
+        alert.setView(layout);
+
+        alert.setPositiveButton("REGISTRAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                String pCantidad = et_cantMuestreos.getText().toString();
+
+                if (!pCantidad.equals("") )
+                {
+                    ActualizarMuestreo_nuevo_tope(pCantidad);
+                }
+                else
+                {
+                    // no insertó el valor
+                    InsertarCantMuestreosNuevos();
+                    Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                            "Debe ingresar la cantidad agregada de muestreos!", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        alert.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                // Intent intent_menuPrincipal = new Intent(ObservacionActivity.this, MenuPrincipalActivity.class);
+                // startActivity(intent_menuPrincipal);
+                DeterminarActualizarMuestreo(miMuestreoActual.idMuestreo);
+            }
+        });
+
+        alert.show();
+    }
+
+    private void ActualizarMuestreo_nuevo_tope(final String pCantidad)
+    {
+        String temp = Integer.toString(cantObservRequeridas_actual + Integer.parseInt(pCantidad));
+
+        String URL = ClaseGlobal.UPDATE_OBSER_REQUE_MUESTREO +
+                "?idMuestreo=" + miMuestreoActual.idMuestreo +
+                "&cantObservRequeridas=" + temp;
+
+        progressDialog.setMessage("Actualizando muestreo...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        cantObservRequeridas_actual += Integer.parseInt(pCantidad);
+                        miMuestreoActual.cantObservRequeridas = Integer.toString(cantObservRequeridas_actual);
+
+                        Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                                "Se ha actualizado el muestreo!", Snackbar.LENGTH_LONG).show();
+
+                    }
+                    else
+                    {
+                        MessageDialog("Error al actualizar el muestreo!", "Error", "Aceptar");
+                        DeterminarActualizarMuestreo(miMuestreoActual.idMuestreo);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+    }
+
+    private void InsertarValoresFormula()
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
+        alert.setTitle("Registrar valores");
+
+        LinearLayout layout = new LinearLayout(ObservacionActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final EditText et_nivelConfianza = new EditText(ObservacionActivity.this);
+        et_nivelConfianza.setHint("Nivel de confianza");
+        et_nivelConfianza.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(et_nivelConfianza);
+
+        final EditText et_nivelError = new EditText(ObservacionActivity.this);
+        et_nivelError.setHint("Nivel de error");
+        et_nivelError.setInputType(InputType.TYPE_CLASS_NUMBER);
+        layout.addView(et_nivelError);
+
+        alert.setView(layout);
+
+        alert.setPositiveButton("REGISTRAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                String pNivelConfianza = et_nivelConfianza.getText().toString();
+                String pNivelError = et_nivelError.getText().toString();
+
+                if (!pNivelConfianza.equals("") && !pNivelError.equals(""))
+                {
+                    int pNivelConfianza_int = Integer.parseInt(pNivelConfianza);
+                    int pNivelError_int = Integer.parseInt(pNivelError);
+
+                    if ((pNivelConfianza_int <= 99) && (pNivelConfianza_int >= 90))
+                    {
+                        int valor = ObtenerMuestreosNecesarios_al_finalizar(pNivelConfianza, pNivelError);
+
+                        Determinar_Muestras_pendientes_debido_valores(valor);
+
+                        ActualizarMuestreo_nuevo_tope(Integer.toString(valor));
+                    }
+                    else
+                    {
+                        MessageDialog("El nivel de confianza debe ser entre 90 y 99",
+                                "Error", "Aceptar");
+                        InsertarValoresFormula();
+                    }
+                    // Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                            // "Valores registrados!", Snackbar.LENGTH_LONG).show();
+                }
+                else
+                {
+                    // no insertó alguno o ninguno de loa valores
+
+                    InsertarValoresFormula();
+                    Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                            "Debe ingresar todos los valores!", Snackbar.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        alert.setNegativeButton("CANCELAR (quitar)", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                // Intent intent_menuPrincipal = new Intent(ObservacionActivity.this, MenuPrincipalActivity.class);
+                // startActivity(intent_menuPrincipal);
+                DeterminarActualizarMuestreo(miMuestreoActual.idMuestreo);
+            }
+        });
+
+        alert.show();
+    }
+
+    private void Determinar_Muestras_pendientes_debido_valores(int pValor)
+    {
+        AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
+        alert.setTitle("Confirmar ?");
+
+        LinearLayout layout = new LinearLayout(ObservacionActivity.this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final TextView et_mensaje = new TextView(ObservacionActivity.this);
+        et_mensaje.setText("Se necesitan " + Integer.toString(pValor) + " muestras más segun los valores ingresados!");
+        layout.addView(et_mensaje);
+
+
+        alert.setView(layout);
+
+        alert.setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+
+
+            }
+        });
+
+        alert.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton)
+            {
+                InsertarValoresFormula();
+            }
+        });
+
+        alert.show();
+    }
+
+    private int ObtenerMuestreosNecesarios_al_finalizar(String pNivelConfinza, String pNivelError)
+    {
+        int cantidad = 0;
+
+        return cantidad;
     }
 
     /**
@@ -345,6 +716,9 @@ public class ObservacionActivity extends AppCompatActivity {
                                 horaObservacion, tiempoRecorrido, estado, descripcion, cantObservRegistradas,
                                 cantObservRequeridas);
 
+                        cantObservRegistradas_actual = Integer.parseInt(cantObservRegistradas);
+                        cantObservRequeridas_actual = Integer.parseInt(cantObservRequeridas);
+
                         progressDialog.dismiss();
                         DecidirPermitirRegistrarObservaciones(idProyecto);
 
@@ -381,6 +755,8 @@ public class ObservacionActivity extends AppCompatActivity {
         long dias = CalcularDiferenciaDias(fechaM);
         if (dias != 0)
         {
+            ActualizarListaDatos_Colaboradores(new ArrayList<String>());
+            ActualizarListaDatos_Operaciones(new ArrayList<String>());
             MessageDialog("Aún faltan " + Long.toString(dias) + " días para dar inicio al muestreo!",
                     "Atención!", "Aceptar");
         }
@@ -398,6 +774,8 @@ public class ObservacionActivity extends AppCompatActivity {
             }
             else
             {
+                ActualizarListaDatos_Operaciones(new ArrayList<String>());
+                ActualizarListaDatos_Colaboradores(new ArrayList<String>());
                 MessageDialog("Aún faltan " + Integer.toString(minutos) + " minutos para dar inicio al muestreo!",
                         "Atención!", "Aceptar");
             }
@@ -1193,6 +1571,26 @@ public class ObservacionActivity extends AppCompatActivity {
                 GetLocacion();
                 break;
         }
+    }
+
+
+    /**
+     * Impedir que el usuario retroceda mediante el boton de atras del dispositivo
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && registroObservacion) {
+
+            MessageDialog("Se han registrado 1 o más observaciones.\nPor favor, finalice el procedimiento!",
+                    "Atención!", "Aceptar");
+
+            //preventing default implementation previous to android.os.Build.VERSION_CODES.ECLAIR
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**

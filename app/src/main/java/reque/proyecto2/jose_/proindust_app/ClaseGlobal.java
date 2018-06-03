@@ -109,6 +109,9 @@ public class ClaseGlobal {
     public static final String UPDATE_MUESTREO = IP + "Muestreo/actualizar_muestreo.php";
     public static final String SELECT_MUESTREO_ACTIVO_DE_PROYECTO = IP + "Muestreo/select_muestreo_activo_de_proyecto.php";
 
+    public static final String UPDATE_OBSER_REGIST_MUESTREO = IP + "Muestreo/actualizar_cantObservRegistradas_muestreo.php";
+    public static final String UPDATE_OBSER_REQUE_MUESTREO = IP + "Muestreo/actualizar_cantObservRequeridas_muestreo.php";
+
     public static String longitud;
     public static String latitud;
     public static String humedad;
