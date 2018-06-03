@@ -114,6 +114,9 @@ public class ClaseGlobal {
 
     public static final String UPDATE_PONER_CONCLUIDO_MUESTREO = IP + "Muestreo/actualizar_estado_a_concluido_muestreo.php";
 
+    public static final String SELECT_TOTAL_OBSERVACIONES_PRODUCTIVAS_MUESTREO = IP + "Muestreo/select_muestras_productivas.php";
+    public static final String SELECT_TOTAL_OBSERVACIONES_MUESTREO = IP + "Muestreo/select_muestras_totales.php";
+
     public static String longitud;
     public static String latitud;
     public static String humedad;

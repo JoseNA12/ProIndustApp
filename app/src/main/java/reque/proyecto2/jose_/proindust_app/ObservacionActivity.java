@@ -1,6 +1,6 @@
 package reque.proyecto2.jose_.proindust_app;
 
-// PUMA
+
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -59,6 +60,7 @@ import reque.proyecto2.jose_.proindust_app.modelo.Muestreo;
 import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
 import reque.proyecto2.jose_.proindust_app.modelo.Tarea;
+import reque.proyecto2.jose_.proindust_app.modelo.DistNormal;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -97,6 +99,11 @@ public class ObservacionActivity extends AppCompatActivity {
     private boolean registroObservacion = false;
     private int cantObservRegistradas_actual = 0;
     private int cantObservRequeridas_actual = 0;
+
+    private int totalObservacionesProductivas = 0;
+    private int totalObservaciones = 0;
+
+    private boolean puedeTerminar = false;
 
     // contienen todos los datos registrados en la base de datos (solo el nombre)
     // private List<String> listaProyectos_todos, listaOperaciones_todos, listaColaboradores_todos, listaTareas_todos;
@@ -257,6 +264,7 @@ public class ObservacionActivity extends AppCompatActivity {
                     if (!jsonObject.getString("status").equals("false"))
                     {
                         miMuestreoActual.cantObservRegistradas = Integer.toString(cantObservRegistradas_actual);
+
                         Intent intent_ = new Intent(ObservacionActivity.this, MenuPrincipalActivity.class);
 
                         if (ClaseGlobal.usuarioActual.idRolUsuario.equals("1")) {
@@ -267,6 +275,7 @@ public class ObservacionActivity extends AppCompatActivity {
                             intent_.putExtra("ROL", "ANALISTA");
                         }
                         startActivity(intent_);
+
                         Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                                 "Muestreo finalizado!", Snackbar.LENGTH_LONG).show();
 
@@ -372,7 +381,7 @@ public class ObservacionActivity extends AppCompatActivity {
         }
         else
         {
-            MessageDialog("Por favor, seleccione un proyceto", "Error", "Aceptar");
+            MessageDialog("Por favor, seleccione un proyecto", "Error", "Aceptar");
         }
     }
 
@@ -401,7 +410,8 @@ public class ObservacionActivity extends AppCompatActivity {
 
                         DeterminarFinMuestreo();
                     }
-                    else {
+                    else
+                    {
                         MessageDialog("Error al crear la observación!", "Error", "Aceptar");
                     }
                 } catch (JSONException e) {
@@ -433,6 +443,7 @@ public class ObservacionActivity extends AppCompatActivity {
     {
         AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
         alert.setTitle("Atención!");
+        alert.setCancelable(false);
 
         LinearLayout layout = new LinearLayout(ObservacionActivity.this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -447,10 +458,10 @@ public class ObservacionActivity extends AppCompatActivity {
         alert.setPositiveButton("FINALIZAR", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                // InsertarValoresFormula(); // ------------------------------------------------------------------------------------
+                ObtenerTotalObservaciones();
+                ObtenerTotalObservaciones_Productivas();
 
-                Poner_en_concluido_muestreo();
-
+                InsertarValoresFormula(); // ------------------------------------------------------------------------------------
             }
         });
 
@@ -484,8 +495,6 @@ public class ObservacionActivity extends AppCompatActivity {
 
                     if (!jsonObject.getString("status").equals("false"))
                     {
-                        Boton_TerminarObservaciones();
-
                         Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                                 "Muestreo finalizado!", Snackbar.LENGTH_LONG).show();
 
@@ -535,7 +544,7 @@ public class ObservacionActivity extends AppCompatActivity {
 
                 if (!pCantidad.equals("") )
                 {
-                    ActualizarMuestreo_nuevo_tope(pCantidad);
+                    ActualizarMuestreo_nuevo_tope(pCantidad, false);
                 }
                 else
                 {
@@ -559,7 +568,7 @@ public class ObservacionActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private void ActualizarMuestreo_nuevo_tope(final String pCantidad)
+    private void ActualizarMuestreo_nuevo_tope(final String pCantidad, final boolean puedeTerminar)
     {
         String temp = Integer.toString(cantObservRequeridas_actual + Integer.parseInt(pCantidad));
 
@@ -585,6 +594,8 @@ public class ObservacionActivity extends AppCompatActivity {
 
                         Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                                 "Se ha actualizado el muestreo!", Snackbar.LENGTH_LONG).show();
+
+                        if (puedeTerminar) { Poner_en_concluido_muestreo(); Boton_TerminarObservaciones(); }
 
                     }
                     else
@@ -615,6 +626,7 @@ public class ObservacionActivity extends AppCompatActivity {
     {
         AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
         alert.setTitle("Registrar valores");
+        alert.setCancelable(false);
 
         LinearLayout layout = new LinearLayout(ObservacionActivity.this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -625,7 +637,7 @@ public class ObservacionActivity extends AppCompatActivity {
         layout.addView(et_nivelConfianza);
 
         final EditText et_nivelError = new EditText(ObservacionActivity.this);
-        et_nivelError.setHint("Nivel de error");
+        et_nivelError.setHint("Nivel de error (%)");
         et_nivelError.setInputType(InputType.TYPE_CLASS_NUMBER);
         layout.addView(et_nivelError);
 
@@ -644,11 +656,9 @@ public class ObservacionActivity extends AppCompatActivity {
 
                     if ((pNivelConfianza_int <= 99) && (pNivelConfianza_int >= 90))
                     {
-                        int valor = ObtenerMuestreosNecesarios_al_finalizar(pNivelConfianza, pNivelError);
 
-                        Determinar_Muestras_pendientes_debido_valores(valor);
+                        ObtenerMuestreosNecesarios_al_finalizar(pNivelConfianza, pNivelError);
 
-                        ActualizarMuestreo_nuevo_tope(Integer.toString(valor));
                     }
                     else
                     {
@@ -670,7 +680,7 @@ public class ObservacionActivity extends AppCompatActivity {
             }
         });
 
-        alert.setNegativeButton("CANCELAR (quitar)", new DialogInterface.OnClickListener() {
+        alert.setNegativeButton("CANCELAR", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
                 // Intent intent_menuPrincipal = new Intent(ObservacionActivity.this, MenuPrincipalActivity.class);
@@ -682,27 +692,53 @@ public class ObservacionActivity extends AppCompatActivity {
         alert.show();
     }
 
-    // sin usar (no esta hecho lo de la formula)
-    private void Determinar_Muestras_pendientes_debido_valores(int pValor)
+    private void ObtenerMuestreosNecesarios_al_finalizar(String pNivelConfinza, String pNivelError)
+    {
+        int cantidad = 0;
+
+        DistNormal a = new DistNormal(
+                Integer.parseInt(pNivelError),
+                Integer.parseInt(pNivelConfinza),
+                totalObservaciones, totalObservacionesProductivas);
+
+        cantidad = (int) a.CalcularNMuestras();
+
+        Determinar_Muestras_pendientes_debido_valores(cantidad);
+
+    }
+
+    private void Determinar_Muestras_pendientes_debido_valores(final int pValor)
     {
         AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
         alert.setTitle("Confirmar ?");
+        alert.setCancelable(false);
 
         LinearLayout layout = new LinearLayout(ObservacionActivity.this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
         final TextView et_mensaje = new TextView(ObservacionActivity.this);
-        et_mensaje.setText("Se necesitan " + Integer.toString(pValor) + " muestras más segun los valores ingresados!");
-        layout.addView(et_mensaje);
 
+        puedeTerminar = false;
+        String msg = "";
+        if (pValor == 0)
+        {
+            puedeTerminar = true;
+            msg = "No se requieren muestreos adicionales!";
+        }
+        else
+        {
+            msg = "Se necesitan " + Integer.toString(pValor) + " muestras más segun los valores ingresados!";
+        }
+
+        et_mensaje.setText(msg);
+        layout.addView(et_mensaje);
 
         alert.setView(layout);
 
         alert.setPositiveButton("ACEPTAR", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton)
             {
-
-
+                ActualizarMuestreo_nuevo_tope(Integer.toString(pValor), puedeTerminar);
             }
         });
 
@@ -716,11 +752,100 @@ public class ObservacionActivity extends AppCompatActivity {
         alert.show();
     }
 
-    private int ObtenerMuestreosNecesarios_al_finalizar(String pNivelConfinza, String pNivelError)
-    {
-        int cantidad = 0;
 
-        return cantidad;
+    private int ObtenerTotalObservaciones()
+    {
+        String URL = ClaseGlobal.SELECT_TOTAL_OBSERVACIONES_MUESTREO +
+                "?idMuestreo=" + miMuestreoActual.idMuestreo;
+
+        progressDialog.setMessage("Obteniendo total de tareas registradas...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    if (jsonArray.length() > 0)
+                    {
+                        String count = jsonArray.getJSONObject(0).get("COUNT(idObservacion)").toString();
+                        totalObservaciones = Integer.parseInt(count);
+
+                    }
+                    else
+                    {
+                        MessageDialog("Error al obtener el total de observaciones del muestreo!", "Error", "Aceptar");
+                        // NO SE QUE HACER SI FALLA
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return totalObservaciones;
+    }
+
+    private int ObtenerTotalObservaciones_Productivas()
+    {
+        String URL = ClaseGlobal.SELECT_TOTAL_OBSERVACIONES_PRODUCTIVAS_MUESTREO +
+                "?idMuestreo=" + miMuestreoActual.idMuestreo;
+
+        progressDialog.setMessage("Obteniendo total de tareas registradas...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    if (jsonArray.length() > 0)
+                    {
+                        String count = jsonArray.getJSONObject(0).get("COUNT(idObservacion)").toString();
+                        totalObservacionesProductivas = Integer.parseInt(count);
+                    }
+                    else
+                    {
+                        MessageDialog("Error al obtener el total de observaciones del muestreo!", "Error", "Aceptar");
+                        // NO SE QUE HACER SI FALLA
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return totalObservacionesProductivas;
     }
 
     /**
@@ -807,8 +932,8 @@ public class ObservacionActivity extends AppCompatActivity {
         long dias = CalcularDiferenciaDias(fechaM);
         if (dias != 0)
         {
-            ActualizarListaDatos_Colaboradores(new ArrayList<String>());
-            ActualizarListaDatos_Operaciones(new ArrayList<String>());
+            ActualizarListaDatos_Colaboradores(new ArrayList<String>()); colaboradorSeleccionado = msgOperacion;
+            ActualizarListaDatos_Operaciones(new ArrayList<String>()); operacionSeleccionada = msgOperacion;
             MessageDialog("Aún faltan " + Long.toString(dias) + " días para dar inicio al muestreo!",
                     "Atención!", "Aceptar");
         }
@@ -826,8 +951,8 @@ public class ObservacionActivity extends AppCompatActivity {
             }
             else
             {
-                ActualizarListaDatos_Operaciones(new ArrayList<String>());
-                ActualizarListaDatos_Colaboradores(new ArrayList<String>());
+                ActualizarListaDatos_Operaciones(new ArrayList<String>()); colaboradorSeleccionado = msgOperacion;
+                ActualizarListaDatos_Colaboradores(new ArrayList<String>()); operacionSeleccionada = msgOperacion;
                 MessageDialog("Aún faltan " + Integer.toString(minutos) + " minutos para dar inicio al muestreo!",
                         "Atención!", "Aceptar");
             }
