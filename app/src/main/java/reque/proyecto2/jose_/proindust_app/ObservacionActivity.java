@@ -101,10 +101,10 @@ public class ObservacionActivity extends AppCompatActivity {
         listaDatosColaborador = new ArrayList<Colaborador>();
         listaDatosTareas = new ArrayList<Tarea>();
 
-        listaProyectos_filtro = GetProyectos();
-        listaOperaciones_filtro = GetOperaciones();
-        listaColaboradores_filtro = GetColaboradores();
-        listaTareas_filtro = GetTareas();
+        // listaProyectos_filtro = GetProyectos();
+        // listaOperaciones_filtro = GetOperaciones();
+        // listaColaboradores_filtro = GetColaboradores();
+        // listaTareas_filtro = GetTareas();
 
         listaProyectos_todos = new ArrayList<String>();
         listaOperaciones_todos = new ArrayList<String>();
@@ -119,6 +119,7 @@ public class ObservacionActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 proyectoSeleccionado = sp_proyecto.getSelectedItem().toString();
+
             }
 
             @Override
@@ -168,6 +169,7 @@ public class ObservacionActivity extends AppCompatActivity {
 
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
+        // Llama DeterminarProyectos()
         ParametrosAmbiente(); // Temperatura y humedad
     }
 
@@ -179,13 +181,102 @@ public class ObservacionActivity extends AppCompatActivity {
     {
         if (ClaseGlobal.usuarioActual.idRolUsuario.equals("2")) // Analista
         {
-            Get_Proyectos_activos_de_usuario(ClaseGlobal.usuarioActual.id);
+            listaProyectos_filtro = Get_Proyectos_activos_de_usuario(ClaseGlobal.usuarioActual.id);
+            ActualizarListaDatos_Proyectos(listaProyectos_filtro);
+        }
+        else // administrador
+        {
+            listaProyectos_filtro = Get_Proyectos_activos();
+            ActualizarListaDatos_Proyectos(listaProyectos_filtro);
         }
     }
 
+    /**
+     * Obtiene todos los proyectos con muestreos activos
+     * Usado para administrador, ya que él puede muestrear cualquier proyecto
+     * @return
+     */
+    private List<String> Get_Proyectos_activos()
+    {
+        String URL = ClaseGlobal.SELECT_PROYECTOS_CON_MUESTREOS_ACTIVOS;
+        final List<String> arraySpinner = new ArrayList<String>();
+        arraySpinner.add(msgProyecto);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
+
+                        arraySpinner.add(nombre);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return arraySpinner;
+    }
+
+    /**
+     * Obtiene todos los proyectos con muestreos en estado de ACTIVO dado un usuario analista
+     * @param pIdUsuario
+     * @return
+     */
     private List<String> Get_Proyectos_activos_de_usuario(String pIdUsuario)
     {
+        String URL = ClaseGlobal.SELECT_PROYECTOS_ACTIVOS_DE_USUARIO + "?idUsuario=" + pIdUsuario;
+        final List<String> arraySpinner = new ArrayList<String>();
+        arraySpinner.add(msgProyecto);
 
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
+
+                        arraySpinner.add(nombre);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return arraySpinner;
     }
 
     private void ActualizarListaDatos_Proyectos(List<String> lista)
@@ -324,10 +415,10 @@ public class ObservacionActivity extends AppCompatActivity {
 
     }
 
-    private List<String> GetTareas()
+    private void GetTareas()
     {
         String URL = ClaseGlobal.SELECT_TAREAS_ALL;
-        final List<String> listaTareas = new ArrayList<String>();
+        // final List<String> listaTareas = new ArrayList<String>();
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -344,7 +435,7 @@ public class ObservacionActivity extends AppCompatActivity {
                         String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
                         String id = jsonArray.getJSONObject(i).get("idTarea").toString();
 
-                        listaTareas.add(nombre);
+                        // listaTareas.add(nombre);
                         listaDatosTareas.add(new Tarea(id, nombre));
                     }
 
@@ -358,14 +449,14 @@ public class ObservacionActivity extends AppCompatActivity {
             }
         });queue.add(stringRequest);
 
-        return listaTareas;
+        // return listaTareas;
     }
 
-    private List<String> GetProyectos()
+    private void GetProyectos()
     {
         String URL = ClaseGlobal.SELECT_PROYECTOS_ALL;
-        final List<String> arraySpinner = new ArrayList<String>();
-        arraySpinner.add(msgProyecto);
+        // final List<String> arraySpinner = new ArrayList<String>();
+        // arraySpinner.add(msgProyecto);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -382,7 +473,7 @@ public class ObservacionActivity extends AppCompatActivity {
                         String id = jsonArray.getJSONObject(i).get("idProyecto").toString();
                         String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
 
-                        arraySpinner.add(nombre);
+                        // arraySpinner.add(nombre);
 
                         listaDatosProyectos.add(new Proyecto(id, nombre));
                     }
@@ -400,14 +491,14 @@ public class ObservacionActivity extends AppCompatActivity {
             }
         });queue.add(stringRequest);
 
-        return arraySpinner;
+        // return arraySpinner;
     }
 
-    private List<String> GetOperaciones()
+    private void GetOperaciones()
     {
         String URL = ClaseGlobal.SELECT_OPERACIONES_ALL;
-        final List<String> arraySpinner2 = new ArrayList<String>();
-        arraySpinner2.add(msgOperacion);
+        // final List<String> arraySpinner2 = new ArrayList<String>();
+        // arraySpinner2.add(msgOperacion);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -424,7 +515,7 @@ public class ObservacionActivity extends AppCompatActivity {
                         String id = jsonArray.getJSONObject(i).get("idOperacion").toString();
                         String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
 
-                        arraySpinner2.add(nombre);
+                        // arraySpinner2.add(nombre);
 
                         listaDatosOperaciones.add(new Operacion(id, nombre, ""));
                     }
@@ -443,14 +534,14 @@ public class ObservacionActivity extends AppCompatActivity {
             }
         });queue.add(stringRequest);
 
-        return arraySpinner2;
+        // return arraySpinner2;
     }
 
-    private List<String> GetColaboradores()
+    private void GetColaboradores()
     {
         String URL = ClaseGlobal.SELECT_COLABORADORES_ALL;
-        final List<String> arraySpinner = new ArrayList<String>();
-        arraySpinner.add(msgColaborador);
+        // final List<String> arraySpinner = new ArrayList<String>();
+        // arraySpinner.add(msgColaborador);
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -467,7 +558,7 @@ public class ObservacionActivity extends AppCompatActivity {
                         String id = jsonArray.getJSONObject(i).get("idColaborador").toString();
                         String pseudonimo = jsonArray.getJSONObject(i).get("pseudonimo").toString();
 
-                        arraySpinner.add(pseudonimo);
+                        // arraySpinner.add(pseudonimo);
 
                         listaDatosColaborador.add(new Colaborador(id, pseudonimo, ""));
                     }
@@ -485,7 +576,7 @@ public class ObservacionActivity extends AppCompatActivity {
             }
         });queue.add(stringRequest);
 
-        return arraySpinner;
+        // return arraySpinner;
     }
 
     /**
