@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
+import reque.proyecto2.jose_.proindust_app.modelo.Muestreo;
 import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
 import reque.proyecto2.jose_.proindust_app.modelo.Tarea;
@@ -76,9 +77,10 @@ public class ObservacionActivity extends AppCompatActivity {
     private ArrayList<Operacion> listaDatosOperaciones;
     private ArrayList<Tarea> listaDatosTareas;
     private ArrayList<Colaborador> listaDatosColaborador;
+    private Muestreo miMuestreoActual;
 
     // contienen todos los datos registrados en la base de datos (solo el nombre)
-    private List<String> listaProyectos_todos, listaOperaciones_todos, listaColaboradores_todos, listaTareas_todos;
+    // private List<String> listaProyectos_todos, listaOperaciones_todos, listaColaboradores_todos, listaTareas_todos;
     // contiene los datos filtrados por parametros, proyectos de acuerdo a usuarios, operaciones de acuerdo a proyectos, etc
     private List<String> listaProyectos_filtro, listaOperaciones_filtro, listaColaboradores_filtro, listaTareas_filtro;
 
@@ -91,6 +93,11 @@ public class ObservacionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_observacion);
 
+        GetProyectos();
+        GetOperaciones();
+        GetColaboradores();
+        GetTareas();
+
         sp_proyecto = (Spinner) findViewById(R.id.sp_proyecto_ID);
         sp_operacion = (Spinner) findViewById(R.id.sp_operacion_ID);
         sp_colaborador = (Spinner) findViewById(R.id.sp_colaborador_ID);
@@ -101,15 +108,10 @@ public class ObservacionActivity extends AppCompatActivity {
         listaDatosColaborador = new ArrayList<Colaborador>();
         listaDatosTareas = new ArrayList<Tarea>();
 
-        // listaProyectos_filtro = GetProyectos();
-        // listaOperaciones_filtro = GetOperaciones();
-        // listaColaboradores_filtro = GetColaboradores();
-        // listaTareas_filtro = GetTareas();
-
-        listaProyectos_todos = new ArrayList<String>();
-        listaOperaciones_todos = new ArrayList<String>();
-        listaColaboradores_todos = new ArrayList<String>();
-        listaTareas_todos = new ArrayList<String>();
+        // listaProyectos_todos = new ArrayList<String>();
+        // listaOperaciones_todos = new ArrayList<String>();
+        // listaColaboradores_todos = new ArrayList<String>();
+        // listaTareas_todos = new ArrayList<String>();
 
         et_descripcion = (EditText) findViewById(R.id.tv_descripcion_ID);
         bt_registrar = (Button) findViewById(R.id.bt_Registrar_ID);
@@ -121,6 +123,20 @@ public class ObservacionActivity extends AppCompatActivity {
             {
                 proyectoSeleccionado = sp_proyecto.getSelectedItem().toString();
 
+                // verificar la hora y fecha !!!!!!!!
+
+                String idProyecto = GetIdProyecto(proyectoSeleccionado);
+
+                try
+                {
+                    // miMuestreoActual = BuscarMuestroActivoProyecto(idProyecto).get(0);
+                    Log.d("PUTA", BuscarMuestroActivoProyecto(idProyecto).get(0).toString());
+                }
+                catch (IndexOutOfBoundsException e) { miMuestreoActual = null; }
+
+
+                ActualizarListaDatos_Operaciones(Get_Operaciones_de_proyecto(idProyecto));
+                ActualizarListaDatos_Colaboradores(Get_Colaboradores_de_proyecto(idProyecto));
             }
 
             @Override
@@ -134,6 +150,8 @@ public class ObservacionActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 operacionSeleccionada = sp_operacion.getSelectedItem().toString();
+
+                ActualizarListaDatos_Tarea(Get_Tareas_de_operacion(GetIdOperacion(operacionSeleccionada)));
             }
 
             @Override
@@ -171,10 +189,8 @@ public class ObservacionActivity extends AppCompatActivity {
             }
         });
 
-
         // Mensaje de carga
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Insertando nueva información...");
         progressDialog.setCancelable(false);
 
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -184,17 +200,81 @@ public class ObservacionActivity extends AppCompatActivity {
     }
 
     /**
+     * Retornar el objeto del muestreo activo perteneciente al ID del proyecto insertado
+     * Sirve tambien para verificar si existe dicho muestreo en estado de activo, esto
+     * para dar paso a efectuar las observaciones
+     * @param pIdProyecto
+     * @return
+     */
+    private List<Muestreo> BuscarMuestroActivoProyecto(String pIdProyecto)
+    {
+        progressDialog.setMessage("Consultando proyectos...");
+        progressDialog.show();
+
+        String URL = ClaseGlobal.SELECT_MUESTREO_ACTIVO_DE_PROYECTO + "?idProyecto=" + pIdProyecto;
+        final List<Muestreo> array = new ArrayList<Muestreo>();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    // en teoria deber ser una sola iteración (1 muestreo activo por proyecto)
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String idMuestreo = jsonArray.getJSONObject(i).get("idMuestreo").toString();
+                        String idProyecto = jsonArray.getJSONObject(i).get("idProyecto").toString();
+                        String fechaInicio = jsonArray.getJSONObject(i).get("fechaInicio").toString();
+                        String lapsoInicial = jsonArray.getJSONObject(i).get("lapsoInicial").toString();
+                        String lapsoFinal = jsonArray.getJSONObject(i).get("lapsoFinal").toString();
+                        String horaObservacion = jsonArray.getJSONObject(i).get("horaObservacion").toString();
+                        String tiempoRecorrido = jsonArray.getJSONObject(i).get("tiempoRecorrido").toString();
+                        String estado = jsonArray.getJSONObject(i).get("estado").toString();
+                        String descripcion = jsonArray.getJSONObject(i).get("descripcion").toString();
+                        String cantObservRegistradas = jsonArray.getJSONObject(i).get("cantObservRegistradas").toString();
+                        String cantObservRequeridas = jsonArray.getJSONObject(i).get("cantObservRequeridas").toString();
+
+                        array.add(new
+                                Muestreo(idMuestreo, idProyecto, fechaInicio, lapsoInicial, lapsoFinal,
+                                horaObservacion, tiempoRecorrido, estado, descripcion, cantObservRegistradas,
+                                cantObservRequeridas));
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return array;
+    }
+
+    /**
      * GetTiempo(): apenas se registren las valores (temp. y humedad) cargar los proyectos
      * InsertarParemetrosManual(): apenas se inserten los valores (temp. y humedad) cargar los proyectos
      */
-    private void DeterminarProyectos()
+    private void Determinar_Proyectos_a_mostrar()
     {
         if (ClaseGlobal.usuarioActual.idRolUsuario.equals("2")) // Analista
         {
             listaProyectos_filtro = Get_Proyectos_activos_de_usuario(ClaseGlobal.usuarioActual.id);
             ActualizarListaDatos_Proyectos(listaProyectos_filtro);
         }
-        else // administrador
+        else // Administrador
         {
             listaProyectos_filtro = Get_Proyectos_activos();
             ActualizarListaDatos_Proyectos(listaProyectos_filtro);
@@ -208,6 +288,9 @@ public class ObservacionActivity extends AppCompatActivity {
      */
     private List<String> Get_Proyectos_activos()
     {
+        progressDialog.setMessage("Consultando proyectos...");
+        progressDialog.show();
+
         String URL = ClaseGlobal.SELECT_PROYECTOS_CON_MUESTREOS_ACTIVOS;
         final List<String> arraySpinner = new ArrayList<String>();
         arraySpinner.add(msgProyecto);
@@ -233,10 +316,12 @@ public class ObservacionActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
                 MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
@@ -252,6 +337,9 @@ public class ObservacionActivity extends AppCompatActivity {
      */
     private List<String> Get_Proyectos_activos_de_usuario(String pIdUsuario)
     {
+        progressDialog.setMessage("Consultando proyectos...");
+        progressDialog.show();
+
         String URL = ClaseGlobal.SELECT_PROYECTOS_ACTIVOS_DE_USUARIO + "?idUsuario=" + pIdUsuario;
         final List<String> arraySpinner = new ArrayList<String>();
         arraySpinner.add(msgProyecto);
@@ -277,10 +365,61 @@ public class ObservacionActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar proyectos.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return arraySpinner;
+    }
+
+    /**
+     * Obtiene todas las operaciones relacionadas a un proyecto dado, mediante el ID del proyecto
+     * @param pIdProyecto
+     * @return
+     */
+    private List<String> Get_Operaciones_de_proyecto(String pIdProyecto)
+    {
+        progressDialog.setMessage("Consultando operaciones...");
+        progressDialog.show();
+
+        String URL = ClaseGlobal.SELECT_OPERACIONES_DE_PROYECTO + "?idProyecto=" + pIdProyecto;
+        final List<String> arraySpinner = new ArrayList<String>();
+        arraySpinner.add(msgOperacion);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
+
+                        arraySpinner.add(nombre);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
                 MessageDialog("Error al solicitar operaciones.\nIntente mas tarde!.",
                         "Error", "Aceptar");
             }
@@ -289,6 +428,107 @@ public class ObservacionActivity extends AppCompatActivity {
         return arraySpinner;
     }
 
+    /**
+     * Obtiene todos los colaboradores de un proyecto mediante el ID del proyecto
+     * @param pIdProyecto
+     * @return
+     */
+    private List<String> Get_Colaboradores_de_proyecto(String pIdProyecto)
+    {
+        progressDialog.setMessage("Consultando colaboradores...");
+        progressDialog.show();
+
+        String URL = ClaseGlobal.SELECT_COLABORADORES_DE_PROYECTO + "?idProyecto=" + pIdProyecto;
+        final List<String> arraySpinner = new ArrayList<String>();
+        arraySpinner.add(msgColaborador);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String pseudonimo = jsonArray.getJSONObject(i).get("pseudonimo").toString();
+
+                        arraySpinner.add(pseudonimo);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar colaboradores.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return arraySpinner;
+    }
+
+    /**
+     * Obtiene todas las tareas relacionadas con una operacion, mediante el ID de la operacione
+     * @param pIdOperacion
+     * @return
+     */
+    private List<String> Get_Tareas_de_operacion(String pIdOperacion)
+    {
+        progressDialog.setMessage("Consultando tareas...");
+        progressDialog.show();
+
+        String URL = ClaseGlobal.SELECT_TAREAS_DE_OPERACION + "?idOperacion=" + pIdOperacion;
+        final List<String> arraySpinner = new ArrayList<String>();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try
+                {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("value");
+
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        String nombre = jsonArray.getJSONObject(i).get("nombre").toString();
+
+                        arraySpinner.add(nombre);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al solicitar colaboradores.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        });queue.add(stringRequest);
+
+        return arraySpinner;
+    }
+
+    /**
+     * Regrescar el contenido del spinner
+     * @param lista
+     */
     private void ActualizarListaDatos_Proyectos(List<String> lista)
     {
         adapterSpinner_proyecto = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, lista);
@@ -371,7 +611,7 @@ public class ObservacionActivity extends AppCompatActivity {
                 }
             }
 
-            RegistrarMuestra(ClaseGlobal.INSERT_OBSERVACION +
+            /*RegistrarMuestra(ClaseGlobal.INSERT_OBSERVACION +
                     "?comentario=" + comentario +
                     "&fecha_hora=" + hourdateFormat.format(date).toString() +
                     "&humedad=" + ClaseGlobal.humedad +
@@ -380,7 +620,7 @@ public class ObservacionActivity extends AppCompatActivity {
                     "&idUsuario=" + ClaseGlobal.usuarioActual.id +
                     "&idColaborador=" + idColaborador +
                     "&idOperacion=" + idOperacion +
-                    "&idTarea=" + idTarea);
+                    "&idTarea=" + idTarea);*/
         }
     }
 
@@ -590,6 +830,65 @@ public class ObservacionActivity extends AppCompatActivity {
     }
 
     /**
+     * Buscar los objetos en la lista, el ID acorde a un nombre
+     * A estas listas, al ejecutar la pantalla, se cargan todos los datos que pertencen
+     * a una tabla
+     * @param pNombre
+     * @return
+     */
+    private String GetIdProyecto(String pNombre)
+    {
+        String id = "error"; // siempre existirá
+        for (int i = 0; i < listaDatosProyectos.size(); i++)
+        {
+            if (pNombre.equals(listaDatosProyectos.get(i).nombre))
+            {
+                id = listaDatosProyectos.get(i).id;
+            }
+        }
+        return id;
+    }
+
+    private String GetIdOperacion(String pNombre)
+    {
+        String id = "error"; // siempre existirá
+        for (int i = 0; i < listaDatosOperaciones.size(); i++)
+        {
+            if (pNombre.equals(listaDatosOperaciones.get(i).nombre))
+            {
+                id = listaDatosOperaciones.get(i).id;
+            }
+        }
+        return id;
+    }
+
+    private String GetIdColaborador(String pPseudonimo)
+    {
+        String id = "error"; // siempre existirá
+        for (int i = 0; i < listaDatosColaborador.size(); i++)
+        {
+            if (pPseudonimo.equals(listaDatosColaborador.get(i).pseudonimo))
+            {
+                id = listaDatosColaborador.get(i).id;
+            }
+        }
+        return id;
+    }
+
+    private String GetIdTareas(String pNombre)
+    {
+        String id = "error"; // siempre existirá
+        for (int i = 0; i < listaDatosTareas.size(); i++)
+        {
+            if (pNombre.equals(listaDatosTareas.get(i).nombre))
+            {
+                id = listaDatosTareas.get(i).id;
+            }
+        }
+        return id;
+    }
+
+    /**
      * Función llamada en onCreate.
      * Solicita primero los parametros de latitud y longitud para posteriormente ejecutar
      * la función encargada de hacer el request de los valores de humedad y temperatura
@@ -632,7 +931,7 @@ public class ObservacionActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    DeterminarProyectos();
+                    Determinar_Proyectos_a_mostrar();
 
                     Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                             "Temperatura: " + ClaseGlobal.temperatura + "°" + "  |  " +
@@ -770,7 +1069,7 @@ public class ObservacionActivity extends AppCompatActivity {
                     ClaseGlobal.temperatura = pTemperatura;
                     ClaseGlobal.humedad = pHumedad;
 
-                    DeterminarProyectos();
+                    Determinar_Proyectos_a_mostrar();
 
                     Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
                             "Valores registrados!\n" + "Temperatura: " + ClaseGlobal.temperatura + "°" + "  |  " +
