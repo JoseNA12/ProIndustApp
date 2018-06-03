@@ -447,7 +447,10 @@ public class ObservacionActivity extends AppCompatActivity {
         alert.setPositiveButton("FINALIZAR", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                InsertarValoresFormula();
+                // InsertarValoresFormula(); // ------------------------------------------------------------------------------------
+
+                Poner_en_concluido_muestreo();
+
             }
         });
 
@@ -460,6 +463,54 @@ public class ObservacionActivity extends AppCompatActivity {
 
         alert.show();
 
+    }
+
+    private void Poner_en_concluido_muestreo()
+    {
+        String URL = ClaseGlobal.UPDATE_PONER_CONCLUIDO_MUESTREO +
+                "?idMuestreo=" + miMuestreoActual.idMuestreo +
+                "&estado=" + "CONCLUIDO";
+
+        progressDialog.setMessage("Finalizando muestreo...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) { // response -> {"status":"false"} o true
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (!jsonObject.getString("status").equals("false"))
+                    {
+                        Boton_TerminarObservaciones();
+
+                        Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                                "Muestreo finalizado!", Snackbar.LENGTH_LONG).show();
+
+                    }
+                    else
+                    {
+                        MessageDialog("Error al finalizar el muestreo!", "Error", "Aceptar");
+                        DeterminarActualizarMuestreo(miMuestreoActual.idMuestreo);
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+
+                progressDialog.dismiss();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error de conexión", "Aceptar");
+            }
+        });queue.add(stringRequest);
     }
 
     private void InsertarCantMuestreosNuevos()
@@ -631,6 +682,7 @@ public class ObservacionActivity extends AppCompatActivity {
         alert.show();
     }
 
+    // sin usar (no esta hecho lo de la formula)
     private void Determinar_Muestras_pendientes_debido_valores(int pValor)
     {
         AlertDialog.Builder alert = new AlertDialog.Builder(ObservacionActivity.this);
