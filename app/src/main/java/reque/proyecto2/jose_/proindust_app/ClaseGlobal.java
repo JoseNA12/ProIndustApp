@@ -101,7 +101,7 @@ public class ClaseGlobal {
     public static final String INICIAR_SESION = IP + "iniciar_sesion.php";
 
     // Observacion
-    public static final String INSERT_OBSERVACION = IP + "Observacion/insertar_muestra.php";
+    public static final String INSERT_OBSERVACION = IP + "Observacion/insertar_observacion.php";
 
     // Muestreo
     public static final String INSERT_MUESTREO = IP + "Muestreo/insertar_muestreo.php";

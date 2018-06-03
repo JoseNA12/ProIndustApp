@@ -38,10 +38,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import reque.proyecto2.jose_.proindust_app.modelo.Colaborador;
 import reque.proyecto2.jose_.proindust_app.modelo.Muestreo;
@@ -49,9 +57,10 @@ import reque.proyecto2.jose_.proindust_app.modelo.Operacion;
 import reque.proyecto2.jose_.proindust_app.modelo.Proyecto;
 import reque.proyecto2.jose_.proindust_app.modelo.Tarea;
 
+import static junit.framework.Assert.assertEquals;
+
 public class ObservacionActivity extends AppCompatActivity {
 
-    // sp_proyecto_ID, sp_operacion_ID, sp_colaborador_ID, atctv_tarea_ID, tv_descripcion_ID, bt_Registrar_ID
 
     private Spinner sp_proyecto, sp_operacion, sp_colaborador;
 
@@ -79,6 +88,9 @@ public class ObservacionActivity extends AppCompatActivity {
     private ArrayList<Colaborador> listaDatosColaborador;
     private Muestreo miMuestreoActual;
 
+    private String horaActual;
+    private String fechaActual;
+
     // contienen todos los datos registrados en la base de datos (solo el nombre)
     // private List<String> listaProyectos_todos, listaOperaciones_todos, listaColaboradores_todos, listaTareas_todos;
     // contiene los datos filtrados por parametros, proyectos de acuerdo a usuarios, operaciones de acuerdo a proyectos, etc
@@ -92,6 +104,11 @@ public class ObservacionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_observacion);
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
+        horaActual = formatoHora.format(cal.getTime());
+        fechaActual = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
         GetProyectos();
         GetOperaciones();
@@ -123,20 +140,11 @@ public class ObservacionActivity extends AppCompatActivity {
             {
                 proyectoSeleccionado = sp_proyecto.getSelectedItem().toString();
 
-                // verificar la hora y fecha !!!!!!!!
-
+                miMuestreoActual = null;
                 String idProyecto = GetIdProyecto(proyectoSeleccionado);
 
-                try
-                {
-                    // miMuestreoActual = BuscarMuestroActivoProyecto(idProyecto).get(0);
-                    Log.d("PUTA", BuscarMuestroActivoProyecto(idProyecto).get(0).toString());
-                }
-                catch (IndexOutOfBoundsException e) { miMuestreoActual = null; }
+                BuscarMuestroActivoProyecto(idProyecto);
 
-
-                ActualizarListaDatos_Operaciones(Get_Operaciones_de_proyecto(idProyecto));
-                ActualizarListaDatos_Colaboradores(Get_Colaboradores_de_proyecto(idProyecto));
             }
 
             @Override
@@ -177,7 +185,7 @@ public class ObservacionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Boton_RegistrarMuestra();
+                Boton_RegistrarObservacion();
             }
         });
 
@@ -195,8 +203,101 @@ public class ObservacionActivity extends AppCompatActivity {
 
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-        // Llama DeterminarProyectos()
+        // Llama a DeterminarProyectos()
         ParametrosAmbiente(); // Temperatura y humedad
+    }
+
+    /**
+     * Función atada al boton de registrar
+     */
+    private void Boton_RegistrarObservacion()
+    {
+        String tareaSeleccionada = atctv_tarea.getText().toString();
+        String comentario = et_descripcion.getText().toString();
+
+        if (!proyectoSeleccionado.equals(msgProyecto))
+        {
+            if (!operacionSeleccionada.equals(msgOperacion))
+            {
+                if (!colaboradorSeleccionado.equals(msgColaborador))
+                {
+                    String idTarea = GetIdTarea(tareaSeleccionada);
+
+                    if (!idTarea.equals("error"))
+                    {
+                        RegistrarObservacion(ClaseGlobal.INSERT_OBSERVACION +
+                                "?comentario=" + comentario +
+                                "&temperatura=" + ClaseGlobal.temperatura +
+                                "&humedad=" + ClaseGlobal.humedad +
+                                "&fecha=" + fechaActual +
+                                "&hora=" + horaActual +
+                                "&idUsuario=" + ClaseGlobal.usuarioActual.id +
+                                "&idColaborador=" + GetIdColaborador(colaboradorSeleccionado) +
+                                "&idOperacion=" + GetIdOperacion(operacionSeleccionada) +
+                                "&idTarea=" + GetIdTarea(tareaSeleccionada) +
+                                "&idMuestreo=" + miMuestreoActual.idMuestreo
+                        );
+                    }
+                    else
+                    {
+                        MessageDialog("Por favor, ingrese una tarea válida", "Error", "Aceptar");
+                    }
+                }
+                else
+                {
+                    MessageDialog("Por favor, seleccione un colaborador", "Error", "Aceptar");
+                }
+            }
+            else
+            {
+                MessageDialog("Por favor, seleccione una operación", "Error", "Aceptar");
+            }
+        }
+        else
+        {
+            MessageDialog("Por favor, seleccione un proyceto", "Error", "Aceptar");
+        }
+    }
+
+    /**
+     * Función encargada de realizar el request a la base de datos para almacenar la muestra
+     * @param URL
+     */
+    private void RegistrarObservacion(String URL)
+    {
+        progressDialog.setMessage("Registrando observación...");
+        progressDialog.show();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+
+                    if (jsonObject.getString("status").equals("true"))
+                    {
+                        Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                                "Se ha registrado la observación!", Snackbar.LENGTH_SHORT).show();
+                        // MessageDialog("Se ha creado la muestra!", "Éxito", "Aceptar");
+                    }
+                    else {
+                        MessageDialog("Error al crear la observación!", "Error", "Aceptar");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressDialog.dismiss();
+                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
+                        "Error", "Aceptar");
+            }
+        }); queue.add(stringRequest);
+
     }
 
     /**
@@ -206,13 +307,13 @@ public class ObservacionActivity extends AppCompatActivity {
      * @param pIdProyecto
      * @return
      */
-    private List<Muestreo> BuscarMuestroActivoProyecto(String pIdProyecto)
+    private void BuscarMuestroActivoProyecto(String pIdProyecto)
     {
         progressDialog.setMessage("Consultando proyectos...");
         progressDialog.show();
 
         String URL = ClaseGlobal.SELECT_MUESTREO_ACTIVO_DE_PROYECTO + "?idProyecto=" + pIdProyecto;
-        final List<Muestreo> array = new ArrayList<Muestreo>();
+        // final List<Muestreo> array = new ArrayList<Muestreo>();
 
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
@@ -239,10 +340,15 @@ public class ObservacionActivity extends AppCompatActivity {
                         String cantObservRegistradas = jsonArray.getJSONObject(i).get("cantObservRegistradas").toString();
                         String cantObservRequeridas = jsonArray.getJSONObject(i).get("cantObservRequeridas").toString();
 
-                        array.add(new
-                                Muestreo(idMuestreo, idProyecto, fechaInicio, lapsoInicial, lapsoFinal,
+                        //array.add(new
+                        miMuestreoActual = new Muestreo(idMuestreo, idProyecto, fechaInicio, lapsoInicial, lapsoFinal,
                                 horaObservacion, tiempoRecorrido, estado, descripcion, cantObservRegistradas,
-                                cantObservRequeridas));
+                                cantObservRequeridas);
+
+                        progressDialog.dismiss();
+                        DecidirPermitirRegistrarObservaciones(idProyecto);
+
+                        break; // por si las moscas (caso extremo)
                     }
 
                 }catch (JSONException e){
@@ -259,8 +365,89 @@ public class ObservacionActivity extends AppCompatActivity {
                         "Error", "Aceptar");
             }
         });queue.add(stringRequest);
+    }
 
-        return array;
+    /**
+     * Dado un ID de proyecto, determinar si se encuentra en el dia, y en la hora indicada para hacer
+     * el muestreo
+     * @param pIdProyecto
+     */
+    private void DecidirPermitirRegistrarObservaciones(String pIdProyecto) // .. ?
+    {
+        // hora y fecha muestreo
+        String horaM = miMuestreoActual.horaObservacion;
+        String fechaM = miMuestreoActual.fechaInicio;
+
+        long dias = CalcularDiferenciaDias(fechaM);
+        if (dias != 0)
+        {
+            MessageDialog("Aún faltan " + Long.toString(dias) + " días para dar inicio al muestreo!",
+                    "Atención!", "Aceptar");
+        }
+        else
+        {
+            int minutos = CalcularDiferenciaMinutos(horaM);
+
+            if (minutos < 1)
+            {
+                Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                        "Es momento de realizar observaciones!", Snackbar.LENGTH_LONG).show();
+
+                ActualizarListaDatos_Operaciones(Get_Operaciones_de_proyecto(pIdProyecto));
+                ActualizarListaDatos_Colaboradores(Get_Colaboradores_de_proyecto(pIdProyecto));
+            }
+            else
+            {
+                MessageDialog("Aún faltan " + Integer.toString(minutos) + " minutos para dar inicio al muestreo!",
+                        "Atención!", "Aceptar");
+            }
+        }
+    }
+
+    private int CalcularDiferenciaMinutos(String pHora)
+    {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm:ss");
+
+        long difference = 0;
+        int minutes = 0;
+        try
+        {
+            Date date2 = formatoHora.parse(pHora);
+            Date date1 = formatoHora.parse(formatoHora.format(cal.getTime()));
+            difference = (date2.getTime() - date1.getTime());
+
+            minutes = (int) TimeUnit.MILLISECONDS.toMinutes(difference);
+
+            // if(minutes<0)minutes += 1440;
+        }
+        catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return minutes;
+    }
+
+    private long CalcularDiferenciaDias(String pFecha)
+    {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+
+        int fechaActual_anio = Integer.parseInt(dateFormat.format(date).substring(0, 4));
+        int fechaActual_mes = Integer.parseInt(dateFormat.format(date).substring(5, 7));
+        int fechaActual_dia = Integer.parseInt(dateFormat.format(date).substring(8, 10));
+
+        int fechaMuestreo_anio = Integer.parseInt(pFecha.substring(0, 4));
+        int fechaMuestreo_mes = Integer.parseInt(pFecha.substring(5, 7));
+        int fechaMuestreo_dia = Integer.parseInt(pFecha.substring(8, 10));
+
+        Calendar c2 = new GregorianCalendar(fechaMuestreo_anio, fechaMuestreo_mes, fechaMuestreo_dia);
+        Calendar c1 = new GregorianCalendar(fechaActual_anio, fechaActual_mes, fechaActual_dia);
+
+        // 1000 x 60 X 60 X 24 = MS per Day
+        long diasRestantes = (c2.getTimeInMillis() - c1.getTimeInMillis()) / (1000*60*60*24);
+
+        return diasRestantes;
     }
 
     /**
@@ -558,113 +745,6 @@ public class ObservacionActivity extends AppCompatActivity {
         atctv_tarea.setAdapter(adapter);
     }
 
-    /**
-     * Función atada al boton de registrar
-     */
-    private void Boton_RegistrarMuestra()
-    {
-        Date date = new Date();
-        DateFormat hourdateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-
-        String tipoMuestra = "1"; //Esto debería ser una variable global que cambie cuando se alcance
-        //el limite de 30 muestreos preliminares
-
-        String tarea = atctv_tarea.getText().toString();
-        String comentario = et_descripcion.getText().toString();
-        if(comentario.equals("")){
-            comentario = "Sin comentario";
-        }
-
-        if(tarea.equals("") || proyectoSeleccionado.equals("") || operacionSeleccionada.equals("") || colaboradorSeleccionado.equals("")){
-            MessageDialog("Es necesario que complete todos los datos para continuar", "Error", "Aceptar");
-        } else {
-            String idProyecto = "-1";
-            String idColaborador = "-1";
-            String idTarea = "-1";
-            String idOperacion = "-1";
-
-            for(int i=0; i < listaDatosProyectos.size(); i++)
-            {
-                if(listaDatosProyectos.get(i).nombre.equals(proyectoSeleccionado)){
-                    idProyecto = listaDatosProyectos.get(i).id;
-                }
-            }
-
-            for(int i=0; i < listaDatosColaborador.size(); i++){
-                if(listaDatosColaborador.get(i).pseudonimo.equals(colaboradorSeleccionado))
-                {
-                    idColaborador = listaDatosColaborador.get(i).id;
-                }
-            }
-
-            for(int i = 0; i < listaDatosOperaciones.size(); i++){
-                if(listaDatosOperaciones.get(i).nombre.equals(operacionSeleccionada))
-                {
-                    idOperacion = listaDatosOperaciones.get(i).id;
-                }
-            }
-
-            for(int i=0; i < listaDatosTareas.size(); i++)
-            {
-                if(listaDatosTareas.get(i).nombre.equals(tarea)){
-                    idTarea = listaDatosTareas.get(i).id;
-                }
-            }
-
-            /*RegistrarMuestra(ClaseGlobal.INSERT_OBSERVACION +
-                    "?comentario=" + comentario +
-                    "&fecha_hora=" + hourdateFormat.format(date).toString() +
-                    "&humedad=" + ClaseGlobal.humedad +
-                    "&idTipoMuestra=" + tipoMuestra +
-                    "&temperatura=" + ClaseGlobal.temperatura +
-                    "&idUsuario=" + ClaseGlobal.usuarioActual.id +
-                    "&idColaborador=" + idColaborador +
-                    "&idOperacion=" + idOperacion +
-                    "&idTarea=" + idTarea);*/
-        }
-    }
-
-    /**
-     * Función encargada de realizar el request a la base de datos para almacenar la muestra
-     * @param URL
-     */
-    private void RegistrarMuestra(String URL)
-    {
-        progressDialog.setMessage("Insertando nueva información...");
-        progressDialog.show();
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-
-                    if (jsonObject.getString("status").equals("true"))
-                    {
-                        Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
-                                "Se ha creado la muestra!", Snackbar.LENGTH_SHORT).show();
-                        // MessageDialog("Se ha creado la muestra!", "Éxito", "Aceptar");
-                    }
-                    else {
-                        MessageDialog("Error al crear la muestra!", "Error", "Aceptar");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                progressDialog.dismiss();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressDialog.dismiss();
-                MessageDialog("Error al procesar la solicitud.\nIntente mas tarde!.",
-                        "Error", "Aceptar");
-            }
-        }); queue.add(stringRequest);
-
-    }
-
     private void GetTareas()
     {
         String URL = ClaseGlobal.SELECT_TAREAS_ALL;
@@ -875,7 +955,7 @@ public class ObservacionActivity extends AppCompatActivity {
         return id;
     }
 
-    private String GetIdTareas(String pNombre)
+    private String GetIdTarea(String pNombre)
     {
         String id = "error"; // siempre existirá
         for (int i = 0; i < listaDatosTareas.size(); i++)
