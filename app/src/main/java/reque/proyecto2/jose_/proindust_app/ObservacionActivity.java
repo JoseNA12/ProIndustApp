@@ -662,8 +662,8 @@ public class ObservacionActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        MessageDialog("El nivel de confianza debe ser entre 90 y 99",
-                                "Error", "Aceptar");
+                        Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
+                                "El nivel de confianza debe ser entre 90 y 99!", Snackbar.LENGTH_LONG).show();
                         InsertarValoresFormula();
                     }
                     // Snackbar.make(ObservacionActivity.this.findViewById(android.R.id.content),
@@ -751,7 +751,6 @@ public class ObservacionActivity extends AppCompatActivity {
 
         alert.show();
     }
-
 
     private int ObtenerTotalObservaciones()
     {
