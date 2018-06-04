@@ -108,14 +108,14 @@ public class ClaseGlobal {
     public static final String SELECT_MUESTREOS_ALL = IP + "Muestreo/select_muestreos_all.php";
     public static final String UPDATE_MUESTREO = IP + "Muestreo/actualizar_muestreo.php";
     public static final String SELECT_MUESTREO_ACTIVO_DE_PROYECTO = IP + "Muestreo/select_muestreo_activo_de_proyecto.php";
-
     public static final String UPDATE_OBSER_REGIST_MUESTREO = IP + "Muestreo/actualizar_cantObservRegistradas_muestreo.php";
     public static final String UPDATE_OBSER_REQUE_MUESTREO = IP + "Muestreo/actualizar_cantObservRequeridas_muestreo.php";
-
     public static final String UPDATE_PONER_CONCLUIDO_MUESTREO = IP + "Muestreo/actualizar_estado_a_concluido_muestreo.php";
-
     public static final String SELECT_TOTAL_OBSERVACIONES_PRODUCTIVAS_MUESTREO = IP + "Muestreo/select_muestras_productivas.php";
     public static final String SELECT_TOTAL_OBSERVACIONES_MUESTREO = IP + "Muestreo/select_muestras_totales.php";
+
+    // Grafico
+    public static final String GET_TAREAS_DATA = IP + "Grafico/grafico_operacion_tarea.php";
 
     public static String longitud;
     public static String latitud;
