@@ -122,7 +122,8 @@ public class CrearColaborador extends AppCompatActivity {
         }
         else
         {
-            MessageDialog("Por favor, llene los campos de texto requeridos.","Error", "Aceptar");
+            MessageDialog("Por favor, llene los campos de texto requeridos."
+                    ,"Error", "Aceptar");
         }
     }
 
